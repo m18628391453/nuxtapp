@@ -26,22 +26,22 @@
             
             <div>
               <h3 class="text-sm font-bold text-gray-300 mb-4 tracking-wider">主题</h3>
-              <div class="flex gap-4">
-                <button 
-                  @click="theme = 'light'" 
-                  :class="['flex-1 flex flex-col items-center justify-center py-4 rounded-lg border transition-all cursor-pointer', theme === 'light' ? 'border-[#32AFFF] bg-[#32AFFF]/10 text-[#32AFFF]' : 'border-gray-700 hover:border-gray-500 text-gray-400']"
-                >
-                   <svg class="w-6 h-6 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                   <span class="text-xs font-medium">浅色</span>
-                </button>
+              <div class="grid grid-cols-2 gap-4">
                 
-                <button 
-                  @click="theme = 'dark'" 
-                  :class="['flex-1 flex flex-col items-center justify-center py-4 rounded-lg border transition-all cursor-pointer', theme === 'dark' ? 'border-[#32AFFF] bg-[#32AFFF]/10 text-[#32AFFF]' : 'border-gray-700 hover:border-gray-500 text-gray-400']"
-                >
-                   <svg class="w-6 h-6 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                   <span class="text-xs font-medium">深色</span>
-                </button>
+                <div class="relative opacity-40 cursor-not-allowed">
+                  <div class="h-16 rounded-lg border border-gray-800 bg-gray-900/50 flex items-center justify-center transition-all">
+                     <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                  </div>
+                  <p class="text-center text-xs mt-2 text-gray-500">浅色</p>
+                </div>
+                
+                <div @click="theme = 'dark'" class="cursor-pointer group relative">
+                  <div :class="['h-16 rounded-lg border flex items-center justify-center transition-all', theme === 'dark' ? 'border-[#32AFFF] bg-[#32AFFF]/5' : 'border-gray-700 group-hover:border-gray-500']">
+                     <svg :class="['w-6 h-6', theme === 'dark' ? 'text-[#32AFFF]' : 'text-gray-400']" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                  </div>
+                  <p class="text-center text-xs mt-2 text-gray-300">深色</p>
+                </div>
+  
               </div>
             </div>
   
@@ -57,9 +57,6 @@
                         <div class="flex-1 bg-gray-800 rounded-sm"></div>
                      </div>
                   </div>
-                  <div v-if="layout === 'sidebar'" class="absolute -bottom-1 -right-1 bg-[#32AFFF] text-white rounded-full p-0.5">
-                      <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                  </div>
                   <p class="text-center text-xs mt-2 text-gray-400">侧边导航</p>
                 </div>
   
@@ -70,9 +67,6 @@
                          <div class="flex-1 bg-gray-600 rounded-sm"></div>
                      </div>
                      <div class="flex-1 bg-gray-800 rounded-sm"></div>
-                  </div>
-                  <div v-if="layout === 'fullscreen'" class="absolute -bottom-1 -right-1 bg-[#32AFFF] text-white rounded-full p-0.5">
-                      <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                   </div>
                   <p class="text-center text-xs mt-2 text-gray-400">内容全屏</p>
                 </div>
@@ -100,7 +94,7 @@
   // 触发更新事件
   const emit = defineEmits(['update:visible'])
   
-  // 默认的主题和布局状态
+  // 默认的主题和布局状态 (主题默认深色)
   const theme = ref('dark')
   const layout = ref('sidebar')
   
