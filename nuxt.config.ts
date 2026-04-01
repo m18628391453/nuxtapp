@@ -20,5 +20,19 @@ export default defineNuxtConfig({
         'echarts', // 确保包含完整 echarts
       ]
     }
+  },
+  // 配置根路径对应页面
+  hooks: {
+    'pages:extend': (pages) => {
+      const overviewPage = pages.find(p => p.name === 'dashboard-overview')
+      if (overviewPage) {
+        pages.unshift({
+          name: 'index',
+          path: '/',
+          file: overviewPage.file,
+          meta: overviewPage.meta
+        })
+      }
+    }
   }
 })

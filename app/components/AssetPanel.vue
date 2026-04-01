@@ -101,15 +101,7 @@
   </template>
   
   <script setup>
-  // 状态标签组件
-  const StatusBadge = defineComponent({
-    props: ['text'],
-    template: `
-      <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-900/30">
-        <span class="text-[10px] font-bold text-emerald-500">{{ text }}</span>
-      </div>
-    `
-  });
+  import StatusBadge from './StatusBadge.vue'  
   
   const loadData = [
     { name: '增氧机', total: 100, running: 80, error: 0, power: 400 },

@@ -8,7 +8,7 @@
       <!-- 菜单+操作区整体容器 -->
       <div class="relative flex items-center justify-between h-full flex-1 ml-50" style="margin-left: 120px;">
         <!-- 底部贯穿下划线 -->
-        <div class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/20 via-blue-500/20 to-blue-500/15 z-0" />
+        <div class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
   
         <!-- 中间：导航菜单 -->
         <nav class="flex items-center h-full space-x-1 z-10 -mt-3">
