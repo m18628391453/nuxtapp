@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-[#0A162C]/60 rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden z-10">
+    <div class="bg-[#0A162C]/10 rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden z-10">
       <div class="flex items-center justify-between mb-2 shrink-0 relative py-1">
         <div class="absolute left-[-16px] top-[-4px] bottom-[-4px] w-1/2 bg-gradient-to-r from-[#173A6B]/60 to-transparent pointer-events-none"></div>
         <div class="absolute left-[-16px] top-[-4px] bottom-[-4px] w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
