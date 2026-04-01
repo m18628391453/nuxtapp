@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-6 gap-1 w-full pt-2">
+    <div class="grid grid-cols-6 gap-1 w-full pt-1">
       <div v-for="(item, idx) in metrics" :key="idx" class="flex flex-col justify-center py-1">
         <p class="text-gray-400 text-[11px] mb-1 font-medium">{{ item.title }}</p>
         <div class="mb-1">

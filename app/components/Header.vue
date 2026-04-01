@@ -1,9 +1,9 @@
 <template>
     <header class="relative flex items-center justify-between h-16 px-6 bg-transparent text-white overflow-hidden">
         <!-- 左侧：Logo区域 -->
-        <div class="flex items-center gap-10 mt-1">
+        <div class="flex items-center gap-10 mt-1 ml-1">
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
-                style="width: 200px; height: 45px;" />
+                style="width: 180px; height: 45px;" />
         </div>
 
         <!-- 菜单+操作区整体容器 -->
@@ -15,15 +15,15 @@
             <!-- 中间：导航菜单 -->
             <nav class="flex items-center h-full space-x-1 z-10 -mt-3">
                 <div v-for="(item, idx) in navItems" :key="item"
-                    class="relative flex items-center h-4/5 m-auto cursor-pointer" @click="handleMenuClick(item, idx)">
+                    class="relative flex items-center h-4/5 m-auto cursor-pointer"@click="handleMenuClick(item, idx)">
                     <a href="javascript:void(0)"
                         class="px-4 text-[15px] font-medium italic z-10 relative cursor-pointer font-['PingFang_SC','Microsoft_YaHei_UI',sans-serif] transition-colors duration-200"
-                        :class="activeIndex === idx ? 'text-cyan-400' : 'text-gray-100 hover:text-cyan-300'">
+                        :class="activeIndex === idx ? 'text-[#32AFFF]' : 'text-gray-100 hover:text-[#32AFFF]/95'"  style="text-align: center;" >
                         {{ item }}
                     </a>
                     <!-- 选中项背景微光效果 -->
                     <div v-if="activeIndex === idx"
-                        class="absolute inset-0 left-[0%] w-7/5 h-full bg-gradient-to-r from-transparent via-cyan-900/50 to-transparent cursor-pointer" />
+                        :class="`absolute min-w-[88px] inset-0 ${idx == 0 ? 'left-[-20%]' : 'left-[0%]' }  w-14/5 h-full bg-gradient-to-r from-transparent via-[#318DC8]/30 to-transparent cursor-pointer`" />
                 </div>
             </nav>
 
