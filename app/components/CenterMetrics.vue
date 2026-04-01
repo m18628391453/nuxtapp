@@ -1,9 +1,9 @@
 <template>
-    <div class="grid grid-cols-6 gap-2 w-full pt-2">
+    <div class="grid grid-cols-6 gap-1 w-full pt-2">
       <div v-for="(item, idx) in metrics" :key="idx" class="flex flex-col justify-center py-1">
         <p class="text-gray-400 text-[11px] mb-1 font-medium">{{ item.title }}</p>
         <div class="mb-1">
-          <span class="text-[26px] font-bold font-mono tracking-wider leading-none text-cyan-400" style="textShadow: '0 0 10px rgba(34,211,238,0.3)'">
+          <span class="text-[26px] font-semibold font-mono tracking-wider leading-none text-cyan-400" style="textShadow: '0 0 10px rgba(34,211,238,0.3)';">
             {{ item.value }}
           </span>
         </div>
