@@ -1,7 +1,7 @@
 <template>
     <div class="flex w-full h-full p-4 gap-4 box-border overflow-hidden bg-transparent text-white font-sans">
       <!-- 左侧 -->
-      <div class="min-w-[350px] max-w-[350px] flex flex-col h-full max-h-[100%] shrink-0">
+      <div class="min-w-[345px] max-w-[345px] flex flex-col h-full max-h-[100%] shrink-0">
         <div class="flex-9 min-h-0">
           <AssetPanel />
         </div>
@@ -35,12 +35,12 @@
       </div>
   
       <!-- 右侧 -->
-      <div class="min-w-[355px] max-w-[355px] flex flex-col h-full shrink-0">
+      <div class="min-w-[350px] max-w-[350px] flex flex-col h-full shrink-0">
         <!-- 系统运行模式 -->
         <div class="bg-[#0A162C]/10 rounded-lg h-[90px] px-4 justify-between shrink-0 relative overflow-hidden" style="padding-top: 0.5rem;">
           <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex py-3.5 px-4 relative -ml-1 -mr-4">
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
-            <h3 class="text-sm font-bold text-white ml-1 leading-none">
+            <h3 class="text-[14px] font-bold text-white ml-1 leading-none">
               系统运行模式
             </h3>
           </div>

@@ -2,7 +2,7 @@
     <div class="bg-[#0A162C]/10 rounded-lg flex flex-col gap-4" style="padding: 1rem 1.2rem 1rem 1.5rem;">
       <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-3 -mr-4">
         <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
-        <h3 class="text-sm font-bold text-white ml-1 leading-none">
+        <h3 class="text-[14px] font-bold text-white ml-1 leading-none">
           各系统用电组成
         </h3>
       </div>

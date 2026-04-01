@@ -4,7 +4,8 @@
         backgroundImage: `url('/image/background.png')`, 
         backgroundSize: 'auto',  // 改为 auto 保持图片原始尺寸
         backgroundPosition: 'center -120px',
-        backgroundRepeat: 'repeat-y'  // 垂直方向重复
+        backgroundRepeat: 'repeat-y',
+        opacity: 0.99 
     }"
     >
         <div class="relative z-10 flex flex-col min-h-screen">

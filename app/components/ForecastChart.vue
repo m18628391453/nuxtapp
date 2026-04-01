@@ -3,7 +3,7 @@
       <!-- 标题栏 -->
       <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-1 -mr-4 mb-2">
         <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
-        <h3 class="text-sm font-bold text-white ml-1 leading-none">{{ title }}</h3>
+        <h3 class="text-[14px] font-bold text-white ml-1 leading-none">{{ title }}</h3>
       </div>
   
       <!-- 图表容器：flex-1 占满剩余空间，min-h-[150px] 保证初始有高度 -->
@@ -62,7 +62,7 @@
         smooth: true,
         showSymbol: false,
         data: [20, 15, 22, 18, 25, 12, 10, 20],
-        lineStyle: { width: 1.5 },
+        lineStyle: { width: 1.0 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(0, 208, 255, 0.3)' },
@@ -77,7 +77,7 @@
         smooth: true,
         showSymbol: false,
         data: [22, 18, 15, 20, 28, 15, 8, 15],
-        lineStyle: { width: 1.5 },
+        lineStyle: { width: 1.0 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(29, 255, 139, 0.3)' },
@@ -92,7 +92,7 @@
         smooth: true,
         showSymbol: false,
         data: [18, 20, 12, 15, 22, 20, 15, 18],
-        lineStyle: { width: 1.5 },
+        lineStyle: { width: 1.0 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(255, 184, 0, 0.25)' },
@@ -103,11 +103,11 @@
       {
         name: '超短期',
         type: 'line',
-        color: '#FF4D00',
+        color: '#F03900F0',
         smooth: true,
         showSymbol: false,
         data: [25, 22, 18, 25, 20, 18, 12, 10],
-        lineStyle: { width: 1.5 },
+        lineStyle: { width: 1.0 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(255, 77, 0, 0.25)' },
@@ -121,9 +121,9 @@
         color: '#00FFFF',
         smooth: true,
         showSymbol: false,
-        data: [15, 10, 20, 12, 30, 32, 25, 15],
+        data: [15, 10, 20, 12, 30, 20, 16, 25],
         lineStyle: {
-          width: 1.5,
+          width: 1.0,
           shadowColor: 'rgba(0, 255, 255, 0.6)',
           shadowBlur: 10
         },
