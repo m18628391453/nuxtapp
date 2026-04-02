@@ -1,35 +1,34 @@
 <template>
     <header class="relative flex items-center justify-between h-16 px-6 bg-transparent text-white overflow-hidden">
-        <!-- 左侧：Logo区域 + 侧边栏展开按钮（仅侧边模式显示） -->
+        <!-- 左侧：Logo区域 -->
         <div class="flex items-center gap-4 mt-1 ml-1 mr-7">
-            <!-- Logo -->
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
                 style="width: 180px; height: 45px;" />
         </div>
 
-        <!-- 菜单+操作区整体容器（去掉全屏模式的ml限制，菜单要一直显示） -->
+        <!-- 菜单+操作区整体容器：保留原有样式逻辑 -->
         <div class="relative flex items-center justify-between h-full flex-1" :class="layoutMode === 'fullscreen' ? 'ml-[120px]' : 'ml-4'">
             <!-- 底部贯穿下划线 -->
             <div class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
             
-            <!-- 中间：导航菜单 - 删掉v-if，一直显示！ -->
+            <!-- 中间：导航菜单 - 保留所有原有逻辑 -->
             <nav class="flex items-center h-full space-x-1 z-10 -mt-3">
                 <div v-for="(item, idx) in menuList" :key="item.route"
                     class="relative flex items-center h-4/5 m-auto cursor-pointer"@click="handleMenuClick(item, idx)">
                     <a href="javascript:void(0)"
                         class="px-4 text-[15px] font-medium italic z-10 relative cursor-pointer font-['PingFang_SC','Microsoft_YaHei_UI',sans-serif] transition-colors duration-200 flex items-center gap-2"
                         :class="activeIndex === idx ? 'text-[#32AFFF]' : 'text-gray-100 hover:text-[#32AFFF]/95'"  style="text-align: center;" >
-                        <!-- 侧边模式显示图标，全屏只显示文字 -->
+                        <!-- 侧边模式显示图标，全屏只显示文字：保留原有逻辑 -->
                         <component v-if="layoutMode === 'sidebar'" :is="menuIconMap[item.icon]" class="w-4 h-4 shrink-0" />
                         {{ item.name }}
                     </a>
-                    <!-- 选中项背景微光效果 -->
+                    <!-- 选中项背景微光效果：保留原有样式 -->
                     <div v-if="activeIndex === idx"
                         :class="`absolute min-w-[88px] inset-0 ${idx == 0 ? 'left-[-15%]' : 'left-[0%]' }  w-14/5 h-full bg-gradient-to-r from-transparent via-[#318DC8]/30 to-transparent cursor-pointer`" />
                 </div>
             </nav>
 
-            <!-- 右侧：操作区与个人信息 - 不动 -->
+            <!-- 右侧：操作区与个人信息 - 保留所有原有样式/功能 -->
             <div class="flex items-center gap-6 z-10 -mt-3 -ml-1">
                 <!-- 搜索按钮 -->
                 <button class="text-gray-300 hover:text-gray-100 cursor-pointer transition-colors duration-200"
@@ -57,7 +56,7 @@
                             p-id="1068"></path>
                     </svg>
                 </button>
-                <!-- 用户信息 -->
+                <!-- 用户信息：保留原有样式 -->
                 <div class="flex items-center gap-2 cursor-pointer group">
                     <div
                         class="w-6 h-6 rounded-full overflow-hidden border border-blue-400 group-hover:border-blue-400 transition-colors duration-200">
@@ -80,7 +79,7 @@
                 </button>
             </div>
         </div>
-        <!-- 菜单搜索弹窗 -->
+        <!-- 菜单搜索弹窗：保留原有组件 -->
         <MSearchModal
           v-model:visible="showSearchModal"
           :menu-list="menuSearchList"
@@ -90,16 +89,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { useLayout } from '~/composables/useLayout'
+import { ref, computed, onMounted, onUnmounted, watch, inject } from 'vue'
+import { useRouter } from 'vue-router'
 import { UserRound, Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, BarChart3, Settings, Shield } from 'lucide-vue-next'
 import MSearchModal from './MSearchModal.vue'
-import type { MenuItem } from '~/composables/useLayout'
 
-// 全局布局状态（单例）
-const { layoutMode, menuList, setLayoutMode, toggleSidebar, addTab, activeMenu } = useLayout()
+type MenuItem = { name: string, route: string, icon: string, index: number, subMenu?: any[] }
 
-// 图标映射表（和useLayout里的icon对应）
+// 从父组件注入状态和方法
+const layoutState = inject('layoutState') as any
+const layoutActions = inject('layoutActions') as any
+const { layoutMode, menuList, activeMenu } = layoutState
+const { updateActiveMenu } = layoutActions
+
+const router = useRouter()
+
+// 保留原有图标映射表
 const menuIconMap: Record<string, any> = {
   Home,
   Zap,
@@ -113,29 +118,29 @@ const menuIconMap: Record<string, any> = {
   Shield
 }
 
-// 定义事件
+// 保留原有事件定义
 const emit = defineEmits<{
   (e: 'menu-change', payload: { name: string, index: number, route: string }): void
   (e: 'search'): void
   (e: 'settings'): void
 }>()
 
-// 当前选中的菜单索引（从activeMenu初始化）
+// 保留原有激活索引逻辑
 const activeIndex = ref(
   menuList.value.findIndex(item => item.route === activeMenu.value.route) || 0
 )
 
-// 监听activeMenu变化，同步更新activeIndex
+// 保留原有监听逻辑
 watch(activeMenu, (newVal) => {
   activeIndex.value = menuList.value.findIndex(item => item.route === newVal.route) || 0
 }, { immediate: true })
 
-// 全屏状态
+// 保留原有全屏状态
 const isFullscreen = ref(false)
-// 搜索弹窗显示状态
+// 保留原有搜索弹窗状态
 const showSearchModal = ref(false)
 
-// 搜索弹窗用的菜单列表
+// 保留原有搜索菜单列表计算属性
 const menuSearchList = computed(() => {
   return menuList.value.map((item) => ({
     name: item.name,
@@ -144,11 +149,11 @@ const menuSearchList = computed(() => {
   }))
 })
 
-// 处理菜单点击
+// 保留原有菜单点击逻辑
 const handleMenuClick = (item: MenuItem, index: number) => {
     if (activeIndex.value === index) return
     activeIndex.value = index
-    addTab(item) // 核心：设置activeMenu
+    updateActiveMenu(item) // 替换为注入的方法
     emit('menu-change', {
         name: item.name,
         index: index,
@@ -156,28 +161,28 @@ const handleMenuClick = (item: MenuItem, index: number) => {
     })
 }
 
-// 处理搜索
+// 保留原有搜索逻辑
 const handleSearch = () => {
     emit('search')
     showSearchModal.value = true
 }
 
-// 处理搜索弹窗选中菜单
+// 保留原有搜索弹窗选中逻辑
 const handleSearchMenuSelect = (menuItem: { name: string, index: number, route: string }) => {
   activeIndex.value = menuItem.index
   const targetMenu = menuList.value.find(item => item.route === menuItem.route)
   if (targetMenu) {
-    addTab(targetMenu) // 核心：设置activeMenu
+    updateActiveMenu(targetMenu) // 替换为注入的方法
     emit('menu-change', menuItem)
   }
 }
 
-// 更新全屏状态
+// 保留原有全屏状态更新逻辑
 const updateFullscreenStatus = () => {
     isFullscreen.value = !!document.fullscreenElement
 }
 
-// 处理全屏切换
+// 保留原有全屏切换逻辑
 const toggleFullscreen = async () => {
     try {
         if (!document.fullscreenElement) {
@@ -191,12 +196,12 @@ const toggleFullscreen = async () => {
     }
 }
 
-// 处理设置
+// 保留原有设置按钮逻辑
 const handleSettings = () => {
     emit('settings')
 }
 
-// 监听全屏变化事件
+// 保留原有生命周期逻辑
 onMounted(() => {
     updateFullscreenStatus()
     document.addEventListener('fullscreenchange', updateFullscreenStatus)

@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <!-- 蒙层 -->
+    <!-- 蒙层：保留原有样式/逻辑 -->
     <transition name="fade">
       <div 
         v-if="visible" 
@@ -9,13 +9,13 @@
       ></div>
     </transition>
 
-    <!-- 设置侧边栏主体 -->
+    <!-- 设置侧边栏主体：保留原有样式 -->
     <transition name="slide">
       <div 
         v-if="visible" 
         class="fixed top-0 right-0 h-full w-80 bg-[#1A1D24] text-gray-200 z-[9999] shadow-2xl flex flex-col border-l border-gray-700/50 font-sans"
       >
-        <!-- 顶部标题 -->
+        <!-- 顶部标题：保留原有样式 -->
         <div class="flex items-center justify-between px-6 py-5 border-b border-gray-800">
           <h2 class="text-base font-medium text-white">配置</h2>
           <button @click="closeSidebar" class="text-gray-400 hover:text-[#32AFFF] transition-colors cursor-pointer">
@@ -25,9 +25,9 @@
           </button>
         </div>
 
-        <!-- 配置内容 -->
+        <!-- 配置内容：恢复主题设置 + 保留布局设置 -->
         <div class="flex-1 overflow-y-auto p-6 space-y-8">
-          <!-- 主题设置 -->
+          <!-- 主题设置：恢复原有样式/逻辑 -->
           <div>
             <h3 class="text-sm font-bold text-gray-300 mb-4 tracking-wider">主题</h3>
             <div class="grid grid-cols-2 gap-4">
@@ -47,12 +47,12 @@
             </div>
           </div>
 
-          <!-- 布局设置（核心修改！点了就立即生效） -->
+          <!-- 布局设置：保留原有样式/逻辑 -->
           <div>
             <h3 class="text-sm font-bold text-gray-300 mb-4 tracking-wider">布局</h3>
             <div class="grid grid-cols-2 gap-4">
               <!-- 侧边导航模式 -->
-              <div @click="setLayoutMode('sidebar')" class="cursor-pointer group relative">
+              <div @click="updateLayoutMode('sidebar')" class="cursor-pointer group relative">
                 <div :class="['h-20 rounded-lg border p-1.5 flex gap-1.5 transition-all', layoutMode === 'sidebar' ? 'border-[#32AFFF] bg-[#32AFFF]/5' : 'border-gray-700 group-hover:border-gray-500']">
                    <div class="w-[30%] bg-[#32AFFF] rounded-sm"></div>
                    <div class="flex-1 flex flex-col gap-1.5">
@@ -64,7 +64,7 @@
               </div>
 
               <!-- 大屏全屏模式 -->
-              <div @click="setLayoutMode('fullscreen')" class="cursor-pointer group relative">
+              <div @click="updateLayoutMode('fullscreen')" class="cursor-pointer group relative">
                 <div :class="['h-20 rounded-lg border p-1.5 flex flex-col gap-1.5 transition-all', layoutMode === 'fullscreen' ? 'border-[#32AFFF] bg-[#32AFFF]/5' : 'border-gray-700 group-hover:border-gray-500']">
                    <div class="h-3 flex gap-1.5">
                        <div class="w-1/4 bg-gray-600 rounded-sm"></div>
@@ -83,11 +83,15 @@
 </template>
 
 <script setup lang="ts">
-import { useLayout } from '~/composables/useLayout'
+import { inject } from 'vue'
 
-// 全局状态（现在是单例了）
-const { layoutMode, theme, setLayoutMode, setTheme } = useLayout()
+// 从父组件注入状态和方法
+const layoutState = inject('layoutState') as any
+const layoutActions = inject('layoutActions') as any
+const { layoutMode, theme } = layoutState
+const { updateLayoutMode, setTheme } = layoutActions
 
+// 保留原有props/emit
 const props = defineProps<{
   visible: boolean
 }>()
@@ -96,13 +100,14 @@ const emit = defineEmits<{
   (e: 'update:visible', value: boolean): void
 }>()
 
-// 关闭侧边栏
+// 保留原有关闭逻辑
 const closeSidebar = (): void => {
   emit('update:visible', false)
 }
 </script>
 
 <style scoped>
+/* 保留原有过渡样式 */
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

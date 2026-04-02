@@ -3,7 +3,7 @@
     class="fixed left-0 top-0 h-full w-60 bg-[#0A162C] border-r border-gray-800/50 z-[999] flex flex-col transition-all duration-300"
     :class="{ '-translate-x-full': sidebarCollapsed }"
   >
-    <!-- 顶部Logo区域 -->
+    <!-- 顶部Logo区域：保留原有样式 -->
     <div class="h-15 flex items-center justify-center py-2 px-2 border-b border-gray-800/50 shrink-0 ">
       <img
         src="/image/logo.png"
@@ -42,49 +42,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, inject } from 'vue'
 import { useRouter } from 'vue-router'
-import type { MenuItem, SubMenuItem } from '~/composables/useLayout'
-import { useLayout } from '~/composables/useLayout'
 
-// 全局布局状态
-const { menuList, activeMenu, toggleSidebar, sidebarCollapsed } = useLayout()
-// 路由实例
+// 从父组件注入状态
+const layoutState = inject('layoutState') as any
+const { activeMenu, sidebarCollapsed } = layoutState
+
 const router = useRouter()
 
-// 当前激活的子菜单
-const activeSubMenu = ref<SubMenuItem>({} as SubMenuItem)
+// 保留原有激活子菜单逻辑
+const activeSubMenu = ref<any>({} as any)
 
-// 计算当前激活菜单的子菜单
+// 保留原有计算属性
 const currentSubMenu = computed(() => {
   if (!activeMenu.value || !activeMenu.value.subMenu) return []
   return activeMenu.value.subMenu
 })
 
-// 处理子菜单点击
-const handleSubMenuClick = (subItem: SubMenuItem) => {
+// 保留原有子菜单点击逻辑
+const handleSubMenuClick = (subItem: any) => {
   activeSubMenu.value = subItem
-  // 跳转子菜单路由
   router.push(subItem.route)
 }
 
-// 初始化：默认选中首页的第一个子菜单
+// 保留原有初始化逻辑
 const initActiveSubMenu = () => {
   if (currentSubMenu.value.length > 0) {
     activeSubMenu.value = currentSubMenu.value[0]
-    // 自动跳转第一个子菜单（可选）
-    // router.push(currentSubMenu.value[0].route)
   }
 }
 
-// 监听激活菜单变化，重新初始化子菜单
+// 保留原有监听逻辑
 watch([activeMenu, currentSubMenu], () => {
   initActiveSubMenu()
 }, { immediate: true })
 </script>
 
 <style scoped>
-/* 滚动条美化 */
+/* 滚动条美化：保留原有样式 */
 nav::-webkit-scrollbar {
   width: 4px;
 }
