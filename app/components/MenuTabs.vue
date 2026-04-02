@@ -18,9 +18,9 @@
       <span>{{ tab.name }}</span>
       <!-- 关闭按钮（首页不显示） -->
       <button
-        v-if="tab.route !== '/'"
+        v-if="tab.route !== '/dashboard/overview' && tab.route !== '/'"
         @click.stop="closeTab(tab.route)"
-        class="ml-1.5 w-4 h-4 flex items-center justify-center rounded-full hover:bg-red-500/20 hover:text-red-400"
+        class="ml-1 -mr-1.5 w-4 h-4 flex items-center justify-center rounded-full hover:bg-red-500/20 hover:text-red-400"
       >
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -73,6 +73,8 @@ interface TabItem {
 const tabsList = ref<TabItem[]>([])
 // 当前激活的 Tab
 const activeTabRoute = ref<string>('')
+// 标记是否是初始化加载阶段
+const isInitializing = ref(true)
 
 // 右键菜单
 const contextMenu = ref({
@@ -101,7 +103,6 @@ const loadTabsFromSession = () => {
     const defaultTab = { name: '综合看板', route: '/dashboard/overview', index: 0 }
     tabsList.value = [defaultTab]
     activeTabRoute.value = defaultTab.route
-    saveTabsToSession()
   }
 }
 
@@ -111,7 +112,6 @@ const addTab = (tab: TabItem) => {
   const existingTab = tabsList.value.find(t => t.route === tab.route)
   if (!existingTab) {
     tabsList.value.push(tab)
-    saveTabsToSession()
   }
   // 切换到该 Tab
   activeTabRoute.value = tab.route
@@ -197,7 +197,18 @@ const handleClickOutside = () => {
 
 // 监听路由变化，添加新 Tab
 watch(() => route.path, (newPath) => {
-  // 查找当前路由对应的菜单项
+  // 初始化阶段，只恢复状态，不新增Tab
+  if (isInitializing.value) {
+    // 确保激活状态和当前路由一致
+    if (tabsList.value.some(t => t.route === newPath)) {
+      activeTabRoute.value = newPath
+      saveTabsToSession()
+    }
+    isInitializing.value = false
+    return
+  }
+
+  // 正常交互阶段，查找菜单项并添加Tab
   let currentMenuItem: TabItem | null = null
   
   // 先在一级菜单中查找
@@ -224,6 +235,9 @@ watch(() => route.path, (newPath) => {
 
 // 监听 activeMenu 变化，处理一级菜单点击
 watch(() => activeMenu.value, (newMenu) => {
+  // 初始化阶段不处理
+  if (isInitializing.value) return
+  
   if (newMenu && newMenu.route) {
     // 如果一级菜单有子菜单，不添加 Tab（由子菜单路由变化触发）
     if (!newMenu.subMenu || newMenu.subMenu.length === 0) {
@@ -233,7 +247,9 @@ watch(() => activeMenu.value, (newMenu) => {
 })
 
 onMounted(() => {
+  // 先加载Session缓存
   loadTabsFromSession()
+  // 添加点击外部关闭菜单的监听
   document.addEventListener('click', handleClickOutside)
 })
 

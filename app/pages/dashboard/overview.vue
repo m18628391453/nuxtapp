@@ -15,7 +15,7 @@
         <CenterMetrics />
   
         <!-- 3D 厂房视图区域 -->
-        <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg  overflow-hidden"
+        <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg  overflow-hidden z-1000"
                 :style="{ 
                 backgroundImage: `url('/image/main.png')`, 
                 backgroundSize: '105%',  // 改为 auto 保持图片原始尺寸
