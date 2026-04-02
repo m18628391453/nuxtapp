@@ -15,9 +15,11 @@
               <Sidebar v-if="layoutMode === 'sidebar'" />
               
               <main 
-                  class="flex-1 h-[calc(100vh-56px)] overflow-hidden transition-all duration-300"
+                  class="flex-1 h-[calc(100vh-56px-40px)] overflow-hidden transition-all duration-300"
                   :class="layoutMode === 'sidebar' && !sidebarCollapsed ? 'ml-60' : 'ml-0'"
               >
+                  <!-- 添加 MenuTabs 组件，放在 Header 下方 -->
+                  <MenuTabs />
                   <slot />
               </main>
           </div>
@@ -33,9 +35,10 @@ import { getCache, setCache, CacheKey } from '~/utils/cache'
 import Header from '../components/Header.vue' 
 import Sidebar from '../components/Sidebar.vue'
 import SettingSidebar from '../components/SettingSidebar.vue'
+import MenuTabs from '../components/MenuTabs.vue'
 
 const showSettings = ref(false)
-const isClientReady = ref(false) // 客户端就绪标记
+const isClientReady = ref(false)
 
 // 1. 定义核心状态
 const layoutMode = ref('fullscreen')
@@ -69,7 +72,7 @@ onMounted(() => {
   sidebarCollapsed.value = getCache(CacheKey.SIDEBAR_COLLAPSED, false)
   theme.value = getCache(CacheKey.THEME, 'dark')
   activeMenu.value = getCache(CacheKey.ACTIVE_MENU, menuList.value[0])
-  isClientReady.value = true // 数据读取完毕，放心渲染
+  isClientReady.value = true
 })
 
 // 3. 封装修改状态的方法并同步到本地缓存
