@@ -5,12 +5,10 @@
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
                 style="width: 180px; height: 45px;" />
         </div>
-
         <!-- 菜单+操作区整体容器 -->
         <div class="relative flex items-center justify-between h-full flex-1 ml-50" style="margin-left: 120px;">
             <!-- 底部贯穿下划线 -->
             <div class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
-
             <!-- 中间：导航菜单 -->
             <nav class="flex items-center h-full space-x-1 z-10 -mt-3">
                 <div v-for="(item, idx) in navItems" :key="item"
@@ -25,7 +23,6 @@
                         :class="`absolute min-w-[88px] inset-0 ${idx == 0 ? 'left-[-20%]' : 'left-[0%]' }  w-14/5 h-full bg-gradient-to-r from-transparent via-[#318DC8]/30 to-transparent cursor-pointer`" />
                 </div>
             </nav>
-
             <!-- 右侧：操作区与个人信息 -->
             <div class="flex items-center gap-6 z-10 -mt-3 -ml-1">
                 <!-- 搜索按钮 -->
@@ -36,7 +33,6 @@
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </button>
-
                 <!-- 全屏按钮 - 动态切换图标 -->
                 <button class="text-gray-300 hover:text-gray-100 cursor-pointer transition-colors duration-200"
                     @click="toggleFullscreen">
@@ -56,7 +52,6 @@
                             p-id="1068"></path>
                     </svg>
                 </button>
-
                 <!-- 用户信息 -->
                 <div class="flex items-center gap-2 cursor-pointer group">
                     <div
@@ -68,7 +63,6 @@
                     </div>
                     <span class="text-sm text-gray-200 group-hover:text-white transition-colors duration-200">管理员</span>
                 </div>
-
                 <!-- 设置按钮 -->
                 <button class="text-gray-300 hover:text-gray-100 cursor-pointer transition-colors duration-200"
                     @click="handleSettings">
@@ -81,34 +75,46 @@
                 </button>
             </div>
         </div>
+        <!-- 菜单搜索弹窗 -->
+        <MSearchModal
+          v-model:visible="showSearchModal"
+          :menu-list="menuSearchList"
+          @select="handleSearchMenuSelect"
+        />
     </header>
 </template>
-
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { UserRound } from 'lucide-vue-next'
+import MSearchModal from './MSearchModal.vue'
 
 // 定义事件
 const emit = defineEmits(['menu-change', 'search', 'settings'])
-
 const navItems = [
     '首页', '能源管理', '储能管理', '负荷管理', '预测管理',
     '策略管理', '能碳管理', '电力交易', '基础设置', '管理设置'
 ]
-
 // 当前选中的菜单索引
 const activeIndex = ref(0)
-
 // 全屏状态
 const isFullscreen = ref(false)
+// 搜索弹窗显示状态
+const showSearchModal = ref(false)
+
+// 给搜索弹窗用的菜单列表
+const menuSearchList = computed(() => {
+  return navItems.map((name, index) => ({
+    name,
+    index,
+    route: getRoutePath(name)
+  }))
+})
 
 // 处理菜单点击
 const handleMenuClick = (item, index) => {
     if (activeIndex.value === index) return // 已选中则不做处理
-
     // 更新选中状态
     activeIndex.value = index
-
     // 触发 change 事件，传递菜单名称和索引
     emit('menu-change', {
         name: item,
@@ -116,7 +122,6 @@ const handleMenuClick = (item, index) => {
         route: getRoutePath(item)
     })
 }
-
 // 菜单到路由的映射（可根据实际需求调整）
 const getRoutePath = (menuName) => {
     const routeMap = {
@@ -133,18 +138,29 @@ const getRoutePath = (menuName) => {
     }
     return routeMap[menuName] || '/'
 }
-
 // 处理搜索
 const handleSearch = () => {
+    // 保留原有逻辑
     emit('search')
     console.log('搜索按钮被点击')
+    // 打开搜索弹窗
+    showSearchModal.value = true
 }
-
+// 处理搜索弹窗选中菜单
+const handleSearchMenuSelect = (menuItem) => {
+  // 同步更新菜单选中状态
+  activeIndex.value = menuItem.index
+  // 触发原有menu-change事件，保持原有功能完全不变
+  emit('menu-change', {
+      name: menuItem.name,
+      index: menuItem.index,
+      route: menuItem.route
+  })
+}
 // 更新全屏状态
 const updateFullscreenStatus = () => {
     isFullscreen.value = !!document.fullscreenElement
 }
-
 // 处理全屏切换
 const toggleFullscreen = async () => {
     try {
@@ -161,13 +177,11 @@ const toggleFullscreen = async () => {
         console.error(`全屏操作失败: ${err.message}`)
     }
 }
-
 // 处理设置
 const handleSettings = () => {
     emit('settings')
     console.log('设置按钮被点击')
 }
-
 // 监听全屏变化事件
 onMounted(() => {
     // 初始化全屏状态
@@ -175,25 +189,21 @@ onMounted(() => {
     // 监听全屏变化
     document.addEventListener('fullscreenchange', updateFullscreenStatus)
 })
-
 onUnmounted(() => {
     // 清理事件监听
     document.removeEventListener('fullscreenchange', updateFullscreenStatus)
 })
 </script>
-
 <style scoped>
 /* 添加平滑过渡效果 */
 a,
 button {
     transition: all 0.2s ease;
 }
-
 /* 可选：为全屏切换添加过渡动画 */
 svg {
     transition: transform 0.2s ease;
 }
-
 button:hover svg {
     transform: scale(1.1);
 }
