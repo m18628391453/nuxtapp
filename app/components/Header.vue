@@ -101,12 +101,13 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useLayout } from '~/composables/useLayout'
 import { UserRound } from 'lucide-vue-next'
 import MSearchModal from './MSearchModal.vue'
 import type { MenuItem } from '~/composables/useLayout'
 
 // 全局布局状态
-const { layoutMode, menuList, toggleSidebar, addTab } = useLayout()
+const { layoutMode, menuList, setLayoutMode, toggleSidebar, addTab } = useLayout()
 
 // 定义事件
 const emit = defineEmits<{
@@ -114,6 +115,13 @@ const emit = defineEmits<{
   (e: 'search'): void
   (e: 'settings'): void
 }>()
+
+// 切换布局模式的逻辑
+const toggleLayoutMode = () => {
+  setLayoutMode(layoutMode.value === 'sidebar' ? 'fullscreen' : 'sidebar')
+  // 调试：打印 layoutMode，确认值是否切换
+  console.log('当前 layoutMode：', layoutMode.value)
+}
 
 // 当前选中的菜单索引
 const activeIndex = ref(0)
