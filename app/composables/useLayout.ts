@@ -1,7 +1,7 @@
 // composables/useLayout.ts
-import { ref, computed } from 'vue'
+import type { LayoutMode, ThemeMode, MenuItem } from './types' // 先建个类型文件，也可以直接写在这
 
-// 定义类型，不乱码
+// 先定义类型（单独建文件 or 写这里都可以）
 export type LayoutMode = 'sidebar' | 'fullscreen'
 export type ThemeMode = 'dark' | 'light'
 export interface MenuItem {
@@ -11,18 +11,18 @@ export interface MenuItem {
   index: number
 }
 
-// 全局响应式状态，全项目通用
+// Nuxt3全局状态：用useState保证唯一实例
 export const useLayout = () => {
-  // 布局模式：sidebar侧边导航 / fullscreen大屏模式
-  const layoutMode = ref<LayoutMode>('fullscreen')
-  // 主题
-  const theme = ref<ThemeMode>('dark')
-  // 侧边栏折叠状态
-  const sidebarCollapsed = ref(false)
-  // 当前激活的菜单
-  const activeMenu = ref<MenuItem>({} as MenuItem)
-  // 菜单列表（你原来的菜单，直接用就行）
-  const menuList = ref<MenuItem[]>([
+  // 布局模式：sidebar侧边导航 / fullscreen大屏模式（全局唯一）
+  const layoutMode = useState<LayoutMode>('layoutMode', () => 'fullscreen')
+  // 主题（全局唯一）
+  const theme = useState<ThemeMode>('theme', () => 'dark')
+  // 侧边栏折叠状态（全局唯一）
+  const sidebarCollapsed = useState<boolean>('sidebarCollapsed', () => false)
+  // 当前激活的菜单（全局唯一）
+  const activeMenu = useState<MenuItem>('activeMenu', () => ({} as MenuItem))
+  // 菜单列表（全局唯一）
+  const menuList = useState<MenuItem[]>('menuList', () => [
     { name: '首页', route: '/', icon: 'Home', index: 0 },
     { name: '能源管理', route: '/energy', icon: 'Zap', index: 1 },
     { name: '储能管理', route: '/storage', icon: 'Battery', index: 2 },
@@ -35,7 +35,7 @@ export const useLayout = () => {
     { name: '系统设置', route: '/system', icon: 'Shield', index: 9 },
   ])
 
-  // 设置布局模式（点击就直接改，立即生效）
+  // 设置布局模式（点击立即生效）
   const setLayoutMode = (mode: LayoutMode) => {
     layoutMode.value = mode
   }
@@ -47,17 +47,17 @@ export const useLayout = () => {
   const toggleSidebar = () => {
     sidebarCollapsed.value = !sidebarCollapsed.value
   }
-  // 新增标签页（你原来的逻辑，保留不动）
+  // 新增标签页
   const addTab = (item: MenuItem) => {
     activeMenu.value = item
   }
 
   return {
-    layoutMode,
-    theme,
-    sidebarCollapsed,
-    activeMenu,
-    menuList,
+    layoutMode: readonly(layoutMode), // 只读暴露，防止直接修改
+    theme: readonly(theme),
+    sidebarCollapsed: readonly(sidebarCollapsed),
+    activeMenu: readonly(activeMenu),
+    menuList: readonly(menuList),
     setLayoutMode,
     setTheme,
     toggleSidebar,

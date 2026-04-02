@@ -37,7 +37,7 @@ import Header from '../components/Header.vue'
 import Sidebar from '../components/Sidebar.vue'
 import SettingSidebar from '../components/SettingSidebar.vue'
 
-// 全局状态，控制布局
+// 全局状态，控制布局（现在是全局单例了）
 const { layoutMode, sidebarCollapsed } = useLayout()
 
 // 控制设置侧边栏显示

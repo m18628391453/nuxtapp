@@ -27,7 +27,7 @@
 
         <!-- 配置内容 -->
         <div class="flex-1 overflow-y-auto p-6 space-y-8">
-          <!-- 主题设置（保留不动） -->
+          <!-- 主题设置 -->
           <div>
             <h3 class="text-sm font-bold text-gray-300 mb-4 tracking-wider">主题</h3>
             <div class="grid grid-cols-2 gap-4">
@@ -77,23 +77,15 @@
             </div>
           </div>
         </div>
-
-        <!-- 底部只留一个关闭按钮，不用确认了！ -->
-        <div class="px-6 py-4 border-t border-gray-800 flex items-center justify-end">
-          <button 
-            @click="closeSidebar" 
-            class="px-6 py-2 rounded text-sm text-white bg-[#32AFFF] hover:bg-[#32AFFF]/90 transition-all"
-          >
-            关闭
-          </button>
-        </div>
       </div>
     </transition>
   </Teleport>
 </template>
 
 <script setup lang="ts">
-// 直接用全局状态，不用临时变量了！
+import { useLayout } from '~/composables/useLayout'
+
+// 全局状态（现在是单例了）
 const { layoutMode, theme, setLayoutMode, setTheme } = useLayout()
 
 const props = defineProps<{
@@ -110,7 +102,6 @@ const closeSidebar = (): void => {
 }
 </script>
 
-<!-- 动画样式，保留不动 -->
 <style scoped>
 .fade-enter-from,
 .fade-leave-to {
