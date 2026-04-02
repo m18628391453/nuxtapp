@@ -2,6 +2,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
   modules: ['@nuxtjs/tailwindcss'],
+  css: ['~/assets/css/global.css'],
   app: {
     head: {
       title: '综合能碳管理平台',  // 全局默认标题

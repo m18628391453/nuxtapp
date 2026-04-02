@@ -1,29 +1,44 @@
 <template>
     <header class="relative flex items-center justify-between h-16 px-6 bg-transparent text-white overflow-hidden">
-        <!-- 左侧：Logo区域 -->
-        <div class="flex items-center gap-10 mt-1 ml-1">
+        <!-- 左侧：Logo区域 + 侧边栏展开按钮（仅侧边模式显示） -->
+        <div class="flex items-center gap-4 mt-1 ml-1">
+            <!-- 侧边栏展开按钮（仅侧边导航模式显示） -->
+            <button
+                v-if="layoutMode === 'sidebar'"
+                @click="toggleSidebar"
+                class="text-gray-300 hover:text-white transition-colors"
+            >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <!-- Logo -->
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
                 style="width: 180px; height: 45px;" />
         </div>
-        <!-- 菜单+操作区整体容器 -->
-        <div class="relative flex items-center justify-between h-full flex-1 ml-50" style="margin-left: 120px;">
+
+        <!-- 菜单+操作区整体容器（仅全屏模式显示菜单） -->
+        <div class="relative flex items-center justify-between h-full flex-1" :class="layoutMode === 'fullscreen' ? 'ml-[120px]' : 'ml-auto'">
             <!-- 底部贯穿下划线 -->
             <div class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
-            <!-- 中间：导航菜单 -->
-            <nav class="flex items-center h-full space-x-1 z-10 -mt-3">
-                <div v-for="(item, idx) in navItems" :key="item"
+            
+            <!-- 中间：导航菜单（仅全屏模式显示，完全保留你原来的样式和功能） -->
+            <nav v-if="layoutMode === 'fullscreen'" class="flex items-center h-full space-x-1 z-10 -mt-3">
+                <div v-for="(item, idx) in menuList" :key="item.route"
                     class="relative flex items-center h-4/5 m-auto cursor-pointer"@click="handleMenuClick(item, idx)">
                     <a href="javascript:void(0)"
                         class="px-4 text-[15px] font-medium italic z-10 relative cursor-pointer font-['PingFang_SC','Microsoft_YaHei_UI',sans-serif] transition-colors duration-200"
                         :class="activeIndex === idx ? 'text-[#32AFFF]' : 'text-gray-100 hover:text-[#32AFFF]/95'"  style="text-align: center;" >
-                        {{ item }}
+                        {{ item.name }}
                     </a>
                     <!-- 选中项背景微光效果 -->
                     <div v-if="activeIndex === idx"
                         :class="`absolute min-w-[88px] inset-0 ${idx == 0 ? 'left-[-20%]' : 'left-[0%]' }  w-14/5 h-full bg-gradient-to-r from-transparent via-[#318DC8]/30 to-transparent cursor-pointer`" />
                 </div>
             </nav>
-            <!-- 右侧：操作区与个人信息 -->
+
+            <!-- 右侧：操作区与个人信息（两种模式都显示，完全保留原有功能） -->
             <div class="flex items-center gap-6 z-10 -mt-3 -ml-1">
                 <!-- 搜索按钮 -->
                 <button class="text-gray-300 hover:text-gray-100 cursor-pointer transition-colors duration-200"
@@ -83,17 +98,23 @@
         />
     </header>
 </template>
-<script setup>
+
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { UserRound } from 'lucide-vue-next'
 import MSearchModal from './MSearchModal.vue'
+import type { MenuItem } from '~/composables/useLayout'
+
+// 全局布局状态
+const { layoutMode, menuList, toggleSidebar, addTab } = useLayout()
 
 // 定义事件
-const emit = defineEmits(['menu-change', 'search', 'settings'])
-const navItems = [
-    '首页', '能源管理', '储能管理', '负荷管理', '预测管理',
-    '策略管理', '能碳管理', '电力交易', '基础设置', '管理设置'
-]
+const emit = defineEmits<{
+  (e: 'menu-change', payload: { name: string, index: number, route: string }): void
+  (e: 'search'): void
+  (e: 'settings'): void
+}>()
+
 // 当前选中的菜单索引
 const activeIndex = ref(0)
 // 全屏状态
@@ -101,106 +122,88 @@ const isFullscreen = ref(false)
 // 搜索弹窗显示状态
 const showSearchModal = ref(false)
 
-// 给搜索弹窗用的菜单列表
+// 给搜索弹窗用的菜单列表（和原来的逻辑完全一致）
 const menuSearchList = computed(() => {
-  return navItems.map((name, index) => ({
-    name,
-    index,
-    route: getRoutePath(name)
+  return menuList.value.map((item) => ({
+    name: item.name,
+    index: item.index,
+    route: item.route
   }))
 })
 
-// 处理菜单点击
-const handleMenuClick = (item, index) => {
-    if (activeIndex.value === index) return // 已选中则不做处理
+// 处理菜单点击（完全保留原有逻辑，新增标签页联动）
+const handleMenuClick = (item: MenuItem, index: number) => {
+    if (activeIndex.value === index) return
     // 更新选中状态
     activeIndex.value = index
-    // 触发 change 事件，传递菜单名称和索引
+    // 新增：添加标签页
+    addTab(item)
+    // 触发 change 事件，完全兼容原有逻辑
     emit('menu-change', {
-        name: item,
+        name: item.name,
         index: index,
-        route: getRoutePath(item)
+        route: item.route
     })
 }
-// 菜单到路由的映射（可根据实际需求调整）
-const getRoutePath = (menuName) => {
-    const routeMap = {
-        '首页': '/',
-        '能源管理': '/energy',
-        '储能管理': '/storage',
-        '负荷管理': '/load',
-        '预测管理': '/forecast',
-        '策略管理': '/strategy',
-        '能碳管理': '/carbon',
-        '电力交易': '/trading',
-        '基础设置': '/settings/basic',
-        '管理设置': '/settings/management'
-    }
-    return routeMap[menuName] || '/'
-}
-// 处理搜索
+
+// 处理搜索（完全保留原有逻辑）
 const handleSearch = () => {
-    // 保留原有逻辑
     emit('search')
     console.log('搜索按钮被点击')
-    // 打开搜索弹窗
     showSearchModal.value = true
 }
-// 处理搜索弹窗选中菜单
-const handleSearchMenuSelect = (menuItem) => {
-  // 同步更新菜单选中状态
+
+// 处理搜索弹窗选中菜单（完全保留原有逻辑，新增标签页联动）
+const handleSearchMenuSelect = (menuItem: { name: string, index: number, route: string }) => {
   activeIndex.value = menuItem.index
-  // 触发原有menu-change事件，保持原有功能完全不变
-  emit('menu-change', {
-      name: menuItem.name,
-      index: menuItem.index,
-      route: menuItem.route
-  })
+  // 新增：添加标签页
+  const targetMenu = menuList.value.find(item => item.route === menuItem.route)
+  if (targetMenu) addTab(targetMenu)
+  // 触发原有事件
+  emit('menu-change', menuItem)
 }
+
 // 更新全屏状态
 const updateFullscreenStatus = () => {
     isFullscreen.value = !!document.fullscreenElement
 }
-// 处理全屏切换
+
+// 处理全屏切换（完全保留原有逻辑）
 const toggleFullscreen = async () => {
     try {
         if (!document.fullscreenElement) {
-            // 进入全屏
             await document.documentElement.requestFullscreen()
         } else {
-            // 退出全屏
             await document.exitFullscreen()
         }
-        // 更新状态
         updateFullscreenStatus()
     } catch (err) {
         console.error(`全屏操作失败: ${err.message}`)
     }
 }
-// 处理设置
+
+// 处理设置（完全保留原有逻辑）
 const handleSettings = () => {
     emit('settings')
     console.log('设置按钮被点击')
 }
-// 监听全屏变化事件
+
+// 监听全屏变化事件（完全保留原有逻辑）
 onMounted(() => {
-    // 初始化全屏状态
     updateFullscreenStatus()
-    // 监听全屏变化
     document.addEventListener('fullscreenchange', updateFullscreenStatus)
 })
 onUnmounted(() => {
-    // 清理事件监听
     document.removeEventListener('fullscreenchange', updateFullscreenStatus)
 })
 </script>
+
 <style scoped>
-/* 添加平滑过渡效果 */
+/* 完全保留你原来的样式 */
 a,
 button {
     transition: all 0.2s ease;
 }
-/* 可选：为全屏切换添加过渡动画 */
 svg {
     transition: transform 0.2s ease;
 }

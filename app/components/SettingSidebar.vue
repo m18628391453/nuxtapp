@@ -35,9 +35,9 @@
                   <p class="text-center text-xs mt-2 text-gray-500">浅色</p>
                 </div>
                 
-                <div @click="theme = 'dark'" class="cursor-pointer group relative">
-                  <div :class="['h-16 rounded-lg border flex items-center justify-center transition-all', theme === 'dark' ? 'border-[#32AFFF] bg-[#32AFFF]/5' : 'border-gray-700 group-hover:border-gray-500']">
-                     <svg :class="['w-6 h-6', theme === 'dark' ? 'text-[#32AFFF]' : 'text-gray-400']" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                <div @click="tempTheme = 'dark'" class="cursor-pointer group relative">
+                  <div :class="['h-16 rounded-lg border flex items-center justify-center transition-all', tempTheme === 'dark' ? 'border-[#32AFFF] bg-[#32AFFF]/5' : 'border-gray-700 group-hover:border-gray-500']">
+                     <svg :class="['w-6 h-6', tempTheme === 'dark' ? 'text-[#32AFFF]' : 'text-gray-400']" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                   </div>
                   <p class="text-center text-xs mt-2 text-gray-300">深色</p>
                 </div>
@@ -49,8 +49,8 @@
               <h3 class="text-sm font-bold text-gray-300 mb-4 tracking-wider">布局</h3>
               <div class="grid grid-cols-2 gap-4">
                 
-                <div @click="layout = 'sidebar'" class="cursor-pointer group relative">
-                  <div :class="['h-20 rounded-lg border p-1.5 flex gap-1.5 transition-all', layout === 'sidebar' ? 'border-[#32AFFF] bg-[#32AFFF]/5' : 'border-gray-700 group-hover:border-gray-500']">
+                <div @click="tempLayout = 'sidebar'" class="cursor-pointer group relative">
+                  <div :class="['h-20 rounded-lg border p-1.5 flex gap-1.5 transition-all', tempLayout === 'sidebar' ? 'border-[#32AFFF] bg-[#32AFFF]/5' : 'border-gray-700 group-hover:border-gray-500']">
                      <div class="w-[30%] bg-[#32AFFF] rounded-sm"></div>
                      <div class="flex-1 flex flex-col gap-1.5">
                         <div class="h-3 bg-gray-600 rounded-sm"></div>
@@ -60,8 +60,8 @@
                   <p class="text-center text-xs mt-2 text-gray-400">侧边导航</p>
                 </div>
   
-                <div @click="layout = 'fullscreen'" class="cursor-pointer group relative">
-                  <div :class="['h-20 rounded-lg border p-1.5 flex flex-col gap-1.5 transition-all', layout === 'fullscreen' ? 'border-[#32AFFF] bg-[#32AFFF]/5' : 'border-gray-700 group-hover:border-gray-500']">
+                <div @click="tempLayout = 'fullscreen'" class="cursor-pointer group relative">
+                  <div :class="['h-20 rounded-lg border p-1.5 flex flex-col gap-1.5 transition-all', tempLayout === 'fullscreen' ? 'border-[#32AFFF] bg-[#32AFFF]/5' : 'border-gray-700 group-hover:border-gray-500']">
                      <div class="h-3 flex gap-1.5">
                          <div class="w-1/4 bg-gray-600 rounded-sm"></div>
                          <div class="flex-1 bg-gray-600 rounded-sm"></div>
@@ -75,49 +75,58 @@
             </div>
   
           </div>
+
+          <!-- 底部确定/取消按钮区域 -->
+          <div class="px-6 py-4 border-t border-gray-800 flex items-center justify-end gap-3">
+            <button 
+              @click="closeSidebar" 
+              class="px-4 py-2 rounded text-sm text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 transition-all"
+            >
+              取消
+            </button>
+            <button 
+              @click="handleConfirm" 
+              class="px-4 py-2 rounded text-sm text-white bg-[#32AFFF] hover:bg-[#32AFFF]/90 transition-all"
+            >
+              确定
+            </button>
+          </div>
         </div>
       </transition>
     </Teleport>
   </template>
   
-  <script setup>
-  import { ref } from 'vue'
+  <script setup lang="ts">
+  import { ref, watch, type LayoutMode, type ThemeMode } from 'vue'
+  const { setLayoutMode, setTheme, layoutMode, theme } = useLayout()
   
-  // 接收父组件通过 v-model 传进来的显示状态
-  const props = defineProps({
-    visible: {
-      type: Boolean,
-      default: false
-    }
-  })
+  const props = defineProps<{
+    visible: boolean
+  }>()
   
-  // 触发更新事件
-  const emit = defineEmits(['update:visible'])
+  const emit = defineEmits<{
+    (e: 'update:visible', value: boolean): void
+  }>()
   
-  // 默认的主题和布局状态 (主题默认深色)
-  const theme = ref('dark')
-  const layout = ref('sidebar')
+  // 关键修复1：初始值同步当前layoutMode，而非固定fullscreen
+  const tempLayout = ref<LayoutMode>(layoutMode.value) 
+  const tempTheme = ref<ThemeMode>(theme.value)
   
-  // 关闭侧边栏的方法
-  const closeSidebar = () => {
+  const closeSidebar = (): void => {
     emit('update:visible', false)
   }
+  
+  const handleConfirm = (): void => {
+    setLayoutMode(tempLayout.value)
+    setTheme(tempTheme.value)
+    closeSidebar()
+  }
+  
+  // 关键修复2：添加immediate，打开面板立即同步最新状态
+  watch(() => props.visible, (newVal) => {
+    if (newVal) {
+      tempLayout.value = layoutMode.value
+      tempTheme.value = theme.value
+    }
+  }, { immediate: true }) 
   </script>
-  
-  <style scoped>
-  /* 遮罩层渐隐渐现动画 */
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity 0.3s ease;
-  }
-  .fade-enter-from, .fade-leave-to {
-    opacity: 0;
-  }
-  
-  /* 侧边栏平滑划入划出动画 */
-  .slide-enter-active, .slide-leave-active {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .slide-enter-from, .slide-leave-to {
-    transform: translateX(100%);
-  }
-  </style>
