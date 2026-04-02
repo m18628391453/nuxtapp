@@ -55,8 +55,16 @@ const menuList = ref([
       { name: '能源看板', route: '/dashboard/energy', index: 1 }
     ]
   },
-  { name: '能源管理', route: '/energy', icon: 'Zap', index: 1, subMenu: [] },
-  { name: '储能管理', route: '/storage', icon: 'Battery', index: 2, subMenu: [] },
+  { name: '能源管理', route: '/energy', icon: 'Zap', index: 1, 
+    subMenu: [
+      { name: '能源监测', route: '/energy/monitor', index: 0 },
+    ] 
+  },
+  { name: '储能管理', route: '/storage', icon: 'Battery', index: 2, 
+    subMenu: [
+      { name: '储能监测', route: '/storage/monitor', index: 0 },
+    ]
+  },
   { name: '负荷管理', route: '/load', icon: 'Activity', index: 3, subMenu: [] },
   { name: '预测管理', route: '/forecast', icon: 'TrendingUp', index: 4, subMenu: [] },
   { name: '策略管理', route: '/strategy', icon: 'Sliders', index: 5, subMenu: [] },
