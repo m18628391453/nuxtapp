@@ -90,19 +90,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, inject } from 'vue'
-import { useRouter } from 'vue-router'
 import { UserRound, Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, BarChart3, Settings, Shield } from 'lucide-vue-next'
 import MSearchModal from './MSearchModal.vue'
-
-type MenuItem = { name: string, route: string, icon: string, index: number, subMenu?: any[] }
+import type { MenuItem, SubMenuItem } from '~/types/index';
 
 // 从父组件注入状态和方法
 const layoutState = inject('layoutState') as any
 const layoutActions = inject('layoutActions') as any
 const { layoutMode, menuList, activeMenu } = layoutState
 const { updateActiveMenu } = layoutActions
-
-const router = useRouter()
 
 // 保留原有图标映射表
 const menuIconMap: Record<string, any> = {
@@ -120,19 +116,19 @@ const menuIconMap: Record<string, any> = {
 
 // 保留原有事件定义
 const emit = defineEmits<{
-  (e: 'menu-change', payload: { name: string, index: number, route: string }): void
+  (e: 'menu-change', payload: SubMenuItem): void
   (e: 'search'): void
   (e: 'settings'): void
 }>()
 
 // 保留原有激活索引逻辑
 const activeIndex = ref(
-  menuList.value.findIndex(item => item.route === activeMenu.value.route) || 0
+  menuList.value.findIndex((item: SubMenuItem) => item.route === activeMenu.value.route) || 0
 )
 
 // 保留原有监听逻辑
 watch(activeMenu, (newVal) => {
-  activeIndex.value = menuList.value.findIndex(item => item.route === newVal.route) || 0
+  activeIndex.value = menuList.value.findIndex((item: SubMenuItem) => item.route === newVal.route) || 0
 }, { immediate: true })
 
 // 保留原有全屏状态
@@ -142,7 +138,7 @@ const showSearchModal = ref(false)
 
 // 保留原有搜索菜单列表计算属性
 const menuSearchList = computed(() => {
-  return menuList.value.map((item) => ({
+  return menuList.value.map((item: SubMenuItem) => ({
     name: item.name,
     index: item.index,
     route: item.route
@@ -168,9 +164,9 @@ const handleSearch = () => {
 }
 
 // 保留原有搜索弹窗选中逻辑
-const handleSearchMenuSelect = (menuItem: { name: string, index: number, route: string }) => {
+const handleSearchMenuSelect = (menuItem: SubMenuItem) => {
   activeIndex.value = menuItem.index
-  const targetMenu = menuList.value.find(item => item.route === menuItem.route)
+  const targetMenu = menuList.value.find((item: SubMenuItem) => item.route === menuItem.route)
   if (targetMenu) {
     updateActiveMenu(targetMenu) // 替换为注入的方法
     emit('menu-change', menuItem)
@@ -192,7 +188,7 @@ const toggleFullscreen = async () => {
         }
         updateFullscreenStatus()
     } catch (err) {
-        console.error(`全屏操作失败: ${err.message}`)
+        console.error(`全屏操作失败: ${Reflect.get(err as object, 'message')}`)
     }
 }
 
