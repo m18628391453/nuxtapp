@@ -2,43 +2,44 @@
     <header class="relative flex items-center justify-between h-16 px-6 bg-transparent text-white overflow-hidden">
         <!-- 左侧：Logo区域 + 侧边栏展开按钮（仅侧边模式显示） -->
         <div class="flex items-center gap-4 mt-1 ml-1">
+            <!-- Logo -->
+            <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
+                style="width: 180px; height: 45px;" />
             <!-- 侧边栏展开按钮（仅侧边导航模式显示） -->
             <button
                 v-if="layoutMode === 'sidebar'"
                 @click="toggleSidebar"
-                class="text-gray-300 hover:text-white transition-colors"
+                class="text-gray-300 hover:text-white transition-colors -mt-3.5 ml-4"
             >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
-
-            <!-- Logo -->
-            <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
-                style="width: 180px; height: 45px;" />
         </div>
 
-        <!-- 菜单+操作区整体容器（仅全屏模式显示菜单） -->
-        <div class="relative flex items-center justify-between h-full flex-1" :class="layoutMode === 'fullscreen' ? 'ml-[120px]' : 'ml-auto'">
+        <!-- 菜单+操作区整体容器（去掉全屏模式的ml限制，菜单要一直显示） -->
+        <div class="relative flex items-center justify-between h-full flex-1" :class="layoutMode === 'fullscreen' ? 'ml-[120px]' : 'ml-4'">
             <!-- 底部贯穿下划线 -->
             <div class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
             
-            <!-- 中间：导航菜单（仅全屏模式显示） -->
-            <nav v-if="layoutMode === 'fullscreen'" class="flex items-center h-full space-x-1 z-10 -mt-3">
+            <!-- 中间：导航菜单 - 删掉v-if，一直显示！ -->
+            <nav class="flex items-center h-full space-x-1 z-10 -mt-3">
                 <div v-for="(item, idx) in menuList" :key="item.route"
                     class="relative flex items-center h-4/5 m-auto cursor-pointer"@click="handleMenuClick(item, idx)">
                     <a href="javascript:void(0)"
-                        class="px-4 text-[15px] font-medium italic z-10 relative cursor-pointer font-['PingFang_SC','Microsoft_YaHei_UI',sans-serif] transition-colors duration-200"
+                        class="px-4 text-[15px] font-medium italic z-10 relative cursor-pointer font-['PingFang_SC','Microsoft_YaHei_UI',sans-serif] transition-colors duration-200 flex items-center gap-2"
                         :class="activeIndex === idx ? 'text-[#32AFFF]' : 'text-gray-100 hover:text-[#32AFFF]/95'"  style="text-align: center;" >
+                        <!-- 侧边模式显示图标，全屏只显示文字 -->
+                        <component v-if="layoutMode === 'sidebar'" :is="menuIconMap[item.icon]" class="w-4 h-4 shrink-0" />
                         {{ item.name }}
                     </a>
                     <!-- 选中项背景微光效果 -->
                     <div v-if="activeIndex === idx"
-                        :class="`absolute min-w-[88px] inset-0 ${idx == 0 ? 'left-[-20%]' : 'left-[0%]' }  w-14/5 h-full bg-gradient-to-r from-transparent via-[#318DC8]/30 to-transparent cursor-pointer`" />
+                        :class="`absolute min-w-[88px] inset-0 ${idx == 0 ? 'left-[-10%]' : 'left-[0%]' }  w-14/5 h-full bg-gradient-to-r from-transparent via-[#318DC8]/30 to-transparent cursor-pointer`" />
                 </div>
             </nav>
 
-            <!-- 右侧：操作区与个人信息 -->
+            <!-- 右侧：操作区与个人信息 - 不动 -->
             <div class="flex items-center gap-6 z-10 -mt-3 -ml-1">
                 <!-- 搜索按钮 -->
                 <button class="text-gray-300 hover:text-gray-100 cursor-pointer transition-colors duration-200"
@@ -101,12 +102,26 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useLayout } from '~/composables/useLayout'
-import { UserRound } from 'lucide-vue-next'
+import { UserRound, Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, BarChart3, Settings, Shield } from 'lucide-vue-next'
 import MSearchModal from './MSearchModal.vue'
 import type { MenuItem } from '~/composables/useLayout'
 
 // 全局布局状态（单例）
 const { layoutMode, menuList, setLayoutMode, toggleSidebar, addTab } = useLayout()
+
+// 图标映射表（和useLayout里的icon对应）
+const menuIconMap: Record<string, any> = {
+  Home,
+  Zap,
+  Battery,
+  Activity,
+  TrendingUp,
+  Sliders,
+  Cloud,
+  BarChart3,
+  Settings,
+  Shield
+}
 
 // 定义事件
 const emit = defineEmits<{
