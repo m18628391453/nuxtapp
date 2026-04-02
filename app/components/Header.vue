@@ -1,20 +1,10 @@
 <template>
     <header class="relative flex items-center justify-between h-16 px-6 bg-transparent text-white overflow-hidden">
         <!-- 左侧：Logo区域 + 侧边栏展开按钮（仅侧边模式显示） -->
-        <div class="flex items-center gap-4 mt-1 ml-1">
+        <div class="flex items-center gap-4 mt-1 ml-1 mr-7">
             <!-- Logo -->
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
                 style="width: 180px; height: 45px;" />
-            <!-- 侧边栏展开按钮（仅侧边导航模式显示） -->
-            <button
-                v-if="layoutMode === 'sidebar'"
-                @click="toggleSidebar"
-                class="text-gray-300 hover:text-white transition-colors -mt-3.5 ml-4"
-            >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
         </div>
 
         <!-- 菜单+操作区整体容器（去掉全屏模式的ml限制，菜单要一直显示） -->
@@ -35,7 +25,7 @@
                     </a>
                     <!-- 选中项背景微光效果 -->
                     <div v-if="activeIndex === idx"
-                        :class="`absolute min-w-[88px] inset-0 ${idx == 0 ? 'left-[-10%]' : 'left-[0%]' }  w-14/5 h-full bg-gradient-to-r from-transparent via-[#318DC8]/30 to-transparent cursor-pointer`" />
+                        :class="`absolute min-w-[88px] inset-0 ${idx == 0 ? 'left-[-15%]' : 'left-[0%]' }  w-14/5 h-full bg-gradient-to-r from-transparent via-[#318DC8]/30 to-transparent cursor-pointer`" />
                 </div>
             </nav>
 
@@ -100,14 +90,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useLayout } from '~/composables/useLayout'
 import { UserRound, Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, BarChart3, Settings, Shield } from 'lucide-vue-next'
 import MSearchModal from './MSearchModal.vue'
 import type { MenuItem } from '~/composables/useLayout'
 
 // 全局布局状态（单例）
-const { layoutMode, menuList, setLayoutMode, toggleSidebar, addTab } = useLayout()
+const { layoutMode, menuList, setLayoutMode, toggleSidebar, addTab, activeMenu } = useLayout()
 
 // 图标映射表（和useLayout里的icon对应）
 const menuIconMap: Record<string, any> = {
@@ -130,8 +120,16 @@ const emit = defineEmits<{
   (e: 'settings'): void
 }>()
 
-// 当前选中的菜单索引
-const activeIndex = ref(0)
+// 当前选中的菜单索引（从activeMenu初始化）
+const activeIndex = ref(
+  menuList.value.findIndex(item => item.route === activeMenu.value.route) || 0
+)
+
+// 监听activeMenu变化，同步更新activeIndex
+watch(activeMenu, (newVal) => {
+  activeIndex.value = menuList.value.findIndex(item => item.route === newVal.route) || 0
+}, { immediate: true })
+
 // 全屏状态
 const isFullscreen = ref(false)
 // 搜索弹窗显示状态
@@ -150,7 +148,7 @@ const menuSearchList = computed(() => {
 const handleMenuClick = (item: MenuItem, index: number) => {
     if (activeIndex.value === index) return
     activeIndex.value = index
-    addTab(item)
+    addTab(item) // 核心：设置activeMenu
     emit('menu-change', {
         name: item.name,
         index: index,
@@ -168,8 +166,10 @@ const handleSearch = () => {
 const handleSearchMenuSelect = (menuItem: { name: string, index: number, route: string }) => {
   activeIndex.value = menuItem.index
   const targetMenu = menuList.value.find(item => item.route === menuItem.route)
-  if (targetMenu) addTab(targetMenu)
-  emit('menu-change', menuItem)
+  if (targetMenu) {
+    addTab(targetMenu) // 核心：设置activeMenu
+    emit('menu-change', menuItem)
+  }
 }
 
 // 更新全屏状态

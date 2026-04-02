@@ -17,7 +17,7 @@
       >
         <!-- 顶部标题 -->
         <div class="flex items-center justify-between px-6 py-5 border-b border-gray-800">
-          <h2 class="text-base font-medium text-white">项目配置</h2>
+          <h2 class="text-base font-medium text-white">配置</h2>
           <button @click="closeSidebar" class="text-gray-400 hover:text-[#32AFFF] transition-colors cursor-pointer">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

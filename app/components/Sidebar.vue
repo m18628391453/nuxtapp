@@ -4,12 +4,12 @@
     :class="{ '-translate-x-full': sidebarCollapsed }"
   >
     <!-- 顶部Logo区域 -->
-    <div class="h-16 flex items-center justify-center px-4 border-b border-gray-800/50 shrink-0">
+    <div class="h-15 flex items-center justify-center py-2 px-2 border-b border-gray-800/50 shrink-0 ">
       <img
         src="/image/logo.png"
         alt="综合能碳Logo"
         class="object-contain"
-        style="width: 160px; height: 40px"
+        style="width: 160px; height: 35px"
       />
     </div>
 
@@ -27,18 +27,11 @@
         @click="handleSubMenuClick(item)"
       >
         <div class="flex items-center gap-3 px-4 py-3">
-          <!-- 子菜单默认用个小圆点图标 -->
-          <div class="w-2 h-2 rounded-full bg-gray-400 group-hover:bg-white shrink-0"></div>
           <!-- 子菜单名称 -->
           <span class="text-sm font-medium">
             {{ item.name }}
           </span>
         </div>
-        <!-- 选中项左侧高亮条 -->
-        <div
-          v-if="activeSubMenu.route === item.route"
-          class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-[#32AFFF] rounded-r-full"
-        />
       </div>
     </nav>
     <!-- 没有子菜单时显示提示 -->
@@ -49,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { MenuItem, SubMenuItem } from '~/composables/useLayout'
 import { useLayout } from '~/composables/useLayout'
@@ -77,14 +70,15 @@ const handleSubMenuClick = (subItem: SubMenuItem) => {
 
 // 初始化：默认选中首页的第一个子菜单
 const initActiveSubMenu = () => {
-  const homeMenu = menuList.value.find(item => item.route === '/')
-  if (homeMenu && homeMenu.subMenu && homeMenu.subMenu.length > 0) {
-    activeSubMenu.value = homeMenu.subMenu[0]
+  if (currentSubMenu.value.length > 0) {
+    activeSubMenu.value = currentSubMenu.value[0]
+    // 自动跳转第一个子菜单（可选）
+    // router.push(currentSubMenu.value[0].route)
   }
 }
 
 // 监听激活菜单变化，重新初始化子菜单
-watch(activeMenu, () => {
+watch([activeMenu, currentSubMenu], () => {
   initActiveSubMenu()
 }, { immediate: true })
 </script>
