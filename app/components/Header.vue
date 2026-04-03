@@ -6,7 +6,7 @@
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
                 :style="`${layoutMode !== 'fullscreen' ? 'width: 190px; opacity:0;': 'width: 170px;' } height: 45px;`" />
         </div>
-        <div v-if="layoutMode !== 'fullscreen'" class="flex items-center gap-4 mr-4">
+        <div v-if="layoutMode !== 'fullscreen'" class="flex items-center gap-4 mr-4 toggle-icon">
             <button class="text-gray-300 hover:text-[#32AFFF] cursor-pointer transition-colors duration-200" @click="emit('toggle-sidebar')">
                 <svg class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4756" width="200" height="200"><path d="M853.333333 810.666667a42.666667 42.666667 0 0 1 0 85.333333H170.666667a42.666667 42.666667 0 0 1 0-85.333333z m-37.930666-213.333334c20.949333 0 37.930667 19.114667 37.930666 42.666667s-16.981333 42.666667-37.930666 42.666667H549.973333c-20.949333 0-37.930667-19.114667-37.930666-42.666667s16.981333-42.666667 37.930666-42.666667zM362.666667 371.498667a21.333333 21.333333 0 0 1 21.333333 21.333333v238.336a21.333333 21.333333 0 0 1-36.437333 15.061333l-161.792-119.125333a21.333333 21.333333 0 0 1 0-30.208l161.792-119.125333a21.333333 21.333333 0 0 1 15.104-6.272zM815.402667 341.333333c20.949333 0 37.930667 19.114667 37.930666 42.666667s-16.981333 42.666667-37.930666 42.666667H549.973333C528.981333 426.666667 512 407.552 512 384s16.981333-42.666667 37.930667-42.666667zM853.333333 128a42.666667 42.666667 0 0 1 0 85.333333H170.666667a42.666667 42.666667 0 1 1 0-85.333333z" fill="#fefefe" fill-opacity=".87" p-id="4757"></path></svg>
             </button>

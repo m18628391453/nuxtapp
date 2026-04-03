@@ -3,16 +3,16 @@
       <!-- 遮罩层 -->
       <div
         v-if="visible"
-        class="fixed inset-0 bg-black/60 z-[9999] flex items-start justify-center pt-[10vh]"
+        class="fixed inset-0 bg-black/50 z-[9999] flex items-start justify-center pt-[10vh]"
         @click.self="handleClose"
       >
         <!-- 弹窗主体 -->
         <div
-          class="w-[60%] max-w-[800px] bg-[#1a1a1e] rounded-2xl border border-gray-700/50 shadow-2xl overflow-hidden flex flex-col"
+          class="w-[60%] max-w-[800px] bg-[#0A162C]/90 rounded-2xl border border-gray-100/10 shadow-2xl overflow-hidden flex flex-col"
           @click.stop
         >
           <!-- 顶部搜索栏 -->
-          <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-700/30">
+          <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-100/10">
             <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -39,7 +39,7 @@
           <div class="flex-1 min-h-[300px] max-h-[300px] overflow-y-auto p-4">
             <!-- 无搜索内容时显示 -->
             <div v-if="filteredMenuList.length === 0" class="w-full h-full flex items-center justify-center">
-              <span class="text-[14px] text-gray-400">没有搜索记录</span>
+              <span class="text-[14px] text-gray-400/80 mt-[10%]">没有搜索记录</span>
             </div>
             <!-- 搜索结果列表 -->
             <ul v-else class="w-full flex flex-col gap-1">
@@ -47,7 +47,7 @@
                 v-for="(item, index) in filteredMenuList"
                 :key="item.name"
                 class="rounded-lg px-4 py-3 cursor-pointer transition-colors"
-                :class="currentActiveIndex === index ? 'bg-[#32AFFF]/20 border border-[#32AFFF]/50' : 'hover:bg-white/5'"
+                :class="currentActiveIndex === index ? 'bg-[#32AFFF]/20 border-b border-gray-100/10' : 'hover:bg-white/5'"
                 @click="handleSelect(item)"
                 @mouseenter="currentActiveIndex = index"
               >
@@ -59,7 +59,7 @@
           </div>
   
           <!-- 底部快捷键提示 -->
-          <div class="px-6 py-4 border-t border-gray-700/30 flex items-center gap-6 text-gray-400 text-[13px]">
+          <div class="px-6 py-4 border-t border-gray-100/10 flex items-center gap-6 text-gray-400 text-[13px]">
             <div class="flex items-center gap-2">
               <span>←</span>
               <span>选择</span>
