@@ -170,7 +170,7 @@ const closeOtherTabs = (route: string) => {
   contextMenu.value.show = false
 }
 
-// 关闭所有 Tabs（保留首页）
+// 关闭所有Tabs页
 const closeAllTabs = () => {
   const homeTab = tabsList.value.find(t => t.route === '/dashboard/overview')
   if (homeTab) {
@@ -190,7 +190,7 @@ const closeAllTabs = () => {
   contextMenu.value.show = false
 }
 
-// 跳转到 Tab
+// 跳转到Tab页
 const goToTab = (route: string) => {
   activeTabRoute.value = route
   router.push(route)
@@ -251,12 +251,8 @@ watch(() => route.path, (newPath) => {
   }
 }, { immediate: true })
 
-// 【核心修改】移除了 watch(activeMenu) 的新增Tab逻辑，只保留路由变化触发新增Tab
-
 onMounted(() => {
-  // 先加载Session缓存
   loadTabsFromSession()
-  // 添加点击外部关闭菜单的监听
   document.addEventListener('click', handleClickOutside)
 })
 

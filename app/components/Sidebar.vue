@@ -4,7 +4,7 @@
     :class="{ '-translate-x-full': sidebarCollapsed }"
   >
     <!-- 顶部Logo区域：保留原有样式 -->
-    <div class="h-15 flex items-center justify-center py-2 px-2 border-b border-gray-800/50 shrink-0 bg-[#0A162C]">
+    <div class="h-14 flex items-center justify-center py-2 px-2 shrink-0 bg-[#0A162C]">
       <img
         src="/image/logo.png"
         alt="综合能碳Logo"
@@ -14,7 +14,7 @@
     </div>
 
     <!-- 菜单列表：只显示当前激活菜单的子菜单 -->
-    <nav v-if="currentSubMenu.length > 0" class="flex-1 overflow-y-auto py-4 px-3 bg-[#0A162C]">
+    <nav v-if="currentSubMenu.length > 0" class="flex-1 overflow-y-auto py-0 px-3 bg-[#0A162C] -mt-[2px]">
       <div
         v-for="item in currentSubMenu"
         :key="item.route"
@@ -26,7 +26,7 @@
         ]"
         @click="handleSubMenuClick(item)"
       >
-        <div class="flex items-center gap-3 px-4 py-3">
+        <div class="flex items-center gap-3 px-3 py-2">
           <!-- 子菜单名称 -->
           <span class="text-sm font-medium">
             {{ item.name }}
