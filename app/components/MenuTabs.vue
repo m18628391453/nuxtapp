@@ -22,6 +22,11 @@
       ]"
       @click="goToTab(tab.route)"
       @contextmenu.prevent="openContextMenu($event, tab.route)"
+      :draggable="!(tab.route === '/dashboard/overview' || tab.route === '/')"
+      @dragstart="handleDragStart(tab)"
+      @dragover.prevent="handleDragOver($event, tab)"
+      @drop="handleDrop(tab)"
+      @dragend="handleDragEnd"
     >
       <!-- 首页显示房子图标，其他显示名称 -->
       <span v-if="tab.route === '/dashboard/overview' || tab.route === '/'">
@@ -170,6 +175,9 @@ const contextMenu = ref({
   y: 0,
   route: ''
 })
+
+// ==================== 新增拖拽相关状态 ====================
+const draggingTab = ref<TabItem | null>(null)
 
 // ==================== 新增核心计算属性 ====================
 // 渲染用的Tab列表：Home永远在前 → 固定标签 → 非固定标签
@@ -412,6 +420,61 @@ const closeRightTabs = (route: string) => {
   contextMenu.value.show = false
 }
 
+// ==================== 拖拽相关方法 - 已修改为插入逻辑 ====================
+// 开始拖拽
+const handleDragStart = (tab: TabItem) => {
+  draggingTab.value = tab
+  ;(event?.target as HTMLElement).style.opacity = '0.5'
+}
+
+// 拖拽悬浮
+const handleDragOver = (e: DragEvent, targetTab: TabItem) => {
+  e.preventDefault()
+  // 仅允许同类型标签（固定/非固定）之间拖拽
+  if (draggingTab.value?.isFixed !== targetTab.isFixed) return
+  // 首页标签不允许被拖拽覆盖
+  if (targetTab.route === '/dashboard/overview' || targetTab.route === '/') return
+}
+
+// 拖拽放下（核心修改：从交换改为插入）
+const handleDrop = (targetTab: TabItem) => {
+  if (!draggingTab.value) return
+  
+  // 校验：1. 不是自己 2. 类型相同（固定/非固定） 3. 不是首页
+  if (
+    draggingTab.value.route === targetTab.route ||
+    draggingTab.value.isFixed !== targetTab.isFixed ||
+    targetTab.route === '/dashboard/overview' || targetTab.route === '/'
+  ) {
+    return
+  }
+
+  // 1. 先找到拖拽标签在原数组中的位置
+  const dragIndex = tabsList.value.findIndex(t => t.route === draggingTab.value!.route)
+  // 2. 找到目标标签在原数组中的位置
+  const targetIndex = tabsList.value.findIndex(t => t.route === targetTab.route)
+
+  if (dragIndex === -1 || targetIndex === -1) return
+
+  // 3. 把拖拽标签从原位置取出来
+  const [movedTab] = tabsList.value.splice(dragIndex, 1)
+  
+  // 4. 计算插入位置：如果原来的位置在目标前面，取出来后数组长度变了，目标索引要减1
+  const insertIndex = dragIndex < targetIndex ? targetIndex - 1 : targetIndex
+  
+  // 5. 把拖拽标签插入到新位置
+  tabsList.value.splice(insertIndex, 0, movedTab)
+  
+  // 6. 保存到sessionStorage
+  saveTabsToSession()
+}
+
+// 拖拽结束
+const handleDragEnd = () => {
+  ;(event?.target as HTMLElement).style.opacity = '1'
+  draggingTab.value = null
+}
+
 // ==================== 原有生命周期和监听保留 ====================
 // 监听路由变化，添加新 Tab
 watch(() => route.path, (newPath) => {
@@ -533,5 +596,13 @@ onUnmounted(() => {
 .tab-active::before,
 .tab-active::after {
   pointer-events: none;
+}
+
+/* 新增拖拽样式 */
+div[draggable="true"] {
+  cursor: grab;
+}
+div[draggable="true"]:active {
+  cursor: grabbing;
 }
 </style>
