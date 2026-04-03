@@ -12,7 +12,7 @@
     }: null"
   >
     <div
-      v-for="tab in tabsList"
+      v-for="tab in renderTabsList"
       :key="tab.route"
       class="relative h-full flex items-center px-4 cursor-pointer text-sm transition-all duration-200 group"
       :class="[
@@ -30,37 +30,111 @@
         </svg>
       </span>
       <span v-else>{{ tab.name }}</span>
-      <!-- 关闭按钮（首页不显示，仅选中/hover时可见） -->
+      <!-- 固定标签显示图钉按钮，非固定标签显示关闭按钮（首页不显示） -->
       <button
         v-if="tab.route !== '/dashboard/overview' && tab.route !== '/'"
-        @click.stop="closeTab(tab.route)"
+        @click.stop="tab.isFixed ? toggleFixed(tab.route) : closeTab(tab.route)"
         class="ml-2 -mr-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#32AFFF1F] hover:text-white transition-all duration-200 opacity-100 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
         :class="[
           activeTabRoute === tab.route ? 'opacity-100 pointer-events-auto' : ''
         ]"
       >
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- 固定标签显示图钉图标 -->
+        <svg v-if="tab.isFixed" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+        </svg>
+        <!-- 非固定标签显示关闭图标 -->
+        <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
-    <!-- 右键菜单 -->
+    <!-- 右键菜单 - 完整功能版 -->
     <div
       v-if="contextMenu.show"
-      class="fixed z-50 w-32 bg-[#0F172A] border border-gray-700 rounded shadow-lg text-sm overflow-hidden"
-      :style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y}px` }"
+      class="fixed z-50 w-48 bg-[#0F172A] border border-gray-700 rounded shadow-lg text-sm overflow-hidden"
+      :style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y - 15 }px` }"
     >
+      <!-- 关闭 -->
       <div
-        class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors"
+        class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+        :class="disableClose ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
+        @click="closeTab(contextMenu.route)"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        关闭
+      </div>
+      <!-- 固定/取消固定 -->
+      <div
+        class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+        :class="disableFixed ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
+        @click="toggleFixed(contextMenu.route)"
+      >
+        <svg v-if="!isContextFixed" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+        </svg>
+        <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+        </svg>
+        {{ isContextFixed ? '取消固定' : '固定标签' }}
+      </div>
+      <!-- 重新加载 -->
+      <div
+        class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+        @click="reloadTab(contextMenu.route)"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        重新加载
+      </div>
+      <!-- 分割线 -->
+      <div class="h-px bg-gray-700 my-1"></div>
+      <!-- 关闭左侧标签 -->
+      <div
+        class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+        :class="disableCloseLeft ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
+        @click="closeLeftTabs(contextMenu.route)"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+        </svg>
+        关闭左侧标签
+      </div>
+      <!-- 关闭右侧标签 -->
+      <div
+        class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+        :class="disableCloseRight ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
+        @click="closeRightTabs(contextMenu.route)"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+        </svg>
+        关闭右侧标签
+      </div>
+      <!-- 关闭其他标签 -->
+      <div
+        class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+        :class="disableCloseOther ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
         @click="closeOtherTabs(contextMenu.route)"
       >
-        关闭其他
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        关闭其他标签
       </div>
+      <!-- 关闭全部标签 -->
       <div
-        class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors"
+        class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+        :class="disableCloseAll ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
         @click="closeAllTabs"
       >
-        关闭全部
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        关闭全部标签
       </div>
     </div>
   </div>
@@ -71,14 +145,17 @@ import { useRouter, useRoute } from 'vue-router'
 import { getSessionCache, setSessionCache, SessionCacheKey } from '~/utils/cache'
 // 从父组件注入状态
 const layoutState = inject('layoutState') as any
+const layoutActions = inject('layoutActions') as any 
+const { forceRefreshPage } = layoutActions
 const { layoutMode, activeMenu, menuList } = layoutState
 const router = useRouter()
 const route = useRoute()
-// Tab 数据类型
+// Tab 数据类型 - 新增固定字段
 interface TabItem {
   name: string
   route: string
   index?: number
+  isFixed?: boolean
 }
 // Tab 列表
 const tabsList = ref<TabItem[]>([])
@@ -93,47 +170,123 @@ const contextMenu = ref({
   y: 0,
   route: ''
 })
+
+// ==================== 新增核心计算属性 ====================
+// 渲染用的Tab列表：Home永远在前 → 固定标签 → 非固定标签
+const renderTabsList = computed(() => {
+  const homeTab = tabsList.value.find(t => t.route === '/dashboard/overview' || t.route === '/')
+  const fixedTabs = tabsList.value.filter(t => !(t.route === '/dashboard/overview' || t.route === '/') && t.isFixed)
+  const unfixedTabs = tabsList.value.filter(t => !(t.route === '/dashboard/overview' || t.route === '/') && !t.isFixed)
+  const result = []
+  if (homeTab) result.push(homeTab)
+  result.push(...fixedTabs)
+  result.push(...unfixedTabs)
+  return result
+})
+// 当前右键选中的Tab
+const currentContextTab = computed(() => {
+  return tabsList.value.find(t => t.route === contextMenu.value.route)
+})
+// 是否是首页标签
+const isContextHome = computed(() => {
+  const route = contextMenu.value.route
+  return route === '/dashboard/overview' || route === '/'
+})
+// 当前右键标签是否固定
+const isContextFixed = computed(() => {
+  return currentContextTab.value?.isFixed || false
+})
+// 非固定标签列表（排除首页）
+const unfixedTabs = computed(() => {
+  return renderTabsList.value.filter(t => !(t.route === '/dashboard/overview' || t.route === '/') && !t.isFixed)
+})
+// 当前右键标签在非固定列表中的索引
+const contextTabUnfixedIndex = computed(() => {
+  return unfixedTabs.value.findIndex(t => t.route === contextMenu.value.route)
+})
+// 关闭按钮禁用逻辑
+const disableClose = computed(() => {
+  return isContextHome.value || isContextFixed.value
+})
+// 固定按钮禁用逻辑
+const disableFixed = computed(() => {
+  return isContextHome.value
+})
+// 关闭左侧禁用逻辑
+const disableCloseLeft = computed(() => {
+  if (isContextHome.value || isContextFixed.value) return true
+  return contextTabUnfixedIndex.value <= 0
+})
+// 关闭右侧禁用逻辑
+const disableCloseRight = computed(() => {
+  if (isContextHome.value || isContextFixed.value) return true
+  if (contextTabUnfixedIndex.value === -1) return true
+  return contextTabUnfixedIndex.value >= unfixedTabs.value.length - 1
+})
+// 关闭其他禁用逻辑
+const disableCloseOther = computed(() => {
+  if (isContextHome.value) return true
+  const closableTabs = tabsList.value.filter(t => 
+    !(t.route === '/dashboard/overview' || t.route === '/') && 
+    !t.isFixed && 
+    t.route !== contextMenu.value.route
+  )
+  return closableTabs.length === 0
+})
+// 关闭全部禁用逻辑
+const disableCloseAll = computed(() => {
+  const closableTabs = tabsList.value.filter(t => 
+    !(t.route === '/dashboard/overview' || t.route === '/') && 
+    !t.isFixed
+  )
+  return closableTabs.length === 0
+})
+
+// ==================== 原有方法保留，适配新需求 ====================
 // 保存 Tabs 到 sessionStorage
 const saveTabsToSession = () => {
   setSessionCache(SessionCacheKey.TABS_LIST, tabsList.value)
   setSessionCache(SessionCacheKey.ACTIVE_TAB_ROUTE, activeTabRoute.value)
 }
-// 从 sessionStorage 加载 Tabs
+// 从 sessionStorage 加载 Tabs - 适配固定字段
 const loadTabsFromSession = () => {
   const savedTabs = getSessionCache<TabItem[]>(SessionCacheKey.TABS_LIST, [])
   const savedActiveRoute = getSessionCache<string>(SessionCacheKey.ACTIVE_TAB_ROUTE, '')
   
   if (savedTabs.length > 0) {
-    tabsList.value = savedTabs
+    // 给历史数据补全固定字段默认值
+    tabsList.value = savedTabs.map(t => ({ isFixed: false, ...t }))
     activeTabRoute.value = savedActiveRoute
   } else {
     // 初始化默认 Tab（取第一个菜单的第一个子菜单）
     const defaultMenu = menuList.value[0]
     const defaultTab = defaultMenu.subMenu && defaultMenu.subMenu.length > 0 
-      ? { name: defaultMenu.subMenu[0].name, route: defaultMenu.subMenu[0].route, index: defaultMenu.subMenu[0].index }
-      : { name: defaultMenu.name, route: defaultMenu.route, index: defaultMenu.index }
+      ? { name: defaultMenu.subMenu[0].name, route: defaultMenu.subMenu[0].route, index: defaultMenu.subMenu[0].index, isFixed: false }
+      : { name: defaultMenu.name, route: defaultMenu.route, index: defaultMenu.index, isFixed: false }
     tabsList.value = [defaultTab]
     activeTabRoute.value = defaultTab.route
   }
 }
-// 添加 Tab
+// 添加 Tab - 新增默认固定字段
 const addTab = (tab: TabItem) => {
   // 检查是否已存在
   const existingTab = tabsList.value.find(t => t.route === tab.route)
   if (!existingTab) {
-    tabsList.value.push(tab)
+    tabsList.value.push({ ...tab, isFixed: false })
   }
   // 切换到该 Tab
   activeTabRoute.value = tab.route
   saveTabsToSession()
 }
-// 移除 Tab
+// 移除 Tab - 新增固定标签不可移除逻辑
 const removeTab = (route: string) => {
   const index = tabsList.value.findIndex(t => t.route === route)
   if (index === -1) return
   
-  // 如果移除的是首页，不允许移除
+  // 首页、固定标签不允许移除
   if (route === '/dashboard/overview' || route === '/') return
+  const targetTab = tabsList.value[index]
+  if (targetTab.isFixed) return
   
   const isRemovingActive = activeTabRoute.value === route
   tabsList.value.splice(index, 1)
@@ -151,43 +304,36 @@ const removeTab = (route: string) => {
 // 关闭指定Tab
 const closeTab = (route: string) => {
   removeTab(route)
-  // 关闭后隐藏右键菜单
   contextMenu.value.show = false
 }
-// 关闭其他 Tabs
+// 关闭其他 Tabs - 适配固定标签逻辑
 const closeOtherTabs = (route: string) => {
-  // 保留当前Tab和首页
-  const homeTab = tabsList.value.find(t => t.route === '/dashboard/overview')
-  const currentTab = tabsList.value.find(t => t.route === route)
-  
-  if (homeTab && currentTab) {
-    tabsList.value = homeTab.route === currentTab.route ? [homeTab] : [homeTab, currentTab]
-  } else if (homeTab) {
-    tabsList.value = [homeTab]
-  } else if (currentTab) {
-    tabsList.value = [currentTab]
-  }
-  
+  // 保留首页、固定标签、当前标签
+  tabsList.value = tabsList.value.filter(t => {
+    const isHome = t.route === '/dashboard/overview' || t.route === '/'
+    const isFixed = t.isFixed
+    const isCurrent = t.route === route
+    return isHome || isFixed || isCurrent
+  })
   activeTabRoute.value = route
   router.push(route)
   saveTabsToSession()
   contextMenu.value.show = false
 }
-// 关闭所有Tabs页
+// 关闭所有Tabs页 - 适配固定标签逻辑
 const closeAllTabs = () => {
-  const homeTab = tabsList.value.find(t => t.route === '/dashboard/overview')
-  if (homeTab) {
-    tabsList.value = [homeTab]
-    activeTabRoute.value = homeTab.route
-    router.push(homeTab.route)
-  } else {
-    const defaultMenu = menuList.value[0]
-    const defaultTab = defaultMenu.subMenu && defaultMenu.subMenu.length > 0 
-      ? { name: defaultMenu.subMenu[0].name, route: defaultMenu.subMenu[0].route, index: defaultMenu.subMenu[0].index }
-      : { name: defaultMenu.name, route: defaultMenu.route, index: defaultMenu.index }
-    tabsList.value = [defaultTab]
-    activeTabRoute.value = defaultTab.route
-    router.push(defaultTab.route)
+  // 保留首页、所有固定标签
+  const reservedTabs = tabsList.value.filter(t => {
+    const isHome = t.route === '/dashboard/overview' || t.route === '/'
+    const isFixed = t.isFixed
+    return isHome || isFixed
+  })
+  tabsList.value = reservedTabs
+  // 切换到第一个保留的标签
+  if (reservedTabs.length > 0) {
+    const targetRoute = reservedTabs[0].route
+    activeTabRoute.value = targetRoute
+    router.push(targetRoute)
   }
   saveTabsToSession()
   contextMenu.value.show = false
@@ -198,13 +344,19 @@ const goToTab = (route: string) => {
   router.push(route)
   saveTabsToSession()
 }
-// 右键菜单
+// 右键菜单 - 重写位置计算，贴合需求
 const openContextMenu = (e: MouseEvent, route: string) => {
   e.preventDefault()
+  // 获取当前点击的标签元素，计算精准位置
+  const targetElement = e.currentTarget as HTMLElement
+  const rect = targetElement.getBoundingClientRect()
+  // left位于标签中间，top位于标签底部+10px
+  const menuLeft = rect.left + rect.width / 2
+  const menuTop = rect.bottom + 10
   contextMenu.value = {
     show: true,
-    x: e.clientX,
-    y: e.clientY,
+    x: menuLeft,
+    y: menuTop,
     route
   }
 }
@@ -212,7 +364,56 @@ const openContextMenu = (e: MouseEvent, route: string) => {
 const handleClickOutside = () => {
   contextMenu.value.show = false
 }
-// 监听路由变化，添加新 Tab（只有路由变了才加，Header点顶级菜单不触发路由变）
+
+// ==================== 新增需求方法 ====================
+// 切换标签固定状态
+const toggleFixed = (route: string) => {
+  const targetTab = tabsList.value.find(t => t.route === route)
+  if (!targetTab || isContextHome.value) return
+  targetTab.isFixed = !targetTab.isFixed
+  saveTabsToSession()
+  contextMenu.value.show = false
+}
+// 重新加载当前标签页
+const reloadTab = (route: string) => {
+  contextMenu.value.show = false
+  // 先标记一下当前要刷新的路由
+  const targetRoute = route
+  // 如果当前就在这个路由上，直接强制刷新组件
+  if (activeTabRoute.value === targetRoute) {
+    forceRefreshPage()
+  } else {
+    // 如果不在，先跳过去再刷新 (双重保险)
+    router.push(targetRoute).then(() => {
+      // 等路由跳转完成后，强制刷新页面组件
+      setTimeout(() => {
+        forceRefreshPage()
+      }, 50)
+    })
+  }
+}
+
+// 关闭左侧标签
+const closeLeftTabs = (route: string) => {
+  const currentIndex = contextTabUnfixedIndex.value
+  if (currentIndex <= 0) return
+  // 关闭当前标签左侧所有非固定标签
+  const toCloseRoutes = unfixedTabs.value.slice(0, currentIndex).map(t => t.route)
+  toCloseRoutes.forEach(routeKey => removeTab(routeKey))
+  contextMenu.value.show = false
+}
+// 关闭右侧标签
+const closeRightTabs = (route: string) => {
+  const currentIndex = contextTabUnfixedIndex.value
+  if (currentIndex === -1 || currentIndex >= unfixedTabs.value.length - 1) return
+  // 关闭当前标签右侧所有非固定标签
+  const toCloseRoutes = unfixedTabs.value.slice(currentIndex + 1).map(t => t.route)
+  toCloseRoutes.forEach(routeKey => removeTab(routeKey))
+  contextMenu.value.show = false
+}
+
+// ==================== 原有生命周期和监听保留 ====================
+// 监听路由变化，添加新 Tab
 watch(() => route.path, (newPath) => {
   // 初始化阶段，只恢复状态，不新增Tab
   if (isInitializing.value) {
@@ -248,6 +449,7 @@ watch(() => route.path, (newPath) => {
     addTab(currentMenuItem)
   }
 }, { immediate: true })
+
 onMounted(() => {
   loadTabsFromSession()
   document.addEventListener('click', handleClickOutside)
@@ -257,6 +459,7 @@ onUnmounted(() => {
 })
 </script>
 <style scoped>
+/* 原有样式完全保留，半分未改 */
 /* 滚动条样式优化，贴合设计稿深色风格 */
 ::-webkit-scrollbar {
   height: 2px;
@@ -268,7 +471,6 @@ onUnmounted(() => {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 /* 非激活Tab样式 */
 .tab-inactive {
   border-radius: 4px;
@@ -290,7 +492,6 @@ onUnmounted(() => {
   width: 1px;
   background: rgba(255,255,255,0.1);
 }
-
 /* 激活Tab核心样式 - 贴合设计稿的底部衔接曲线 */
 .tab-active {
   border-top-left-radius: 6px;

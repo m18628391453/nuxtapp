@@ -8,7 +8,7 @@
           opacity: 0.99 
       } : null"
   >
-      <div class="relative z-10 flex flex-col min-h-screen">
+      <div class="relative z-10 flex flex-col min-h-screen" >
           <Header @settings="showSettings = true" />
           
           <div class="flex flex-1 overflow-hidden">
@@ -16,6 +16,7 @@
               
               <main 
                   class="flex-1 h-[calc(100vh-50px)] overflow-hidden transition-all duration-300"
+                  :key="refreshKey"
                   :class="layoutMode === 'sidebar' && !sidebarCollapsed ? 'ml-[210px]' : 'ml-0'"
                   :style=" layoutMode !== 'fullscreen' ? { 
                       backgroundImage: `url('/image/background.png')`, 
@@ -46,11 +47,17 @@ import MenuTabs from '../components/MenuTabs.vue'
 const showSettings = ref(false)
 const isClientReady = ref(false)
 
-// 1. 定义核心状态
+// 定义核心状态
 const layoutMode = ref('fullscreen')
 const sidebarCollapsed = ref(false)
 const theme = ref('dark')
 const activeMenu = ref(null)
+const refreshKey = ref(0) // 定义一个刷新用的 Key
+
+// 封装强制刷新的方法
+const forceRefreshPage = () => {
+  refreshKey.value += 1
+}
 
 // 菜单数据写死在顶层，分发下去
 const menuList = ref([
@@ -80,7 +87,7 @@ const menuList = ref([
   { name: '系统设置', route: '/system', icon: 'Shield', index: 9, subMenu: [] },
 ])
 
-// 2. 挂载时从本地存储拉取数据
+// 挂载时从本地存储拉取数据
 onMounted(() => {
   layoutMode.value = getCache(CacheKey.LAYOUT_MODE, 'fullscreen')
   sidebarCollapsed.value = getCache(CacheKey.SIDEBAR_COLLAPSED, false)
@@ -89,7 +96,7 @@ onMounted(() => {
   isClientReady.value = true
 })
 
-// 3. 封装修改状态的方法并同步到本地缓存
+// 封装修改状态的方法并同步到本地缓存
 const updateLayoutMode = (mode) => {
   layoutMode.value = mode
   setCache(CacheKey.LAYOUT_MODE, mode)
@@ -105,7 +112,7 @@ const updateActiveMenu = (menu) => {
   setCache(CacheKey.ACTIVE_MENU, menu)
 }
 
-// 4. 将状态和方法注入给所有子组件
+// 将状态和方法注入给所有子组件
 provide('layoutState', {
   layoutMode,
   sidebarCollapsed,
@@ -117,6 +124,7 @@ provide('layoutState', {
 provide('layoutActions', {
   updateLayoutMode,
   toggleSidebar,
-  updateActiveMenu
+  updateActiveMenu,
+  forceRefreshPage // 注入给子组件用
 })
 </script>
