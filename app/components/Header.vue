@@ -1,7 +1,14 @@
 <template>
     <header class="relative flex items-center justify-between px-6 text-white transition-all duration-300"
-        :class="layoutMode === 'fullscreen' ? 'h-16 overflow-hidden bg-transparent' : 'h-13 bg-[#0A162C] border-b border-gray-800/50'">
-        
+        :class="layoutMode === 'fullscreen' ? 'h-16 overflow-hidden bg-transparent' : 'h-13 border-b border-gray-800/80'"
+        :style="layoutMode !== 'fullscreen' ? { 
+            backgroundImage: `url('/image/matrix.png')`, 
+            backgroundSize: '12%',  
+            backgroundPosition: 'center',
+            backgroundRepeat: 'repeat',
+            opacity: 0.99 
+        }: null"
+    >
         <div v-if="!sidebarCollapsed"  class="flex items-center gap-4 mt-1 ml-1 mr-7">
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
                 :style="`${layoutMode !== 'fullscreen' ? 'width: 190px; opacity:0;': 'width: 170px;' } height: 45px;`" />
@@ -21,11 +28,11 @@
 
         <div class="relative flex items-center justify-between h-full flex-1" 
              :class="[
-                 layoutMode === 'fullscreen' ? 'ml-[134px]' : 'ml-4 bg-[#0A162C]',
+                 layoutMode === 'fullscreen' ? 'ml-[134px]' : 'ml-4 bg-transparent',
                  layoutMode !== 'fullscreen' && sidebarCollapsed ? 'ml-0 !pl-2' : ''
              ]">
             
-            <div v-if="layoutMode === 'fullscreen'" class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
+            <div v-if="layoutMode === 'fullscreen'" class="absolute bottom-3 -left-10 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
             
             <nav v-if="layoutMode === 'fullscreen'" class="flex items-center h-full space-x-1 z-10 -mt-3">
                 <div v-for="(item, idx) in menuList" :key="item.route"

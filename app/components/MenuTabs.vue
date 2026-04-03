@@ -1,7 +1,14 @@
 <template>
   <div
     v-if="layoutMode === 'sidebar'"
-    class="h-10 bg-[#0D1B32] border-b border-gray-800/50 flex items-center gap-1 px-2 overflow-x-auto whitespace-nowrap z-20"
+    class="h-10 border-b border-gray-800/80 flex items-center gap-1 px-2 overflow-x-auto whitespace-nowrap z-20"
+    :style="layoutMode !== 'fullscreen' ? { 
+        backgroundImage: `url('/image/matrix.png')`, 
+        backgroundSize: '12%',  
+        backgroundPosition: 'center',
+        backgroundRepeat: 'repeat',
+        opacity: 0.99 
+    }: null"
   >
     <div
       v-for="tab in tabsList"

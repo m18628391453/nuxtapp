@@ -1,11 +1,18 @@
 <template>
   <aside
-    class="fixed left-0 top-0 h-full bg-[#0A162C] border-r border-gray-800/50 z-[999] flex flex-col transition-all duration-300"
+    class="fixed left-0 top-0 h-full border-r border-gray-800/80 z-[999] flex flex-col transition-all duration-300"
     :class="{ '-translate-x-full': sidebarCollapsed }"
-    style="width: 210px; "
+    :style="{ 
+      backgroundImage: `url('/image/matrix.png')`, 
+      backgroundSize: '98%',  
+      backgroundPosition: 'center',
+      backgroundRepeat: 'repeat',
+      width: '210px',
+      opacity: 0.99 
+    }"
   >
     <!-- 顶部Logo区域：保留原有样式 -->
-    <div class="h-14 flex items-center justify-center py-2 px-2 shrink-0 bg-[#0A162C]">
+    <div class="h-14 flex items-center justify-center py-2 px-2 shrink-0 bg-transparent">
       <img
         src="/image/logo.png"
         alt="综合能碳Logo"
@@ -15,7 +22,7 @@
     </div>
 
     <!-- 菜单列表：只显示当前激活菜单的子菜单 -->
-    <nav v-if="currentSubMenu.length > 0" class="flex-1 overflow-y-auto py-0 px-3 bg-[#0A162C] -mt-[2px]">
+    <nav v-if="currentSubMenu.length > 0" class="flex-1 overflow-y-auto py-0 px-3 bg-transparent -mt-[2px]">
       <div
         v-for="item in currentSubMenu"
         :key="item.route"
