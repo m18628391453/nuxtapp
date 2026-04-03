@@ -1,12 +1,12 @@
 <template>
   <div v-if="isClientReady" class="relative min-h-screen text-white font-sans" 
-      :style="{ 
-      backgroundImage: `url('/image/background.png')`, 
-      backgroundSize: 'auto',  
-      backgroundPosition: 'center -120px',
-      backgroundRepeat: 'repeat-y',
-      opacity: 0.99 
-  }"
+      :style=" layoutMode === 'fullscreen' ? { 
+          backgroundImage: `url('/image/background.png')`, 
+          backgroundSize: 'auto',  
+          backgroundPosition: 'center -120px',
+          backgroundRepeat: 'repeat-y',
+          opacity: 0.99 
+      } : null"
   >
       <div class="relative z-10 flex flex-col min-h-screen">
           <Header @settings="showSettings = true" />
@@ -15,8 +15,15 @@
               <Sidebar v-if="layoutMode === 'sidebar'" />
               
               <main 
-                  class="flex-1 h-[calc(100vh-56px-40px)] overflow-hidden transition-all duration-300"
+                  class="flex-1 h-[calc(100vh-50px)] overflow-hidden transition-all duration-300"
                   :class="layoutMode === 'sidebar' && !sidebarCollapsed ? 'ml-[210px]' : 'ml-0'"
+                  :style=" layoutMode !== 'fullscreen' ? { 
+                      backgroundImage: `url('/image/background.png')`, 
+                      backgroundSize: 'auto',  
+                      backgroundPosition: 'center 0px',
+                      backgroundRepeat: 'repeat-y',
+                      opacity: 0.99 
+                  } : null"
               >
                   <MenuTabs />
                   <slot />

@@ -1,7 +1,10 @@
 <template>
-    <div class="flex w-full h-full p-4 gap-4 box-border overflow-hidden bg-transparent text-white font-sans">
+    <div class="flex w-full h-full  gap-4 box-border overflow-hidden bg-transparent text-white font-sans "
+        :class="layoutMode === 'sidebar' ? '-mt-2 py-3' : 'p-4'">
       <!-- 左侧 -->
-      <div class="min-w-[345px] max-w-[345px] flex flex-col h-full max-h-[100%] shrink-0">
+      <div class="flex flex-col h-full max-h-[100%] shrink-0"
+          :class="layoutMode === 'sidebar' ? 'min-w-[325px] max-w-[325px] f' : 'min-w-[345px] max-w-[345px]'" 
+      >
         <div class="flex-9 min-h-0">
           <AssetPanel />
         </div>
@@ -18,7 +21,7 @@
         <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg  overflow-hidden z-1000"
                 :style="{ 
                 backgroundImage: `url('/image/main.png')`, 
-                backgroundSize: '105%',  // 改为 auto 保持图片原始尺寸
+                backgroundSize: layoutMode === 'sidebar' ? '120%': '105%',  // 改为 auto 保持图片原始尺寸
                 backgroundPosition: 'center center',
                 backgroundRepeat: 'no-repeat'  // 垂直方向重复
             }"
@@ -29,13 +32,17 @@
         </div>
   
         <!-- 能源供需平衡分析 -->
-        <div class="flex-[1.5] min-h-0">
+        <div class="flex-[1.5] min-h-0"
+            :class="layoutMode === 'sidebar' ? '-mt-3 mb-3' : ''"
+        >
           <BalanceChart />
         </div>
       </div>
   
       <!-- 右侧 -->
-      <div class="min-w-[350px] max-w-[350px] flex flex-col h-full shrink-0">
+      <div class="flex flex-col h-full shrink-0"
+          :class="layoutMode === 'sidebar' ? 'min-w-[330px] max-w-[330px] f' : 'min-w-[350px] max-w-[350px]'" 
+      >
         <!-- 系统运行模式 -->
         <div class="bg-[#0A162C]/10 rounded-lg h-[90px] px-4 justify-between shrink-0 relative overflow-hidden" style="padding-top: 0.5rem;">
           <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex py-3.5 px-4 relative -ml-1 -mr-4">
@@ -68,4 +75,8 @@
   definePageMeta({
     layout: 'dashboard'
   })
+
+  // 从父组件注入状态和方法
+  const layoutState = inject('layoutState');
+  const { layoutMode } = layoutState;
   </script>
