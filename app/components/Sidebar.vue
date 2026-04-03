@@ -29,8 +29,8 @@
       >
         <div class="flex items-center gap-3 px-3 py-2">
           <!-- 子菜单名称 -->
-          <component :is="menuIconMap[item.icon]" class="w-[14px] h-[14px] mr-1.5 shrink-0" />
-          <span class="text-sm font-medium">
+          <component :is="menuIconMap[item.icon]" class="w-[14px] h-[14px] shrink-0" />
+          <span class="text-sm font-medium -ml-1">
             {{ item.name }}
           </span>
         </div>
@@ -59,22 +59,27 @@ const menuIconMap: Record<string, any> = {
   Cloud,
   BarChart3,
   Settings,
-  Shield
+  Shield,
+  TvMinimal,
+  Monitor
 }
 
 // 从父组件注入状态
 const layoutState = inject('layoutState') as any
-const { activeMenu, sidebarCollapsed } = layoutState
+const { activeMenu, sidebarCollapsed, menuList } = layoutState
 
 const router = useRouter()
 
 // 保留原有激活子菜单逻辑
 const activeSubMenu = ref<any>({} as any)
 
-// 保留原有计算属性
+
 const currentSubMenu = computed(() => {
-  if (!activeMenu.value || !activeMenu.value.subMenu) return []
-  return activeMenu.value.subMenu
+  if (!activeMenu.value) return []
+  // 在完整的 menuList 中找到匹配的那一项
+  const currentMenu = menuList.value.find((m: any) => m.route === activeMenu.value.route)
+  if (!currentMenu || !currentMenu.subMenu) return []
+  return currentMenu.subMenu
 })
 
 // 保留原有子菜单点击逻辑
