@@ -4,17 +4,17 @@
     :class="{ '-translate-x-full': sidebarCollapsed }"
   >
     <!-- 顶部Logo区域：保留原有样式 -->
-    <div class="h-15 flex items-center justify-center py-2 px-2 border-b border-gray-800/50 shrink-0 ">
+    <div class="h-15 flex items-center justify-center py-2 px-2 border-b border-gray-800/50 shrink-0 bg-[#0A162C]">
       <img
         src="/image/logo.png"
         alt="综合能碳Logo"
         class="object-contain"
-        style="width: 160px; height: 35px"
+        style="width: 160px; height: 33px"
       />
     </div>
 
     <!-- 菜单列表：只显示当前激活菜单的子菜单 -->
-    <nav v-if="currentSubMenu.length > 0" class="flex-1 overflow-y-auto py-4 px-3">
+    <nav v-if="currentSubMenu.length > 0" class="flex-1 overflow-y-auto py-4 px-3 bg-[#0A162C]">
       <div
         v-for="item in currentSubMenu"
         :key="item.route"

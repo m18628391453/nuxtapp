@@ -1,36 +1,47 @@
 <template>
-    <header class="relative flex items-center justify-between h-16 px-6 bg-transparent text-white overflow-hidden">
-        <!-- 左侧：Logo区域 -->
+    <header class="relative flex items-center justify-between px-6 text-white transition-all duration-300"
+        :class="layoutMode === 'fullscreen' ? 'h-16 overflow-hidden bg-transparent' : 'h-13 bg-[#0A162C] border-b border-gray-800/50'">
+        
         <div class="flex items-center gap-4 mt-1 ml-1 mr-7">
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
-                style="width: 180px; height: 45px;" />
+                :style="`${layoutMode !== 'fullscreen' ? 'width: 190px; opacity:0;': 'width: 170px;' } height: 45px;`" />
+        </div>
+        <div v-if="layoutMode !== 'fullscreen'" class="flex items-center gap-4 mr-4">
+            <button class="text-gray-300 hover:text-[#32AFFF] cursor-pointer transition-colors duration-200" @click="emit('toggle-sidebar')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                </svg>
+            </button>
         </div>
 
-        <!-- 菜单+操作区整体容器：保留原有样式逻辑 -->
-        <div class="relative flex items-center justify-between h-full flex-1" :class="layoutMode === 'fullscreen' ? 'ml-[120px]' : 'ml-4'">
-            <!-- 底部贯穿下划线 -->
-            <div class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
+        <div class="relative flex items-center justify-between h-full flex-1" :class="layoutMode === 'fullscreen' ? 'ml-[134px]' : 'ml-4 bg-[#0A162C]'">
             
-            <!-- 中间：导航菜单 - 保留所有原有逻辑 -->
-            <nav class="flex items-center h-full space-x-1 z-10 -mt-3">
+            <div v-if="layoutMode === 'fullscreen'" class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
+            
+            <nav v-if="layoutMode === 'fullscreen'" class="flex items-center h-full space-x-1 z-10 -mt-3">
                 <div v-for="(item, idx) in menuList" :key="item.route"
-                    class="relative flex items-center h-4/5 m-auto cursor-pointer"@click="handleMenuClick(item, idx)">
+                    class="relative flex items-center h-4/5 m-auto cursor-pointer" @click="handleMenuClick(item, idx)">
                     <a href="javascript:void(0)"
                         class="px-4 text-[15px] font-medium italic z-10 relative cursor-pointer font-['PingFang_SC','Microsoft_YaHei_UI',sans-serif] transition-colors duration-200 flex items-center gap-2"
                         :class="activeIndex === idx ? 'text-[#32AFFF]' : 'text-gray-100 hover:text-[#32AFFF]/95'"  style="text-align: center;" >
-                        <!-- 侧边模式显示图标，全屏只显示文字：保留原有逻辑 -->
-                        <component v-if="layoutMode === 'sidebar'" :is="menuIconMap[item.icon]" class="w-4 h-4 shrink-0" />
                         {{ item.name }}
                     </a>
-                    <!-- 选中项背景微光效果：保留原有样式 -->
                     <div v-if="activeIndex === idx"
                         :class="`absolute min-w-[88px] inset-0 ${idx == 0 ? 'left-[-15%]' : 'left-[0%]' }  w-14/5 h-full bg-gradient-to-r from-transparent via-[#318DC8]/30 to-transparent cursor-pointer`" />
                 </div>
             </nav>
 
-            <!-- 右侧：操作区与个人信息 - 保留所有原有样式/功能 -->
-            <div class="flex items-center gap-6 z-10 -mt-3 -ml-1">
-                <!-- 搜索按钮 -->
+            <nav v-else class="flex items-center h-full space-x-2 z-10">
+                <div v-for="(item, idx) in menuList" :key="item.route"
+                    class="flex items-center h-[34px] px-3 cursor-pointer transition-all duration-300 rounded-md"
+                    :class="activeIndex === idx ? 'bg-[#32AFFF] text-white shadow-sm' : 'text-gray-300 hover:text-white hover:bg-white/10'"
+                    @click="handleMenuClick(item, idx)">
+                    <component :is="menuIconMap[item.icon]" class="w-[18px] h-[18px] mr-1.5 shrink-0" />
+                    <span class="text-[14px] font-medium tracking-wide">{{ item.name }}</span>
+                </div>
+            </nav>
+
+            <div class="flex items-center gap-6 z-10" :class="layoutMode === 'fullscreen' ? '-mt-3 -ml-1' : ''">
                 <button class="text-gray-300 hover:text-gray-100 cursor-pointer transition-colors duration-200"
                     @click="handleSearch">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,17 +49,14 @@
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </button>
-                <!-- 全屏按钮 -->
                 <button class="text-gray-300 hover:text-gray-100 cursor-pointer transition-colors duration-200"
                     @click="toggleFullscreen">
-                    <!-- 未全屏：全屏图标 -->
                     <svg v-if="!isFullscreen" class="w-4 h-4 icon" fill="#D1D5DB" stroke="currentColor"
                         viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5516">
                         <path
                             d="M629.557 391.972c17.329 17.32 47.028 17.32 66.815 0l168.302-165.814v133.637c0 19.806 14.85 34.647 34.637 34.647h24.743c19.806 0 34.657-12.372 34.657-29.692V119.733h-2.479l2.479-17.318c0-9.904-2.479-17.33-7.436-24.752-4.936-4.948-14.848-9.895-24.743-9.895h-17.327L664.211 65.29c-19.805 0-34.654 17.329-34.654 34.646v24.752c2.478 22.274 19.789 34.646 39.593 34.646h128.69L632.036 325.149c-22.283 17.319-22.283 47.026-2.478 66.823zM394.44 629.557c-17.31-17.327-47.009-17.327-66.815 0l-168.3 165.807V664.195c0-19.787-14.833-34.638-34.638-34.638h-24.76c-19.788 0-34.639 12.372-34.639 29.699v242.533h2.478l-2.478 17.327c0 9.894 2.478 17.31 7.416 24.744 4.956 4.956 14.868 9.894 24.761 9.894h17.328l244.993 2.478c19.823 0 34.655-17.328 34.655-34.638v-24.76c-2.478-22.266-19.788-34.638-39.593-34.638H226.16l168.283-165.824c17.327-17.327 17.327-47.027-0.001-66.815z m561.79 274.709v-242.55c0-19.787-17.329-29.68-34.639-29.68h-24.759c-19.788 0-34.639 17.31-34.639 34.638v131.168l-168.3-165.806c-17.309-17.329-47.01-17.329-66.816 0-17.326 17.31-17.326 47.009 0 66.814l168.284 165.806h-128.69c-19.787 0-37.116 12.388-39.594 34.654v24.745c0 19.805 17.33 34.654 34.64 34.654l240.071-2.478h17.329c9.893 0 17.31-2.478 24.743-9.894 4.955-4.956 7.415-14.85 7.415-24.744l4.955-17.327c-2.478 0 0 0 0 0zM228.636 159.335h128.69c19.806 0 37.116-12.373 39.593-34.646V99.936c0-19.797-17.309-34.646-34.654-34.646l-244.993 2.478H99.927c-9.876 0-17.31 2.478-24.743 9.895-4.939 4.956-7.416 14.849-7.416 24.752l2.477 17.318h-2.477v245.018c0 19.797 14.85 29.692 34.638 29.692h24.743c19.823 0 34.655-14.841 34.655-34.646v-133.64l168.283 165.815c17.345 17.32 47.045 17.32 66.832 0 17.33-17.327 17.33-47.026 0-66.823L228.636 159.335z m0 0"
                             p-id="5517"></path>
                     </svg>
-                    <!-- 全屏：退出全屏图标 -->
                     <svg v-else class="w-4 h-4 icon" fill="#D1D5DB" stroke="currentColor" viewBox="0 0 1024 1024"
                         version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1067">
                         <path
@@ -56,7 +64,6 @@
                             p-id="1068"></path>
                     </svg>
                 </button>
-                <!-- 用户信息：保留原有样式 -->
                 <div class="flex items-center gap-2 cursor-pointer group">
                     <div
                         class="w-6 h-6 rounded-full overflow-hidden border border-blue-400 group-hover:border-blue-400 transition-colors duration-200">
@@ -67,7 +74,6 @@
                     </div>
                     <span class="text-sm text-gray-200 group-hover:text-white transition-colors duration-200">管理员</span>
                 </div>
-                <!-- 设置按钮 -->
                 <button class="text-gray-300 hover:text-gray-100 cursor-pointer transition-colors duration-200"
                     @click="handleSettings">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 21 21">
@@ -79,7 +85,7 @@
                 </button>
             </div>
         </div>
-        <!-- 菜单搜索弹窗：保留原有组件 -->
+        
         <MSearchModal
           v-model:visible="showSearchModal"
           :menu-list="menuSearchList"
@@ -100,7 +106,7 @@ const layoutActions = inject('layoutActions') as any
 const { layoutMode, menuList, activeMenu } = layoutState
 const { updateActiveMenu } = layoutActions
 
-// 保留原有图标映射表
+// 保持原有映射表
 const menuIconMap: Record<string, any> = {
   Home,
   Zap,
@@ -114,29 +120,25 @@ const menuIconMap: Record<string, any> = {
   Shield
 }
 
-// 保留原有事件定义
+// 定义抛出的事件，奶奶加了一个 toggle-sidebar 用来适配边侧栏控制
 const emit = defineEmits<{
   (e: 'menu-change', payload: SubMenuItem): void
   (e: 'search'): void
   (e: 'settings'): void
+  (e: 'toggle-sidebar'): void
 }>()
 
-// 保留原有激活索引逻辑
 const activeIndex = ref(
   menuList.value.findIndex((item: SubMenuItem) => item.route === activeMenu.value.route) || 0
 )
 
-// 保留原有监听逻辑
 watch(activeMenu, (newVal) => {
   activeIndex.value = menuList.value.findIndex((item: SubMenuItem) => item.route === newVal.route) || 0
 }, { immediate: true })
 
-// 保留原有全屏状态
 const isFullscreen = ref(false)
-// 保留原有搜索弹窗状态
 const showSearchModal = ref(false)
 
-// 保留原有搜索菜单列表计算属性
 const menuSearchList = computed(() => {
   return menuList.value.map((item: SubMenuItem) => ({
     name: item.name,
@@ -145,11 +147,10 @@ const menuSearchList = computed(() => {
   }))
 })
 
-// 保留原有菜单点击逻辑
 const handleMenuClick = (item: MenuItem, index: number) => {
     if (activeIndex.value === index) return
     activeIndex.value = index
-    updateActiveMenu(item) // 替换为注入的方法
+    updateActiveMenu(item) 
     emit('menu-change', {
         name: item.name,
         index: index,
@@ -157,28 +158,24 @@ const handleMenuClick = (item: MenuItem, index: number) => {
     })
 }
 
-// 保留原有搜索逻辑
 const handleSearch = () => {
     emit('search')
     showSearchModal.value = true
 }
 
-// 保留原有搜索弹窗选中逻辑
 const handleSearchMenuSelect = (menuItem: SubMenuItem) => {
   activeIndex.value = menuItem.index
   const targetMenu = menuList.value.find((item: SubMenuItem) => item.route === menuItem.route)
   if (targetMenu) {
-    updateActiveMenu(targetMenu) // 替换为注入的方法
+    updateActiveMenu(targetMenu)
     emit('menu-change', menuItem)
   }
 }
 
-// 保留原有全屏状态更新逻辑
 const updateFullscreenStatus = () => {
     isFullscreen.value = !!document.fullscreenElement
 }
 
-// 保留原有全屏切换逻辑
 const toggleFullscreen = async () => {
     try {
         if (!document.fullscreenElement) {
@@ -192,12 +189,10 @@ const toggleFullscreen = async () => {
     }
 }
 
-// 保留原有设置按钮逻辑
 const handleSettings = () => {
     emit('settings')
 }
 
-// 保留原有生命周期逻辑
 onMounted(() => {
     updateFullscreenStatus()
     document.addEventListener('fullscreenchange', updateFullscreenStatus)
@@ -209,7 +204,8 @@ onUnmounted(() => {
 
 <style scoped>
 a,
-button {
+button,
+div {
     transition: all 0.2s ease;
 }
 svg {
