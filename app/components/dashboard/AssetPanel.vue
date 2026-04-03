@@ -38,14 +38,14 @@
           <StatusBadge :text="energyStorageData.status" />
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <div class="bg-gradient-to-r from-[#076193a0] to-transparent px-4 py-2 flex flex-col gap-1">
+          <div class="bg-gradient-to-r from-[#07619340] to-transparent px-4 py-2 flex flex-col gap-1">
             <span class="text-[11px] font-medium text-gray-200">{{ energyStorageData.charge.label }}</span>
             <div class="flex items-baseline gap-1">
               <span class="text-[14px] font-bold text-[#32AFFF] font-mono">{{ energyStorageData.charge.value }}</span>
               <span class="text-[11px] text-gray-300">{{ energyStorageData.charge.unit }}</span>
             </div>
           </div>
-          <div class="bg-gradient-to-r from-[#076193a0] to-transparent px-4 py-2 flex flex-col gap-1">
+          <div class="bg-gradient-to-r from-[#07619340] to-transparent px-4 py-2 flex flex-col gap-1">
             <span class="text-[11px] font-medium text-gray-200">{{ energyStorageData.discharge.label }}</span>
             <div class="flex items-baseline gap-1">
               <span class="text-[14px] font-bold text-[#32AFFF] font-mono">{{ energyStorageData.discharge.value }}</span>
