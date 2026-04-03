@@ -52,7 +52,7 @@
     <!-- 右键菜单 - 完整功能版 -->
     <div
       v-if="contextMenu.show"
-      class="fixed z-50 w-48 bg-[#0F172A] border border-gray-700 rounded shadow-lg text-sm overflow-hidden"
+      class="fixed z-50 w-40 bg-[#0F172A] border border-gray-700 rounded shadow-lg text-sm overflow-hidden"
       :style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y - 15 }px` }"
     >
       <!-- 关闭 -->
