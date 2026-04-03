@@ -6,7 +6,7 @@
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
                 :style="`${layoutMode !== 'fullscreen' ? 'width: 190px; opacity:0;': 'width: 170px;' } height: 45px;`" />
         </div>
-        <div v-if="layoutMode !== 'fullscreen'" class="flex items-center gap-4 mt-1 reduce" :class="sidebarCollapsed ? 'ml-0' : 'ml-0 mr-4'" style="height: 50px;">
+        <div v-if="layoutMode !== 'fullscreen'" class="flex items-center gap-4 reduce" :class="sidebarCollapsed ? 'ml-0' : 'ml-0 mr-4'" style="height: 50px;">
             <!-- 收缩/拉伸按钮：根据sidebarCollapsed切换图标 -->
             <button class="text-gray-300 hover:text-[#32AFFF] cursor-pointer transition-colors duration-200" @click="handleToggleSidebar">
                 <svg v-if="!sidebarCollapsed" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4756" width="200" height="200">
