@@ -16,9 +16,8 @@
               
               <main 
                   class="flex-1 h-[calc(100vh-56px-40px)] overflow-hidden transition-all duration-300"
-                  :class="layoutMode === 'sidebar' && !sidebarCollapsed ? 'ml-60' : 'ml-0'"
+                  :class="layoutMode === 'sidebar' && !sidebarCollapsed ? 'ml-[210px]' : 'ml-0'"
               >
-                  <!-- 添加 MenuTabs 组件，放在 Header 下方 -->
                   <MenuTabs />
                   <slot />
               </main>
@@ -51,18 +50,18 @@ const menuList = ref([
   { 
     name: '首页', route: '/', icon: 'Home', index: 0,
     subMenu: [
-      { name: '综合看板', route: '/dashboard/overview', index: 0 },
-      { name: '能源看板', route: '/dashboard/energy', index: 1 }
+      { name: '综合看板', route: '/dashboard/overview', icon: 'TvMinimal', index: 0 },
+      { name: '能源看板', route: '/dashboard/energy', icon: 'TvMinimal', index: 1 }
     ]
   },
   { name: '能源管理', route: '/energy', icon: 'Zap', index: 1, 
     subMenu: [
-      { name: '能源监测', route: '/energy/monitor', index: 0 },
+      { name: '能源监测', route: '/energy/monitor', icon: 'Monitor', index: 0 },
     ] 
   },
   { name: '储能管理', route: '/storage', icon: 'Battery', index: 2, 
     subMenu: [
-      { name: '储能监测', route: '/storage/monitor', index: 0 },
+      { name: '储能监测', route: '/storage/monitor', icon: 'Monitor', index: 0 },
     ]
   },
   { name: '负荷管理', route: '/load', icon: 'Activity', index: 3, subMenu: [] },
