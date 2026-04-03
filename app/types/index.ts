@@ -6,12 +6,13 @@ export interface SubMenuItem {
   name: string
   route: string
   index: number
+  icon?: string
 }
 
 export interface MenuItem {
   name: string
   route: string
-  icon: string
   index: number
+  icon?: string
   subMenu?: SubMenuItem[]
 }
