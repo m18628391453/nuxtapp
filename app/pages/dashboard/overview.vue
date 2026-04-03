@@ -14,14 +14,14 @@
       </div>
   
       <!-- 中间 -->
-      <div class="flex-1 flex flex-col gap-4 h-full min-w-[500px]">
+      <div class="flex-1 flex flex-col gap-4 h-full min-w-[600px]">
         <CenterMetrics />
   
         <!-- 3D 厂房视图区域 -->
         <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg  overflow-hidden z-1000"
                 :style="{ 
                 backgroundImage: `url('/image/main.png')`, 
-                backgroundSize: layoutMode === 'sidebar' ? '120%': '105%',  // 改为 auto 保持图片原始尺寸
+                backgroundSize: layoutMode === 'sidebar' ? '110%': '105%',  // 改为 auto 保持图片原始尺寸
                 backgroundPosition: 'center center',
                 backgroundRepeat: 'no-repeat'  // 垂直方向重复
             }"
