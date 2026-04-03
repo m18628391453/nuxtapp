@@ -2,17 +2,28 @@
     <header class="relative flex items-center justify-between px-6 text-white transition-all duration-300"
         :class="layoutMode === 'fullscreen' ? 'h-16 overflow-hidden bg-transparent' : 'h-13 bg-[#0A162C] border-b border-gray-800/50'">
         
-        <div class="flex items-center gap-4 mt-1 ml-1 mr-7">
+        <div v-if="!sidebarCollapsed"  class="flex items-center gap-4 mt-1 ml-1 mr-7">
             <img src="/image/logo.png" alt="综合能碳Logo" class="object-contain shrink-0"
                 :style="`${layoutMode !== 'fullscreen' ? 'width: 190px; opacity:0;': 'width: 170px;' } height: 45px;`" />
         </div>
-        <div v-if="layoutMode !== 'fullscreen'" class="flex items-center gap-4 mr-4 toggle-icon">
-            <button class="text-gray-300 hover:text-[#32AFFF] cursor-pointer transition-colors duration-200" @click="emit('toggle-sidebar')">
-                <svg class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4756" width="200" height="200"><path d="M853.333333 810.666667a42.666667 42.666667 0 0 1 0 85.333333H170.666667a42.666667 42.666667 0 0 1 0-85.333333z m-37.930666-213.333334c20.949333 0 37.930667 19.114667 37.930666 42.666667s-16.981333 42.666667-37.930666 42.666667H549.973333c-20.949333 0-37.930667-19.114667-37.930666-42.666667s16.981333-42.666667 37.930666-42.666667zM362.666667 371.498667a21.333333 21.333333 0 0 1 21.333333 21.333333v238.336a21.333333 21.333333 0 0 1-36.437333 15.061333l-161.792-119.125333a21.333333 21.333333 0 0 1 0-30.208l161.792-119.125333a21.333333 21.333333 0 0 1 15.104-6.272zM815.402667 341.333333c20.949333 0 37.930667 19.114667 37.930666 42.666667s-16.981333 42.666667-37.930666 42.666667H549.973333C528.981333 426.666667 512 407.552 512 384s16.981333-42.666667 37.930667-42.666667zM853.333333 128a42.666667 42.666667 0 0 1 0 85.333333H170.666667a42.666667 42.666667 0 1 1 0-85.333333z" fill="#fefefe" fill-opacity=".87" p-id="4757"></path></svg>
+        <div v-if="layoutMode !== 'fullscreen'" class="flex items-center gap-4 mt-1 reduce" :class="sidebarCollapsed ? 'ml-0' : 'ml-0 mr-4'" style="height: 50px;">
+            <!-- 收缩/拉伸按钮：根据sidebarCollapsed切换图标 -->
+            <button class="text-gray-300 hover:text-[#32AFFF] cursor-pointer transition-colors duration-200" @click="handleToggleSidebar">
+                <svg v-if="!sidebarCollapsed" class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4756" width="200" height="200">
+                    <path d="M853.333333 810.666667a42.666667 42.666667 0 0 1 0 85.333333H170.666667a42.666667 42.666667 0 0 1 0-85.333333z m-37.930666-213.333334c20.949333 0 37.930667 19.114667 37.930666 42.666667s-16.981333 42.666667-37.930666 42.666667H549.973333c-20.949333 0-37.930667-19.114667-37.930666-42.666667s16.981333-42.666667 37.930666-42.666667zM362.666667 371.498667a21.333333 21.333333 0 0 1 21.333333 21.333333v238.336a21.333333 21.333333 0 0 1-36.437333 15.061333l-161.792-119.125333a21.333333 21.333333 0 0 1 0-30.208l161.792-119.125333a21.333333 21.333333 0 0 1 15.104-6.272zM815.402667 341.333333c20.949333 0 37.930667 19.114667 37.930666 42.666667s-16.981333 42.666667-37.930666 42.666667H549.973333C528.981333 426.666667 512 407.552 512 384s16.981333-42.666667 37.930667-42.666667zM853.333333 128a42.666667 42.666667 0 0 1 0 85.333333H170.666667a42.666667 42.666667 0 1 1 0-85.333333z" fill="#fefefe" fill-opacity=".87" p-id="4757"></path>
+                </svg>
+                <!-- 拉伸按钮图标 -->
+                <svg v-else class="icon w-4 h-4" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5723">
+                    <path d="M170.666667 810.666667a42.666667 42.666667 0 0 0-4.992 85.034666L170.666667 896h682.666666a42.666667 42.666667 0 0 0 4.992-85.034667L853.333333 810.666667H170.666667z m37.930666-213.333334C187.648 597.333333 170.666667 616.448 170.666667 640c0 21.888 14.634667 39.936 33.493333 42.368L208.64 682.666667h265.472c20.949333 0 37.930667-19.114667 37.930667-42.666667 0-21.888-14.634667-39.936-33.493334-42.368L474.026667 597.333333H208.64zM661.333333 371.498667a21.333333 21.333333 0 0 0-20.992 17.493333l-0.341333 3.84v238.336a21.333333 21.333333 0 0 0 33.450667 17.536l2.986666-2.474667 161.792-119.125333a21.333333 21.333333 0 0 0 2.474667-27.221333l-2.474667-2.986667-161.792-119.125333a21.333333 21.333333 0 0 0-15.104-6.272zM208.597333 341.333333C187.648 341.333333 170.666667 360.448 170.666667 384c0 21.888 14.634667 39.936 33.493333 42.368L208.64 426.666667h265.472c20.949333 0 37.930667-19.114667 37.930667-42.666667 0-21.888-14.634667-39.936-33.493334-42.368L474.026667 341.333333H208.64zM170.666667 128a42.666667 42.666667 0 0 0-4.992 85.034667L170.666667 213.333333h682.666666a42.666667 42.666667 0 0 0 4.992-85.034666L853.333333 128H170.666667z" fill="#fefefe" fill-opacity=".87" p-id="5724"></path>
+                </svg>
             </button>
         </div>
 
-        <div class="relative flex items-center justify-between h-full flex-1" :class="layoutMode === 'fullscreen' ? 'ml-[134px]' : 'ml-4 bg-[#0A162C]'">
+        <div class="relative flex items-center justify-between h-full flex-1" 
+             :class="[
+                 layoutMode === 'fullscreen' ? 'ml-[134px]' : 'ml-4 bg-[#0A162C]',
+                 layoutMode !== 'fullscreen' && sidebarCollapsed ? 'ml-0 !pl-2' : ''
+             ]">
             
             <div v-if="layoutMode === 'fullscreen'" class="absolute bottom-3 -left-3 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
             
@@ -101,8 +112,8 @@ import type { MenuItem, SubMenuItem } from '~/types/index';
 // 从父组件注入状态和方法
 const layoutState = inject('layoutState') as any
 const layoutActions = inject('layoutActions') as any
-const { layoutMode, menuList, activeMenu } = layoutState
-const { updateActiveMenu } = layoutActions
+const { layoutMode, menuList, activeMenu, sidebarCollapsed } = layoutState
+const { updateActiveMenu, toggleSidebar } = layoutActions
 
 // 保持原有映射表
 const menuIconMap: Record<string, any> = {
@@ -154,6 +165,12 @@ const handleMenuClick = (item: MenuItem, index: number) => {
         index: index,
         route: item.route
     })
+}
+
+// 新增：处理侧边栏切换
+const handleToggleSidebar = () => {
+  toggleSidebar()
+  emit('toggle-sidebar')
 }
 
 const handleSearch = () => {
@@ -211,5 +228,9 @@ svg {
 }
 button:hover svg {
     transform: scale(1.1);
+}
+/* 新增：保证收缩后Header内容贴左 */
+:deep(.reduce) {
+    transition: margin-left 0.3s ease;
 }
 </style>
