@@ -99,8 +99,11 @@ const loadTabsFromSession = () => {
     tabsList.value = savedTabs
     activeTabRoute.value = savedActiveRoute
   } else {
-    // 初始化默认 Tab
-    const defaultTab = { name: '综合看板', route: '/dashboard/overview', index: 0 }
+    // 初始化默认 Tab（取第一个菜单的第一个子菜单）
+    const defaultMenu = menuList.value[0]
+    const defaultTab = defaultMenu.subMenu && defaultMenu.subMenu.length > 0 
+      ? { name: defaultMenu.subMenu[0].name, route: defaultMenu.subMenu[0].route, index: defaultMenu.subMenu[0].index }
+      : { name: defaultMenu.name, route: defaultMenu.route, index: defaultMenu.index }
     tabsList.value = [defaultTab]
     activeTabRoute.value = defaultTab.route
   }
@@ -124,14 +127,15 @@ const removeTab = (route: string) => {
   if (index === -1) return
   
   // 如果移除的是首页，不允许移除
-  if (route === '/dashboard/overview') return
+  if (route === '/dashboard/overview' || route === '/') return
   
   const isRemovingActive = activeTabRoute.value === route
   tabsList.value.splice(index, 1)
   
   // 如果移除的是当前激活的 Tab，需要切换到相邻的 Tab
   if (isRemovingActive && tabsList.value.length > 0) {
-    const newActiveRoute = index < tabsList.value.length ? tabsList.value[index].route : tabsList.value[tabsList.value.length - 1].route
+    const newIndex = index < tabsList.value.length ? index : tabsList.value.length - 1
+    const newActiveRoute = tabsList.value[newIndex].route
     activeTabRoute.value = newActiveRoute
     router.push(newActiveRoute)
   }
@@ -139,21 +143,31 @@ const removeTab = (route: string) => {
   saveTabsToSession()
 }
 
+// 关闭指定Tab
+const closeTab = (route: string) => {
+  removeTab(route)
+  // 关闭后隐藏右键菜单
+  contextMenu.value.show = false
+}
+
 // 关闭其他 Tabs
 const closeOtherTabs = (route: string) => {
-  const targetTab = tabsList.value.find(t => t.route === route)
-  if (targetTab && route !== '/dashboard/overview') {
-    tabsList.value = [targetTab]
-  } else {
-    // 如果是首页，保留首页
-    const homeTab = tabsList.value.find(t => t.route === '/dashboard/overview')
-    if (homeTab) {
-      tabsList.value = [homeTab]
-    }
+  // 保留当前Tab和首页
+  const homeTab = tabsList.value.find(t => t.route === '/dashboard/overview')
+  const currentTab = tabsList.value.find(t => t.route === route)
+  
+  if (homeTab && currentTab) {
+    tabsList.value = homeTab.route === currentTab.route ? [homeTab] : [homeTab, currentTab]
+  } else if (homeTab) {
+    tabsList.value = [homeTab]
+  } else if (currentTab) {
+    tabsList.value = [currentTab]
   }
+  
   activeTabRoute.value = route
   router.push(route)
   saveTabsToSession()
+  contextMenu.value.show = false
 }
 
 // 关闭所有 Tabs（保留首页）
@@ -164,7 +178,10 @@ const closeAllTabs = () => {
     activeTabRoute.value = homeTab.route
     router.push(homeTab.route)
   } else {
-    const defaultTab = { name: '综合看板', route: '/dashboard/overview', index: 0 }
+    const defaultMenu = menuList.value[0]
+    const defaultTab = defaultMenu.subMenu && defaultMenu.subMenu.length > 0 
+      ? { name: defaultMenu.subMenu[0].name, route: defaultMenu.subMenu[0].route, index: defaultMenu.subMenu[0].index }
+      : { name: defaultMenu.name, route: defaultMenu.route, index: defaultMenu.index }
     tabsList.value = [defaultTab]
     activeTabRoute.value = defaultTab.route
     router.push(defaultTab.route)
@@ -182,6 +199,7 @@ const goToTab = (route: string) => {
 
 // 右键菜单
 const openContextMenu = (e: MouseEvent, route: string) => {
+  e.preventDefault()
   contextMenu.value = {
     show: true,
     x: e.clientX,
@@ -195,7 +213,7 @@ const handleClickOutside = () => {
   contextMenu.value.show = false
 }
 
-// 监听路由变化，添加新 Tab
+// 监听路由变化，添加新 Tab（只有路由变了才加，Header点顶级菜单不触发路由变）
 watch(() => route.path, (newPath) => {
   // 初始化阶段，只恢复状态，不新增Tab
   if (isInitializing.value) {
@@ -233,18 +251,7 @@ watch(() => route.path, (newPath) => {
   }
 }, { immediate: true })
 
-// 监听 activeMenu 变化，处理一级菜单点击
-watch(() => activeMenu.value, (newMenu) => {
-  // 初始化阶段不处理
-  if (isInitializing.value) return
-  
-  if (newMenu && newMenu.route) {
-    // 如果一级菜单有子菜单，不添加 Tab（由子菜单路由变化触发）
-    if (!newMenu.subMenu || newMenu.subMenu.length === 0) {
-      addTab({ name: newMenu.name, route: newMenu.route, index: newMenu.index })
-    }
-  }
-})
+// 【核心修改】移除了 watch(activeMenu) 的新增Tab逻辑，只保留路由变化触发新增Tab
 
 onMounted(() => {
   // 先加载Session缓存
