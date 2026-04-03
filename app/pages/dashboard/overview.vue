@@ -5,10 +5,10 @@
       <div class="flex flex-col h-full max-h-[100%] shrink-0"
           :class="layoutMode === 'sidebar' ? 'min-w-[325px] max-w-[325px] f' : 'min-w-[345px] max-w-[345px]'" 
       >
-        <div class="flex-9 min-h-0">
+        <div class="flex-[9] min-h-0">
           <AssetPanel />
         </div>
-        <div class="flex-5 min-h-0">
+        <div class="flex-[5] min-h-0">
           <PowerPie />
         </div>
       </div>
@@ -40,8 +40,8 @@
       </div>
   
       <!-- 右侧 -->
-      <div class="flex flex-col h-full shrink-0"
-          :class="layoutMode === 'sidebar' ? 'min-w-[330px] max-w-[330px] f' : 'min-w-[350px] max-w-[350px]'" 
+      <div class="flex flex-col h-full  shrink-0"
+          :class="layoutMode === 'sidebar' ? 'min-w-[330px] max-w-[330px] max-h-[99%]' : 'min-w-[350px] max-w-[350px] max-h-[100%]'" 
       >
         <!-- 系统运行模式 -->
         <div class="bg-[#0A162C]/10 rounded-lg h-[90px] px-4 justify-between shrink-0 relative overflow-hidden" style="padding-top: 0.5rem;">
@@ -56,15 +56,15 @@
           </div>
         </div>
   
-        <div class="flex-11">
+        <div class="flex-[8]">
           <RevenueChart />
         </div>
   
-        <div class="flex-11 -mt-2">
+        <div class="flex-[10] -mt-2">
           <ForecastChart title="发电预测" />
         </div>
   
-        <div class="flex-11 -mt-2">
+        <div class="flex-[10] -mt-2">
           <ForecastChart title="负荷预测" />
         </div>
       </div>
@@ -72,8 +72,15 @@
   </template>
   
   <script setup>
+  import AssetPanel from '@/components/dashboard/AssetPanel.vue' 
+  import PowerPie from '@/components/dashboard/PowerPie.vue' 
+  import CenterMetrics from '@/components/dashboard/CenterMetrics.vue' 
+  import BalanceChart from '@/components/dashboard/BalanceChart.vue' 
+  import RevenueChart from '@/components/dashboard/RevenueChart.vue' 
+  import ForecastChart from '@/components/dashboard/ForecastChart.vue' 
+
   definePageMeta({
-    layout: 'dashboard'
+    layout: 'layout'
   })
 
   // 从父组件注入状态和方法
