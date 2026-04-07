@@ -20,9 +20,9 @@
                   :class="layoutMode === 'sidebar' && !sidebarCollapsed ? 'ml-[210px]' : 'ml-0'"
                   :style=" layoutMode !== 'fullscreen' ? { 
                       backgroundImage: `url('/image/background.png')`, 
-                      backgroundSize: 'auto',  
-                      backgroundPosition: 'center 0px',
-                      backgroundRepeat: 'repeat-y',
+                      backgroundSize: '100%',  
+                      backgroundPosition: 'center -60px',
+                      backgroundRepeat: 'repeat',
                       opacity: 0.99 
                   } : null"
               >
