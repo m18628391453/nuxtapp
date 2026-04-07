@@ -68,7 +68,7 @@ const menuList = ref([
     ]
   },
   { 
-    name: '能源管理', route: '', icon: 'Zap', index: 1,
+    name: '能源管理', route: '/energy/pvoverview', icon: 'Zap', index: 1,
     subMenu: [
       { 
         name: '光伏监测', route: '/energy/pv', icon: 'Sun', index: 0,
