@@ -8,10 +8,10 @@
         <div class="flex-[4] min-h-0">
           <StationIntro />
         </div>
-        <div class="flex-[6] min-h-0">
+        <div class="flex-[4.5] min-h-0">
           <GridPointData />
         </div>
-        <div class="flex-[3] min-h-0">
+        <div class="flex-[4.25] min-h-0">
           <SocialContribution />
         </div>
       </div>
@@ -84,6 +84,5 @@
     { title: '日发电量(万kWh)', value: '26,8', change: '↓11.4%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
     { title: '最大出力(MW)', value: '12,380', change: '↑1.6%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
     { title: '小时数(小时)', value: '4,156', change: '↓11.4%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
-    { title: '年累计发电量(万kWh)', value: '28,602', change: '↑8.2%', vs: 'vs 同期', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
   ];
   </script>
