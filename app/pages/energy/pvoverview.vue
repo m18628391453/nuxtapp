@@ -1,29 +1,33 @@
 <template>
-    <div class="flex w-full h-full  gap-4 box-border overflow-hidden bg-transparent text-white font-sans "
+    <div class="flex w-full h-full gap-4 box-border overflow-hidden bg-transparent text-white font-sans "
         :class="layoutMode === 'sidebar' ? '-mt-2 py-3' : 'p-4'">
-      <!-- 左侧 -->
-      <div class="flex flex-col h-full max-h-[100%] shrink-0"
-          :class="layoutMode === 'sidebar' ? 'min-w-[325px] max-w-[325px] f' : 'min-w-[345px] max-w-[345px]'" 
+      <!-- 左侧栏：电站简介、并网点数据、社会贡献 -->
+      <div class="flex flex-col h-full max-h-[100%] shrink-0 gap-4"
+          :class="layoutMode === 'sidebar' ? 'min-w-[325px] max-w-[325px]' : 'min-w-[345px] max-w-[345px]'" 
       >
-        <div class="flex-[9] min-h-0">
-          <AssetPanel />
+        <div class="flex-[4] min-h-0">
+          <StationIntro />
         </div>
-        <div class="flex-[5] min-h-0">
-          <PowerPie />
+        <div class="flex-[6] min-h-0">
+          <GridPointData />
+        </div>
+        <div class="flex-[3] min-h-0">
+          <SocialContribution />
         </div>
       </div>
   
-      <!-- 中间 -->
+      <!-- 中间栏：核心指标、3D光伏视图、功率辐射曲线 -->
       <div class="flex-1 flex flex-col gap-4 h-full min-w-[600px]">
-        <CenterMetrics />
+        <!-- 顶部核心指标组件，复用已封装的CenterMetrics，传入光伏专属指标 -->
+        <CenterMetrics :metrics-data="pvMetrics" />
   
-        <!-- 3D 厂房视图区域 -->
-        <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg  overflow-hidden z-1000"
+        <!-- 3D 光伏电站视图区域 -->
+        <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg overflow-hidden z-10"
                 :style="{ 
-                backgroundImage: `url('/image/main.png')`, 
-                backgroundSize: layoutMode === 'sidebar' ? '110%': '105%',  // 改为 auto 保持图片原始尺寸
+                backgroundImage: `url('/image/pvmain.png')`, 
+                backgroundSize: layoutMode === 'sidebar' ? '110%': '105%',
                 backgroundPosition: 'center center',
-                backgroundRepeat: 'no-repeat'  // 垂直方向重复
+                backgroundRepeat: 'no-repeat'
             }"
         >
           <div class="absolute w-full h-full pointer-events-none">
@@ -31,59 +35,55 @@
           </div>
         </div>
   
-        <!-- 能源供需平衡分析 -->
+        <!-- 功率和辐射曲线图表 -->
         <div class="flex-[1.5] min-h-0"
             :class="layoutMode === 'sidebar' ? '-mt-3 mb-3' : ''"
         >
-          <BalanceChart />
+          <PowerRadiationChart />
         </div>
       </div>
   
-      <!-- 右侧 -->
-      <div class="flex flex-col h-full  shrink-0"
+      <!-- 右侧栏：发电量统计、逆变器排名、运行状态 -->
+      <div class="flex flex-col h-full shrink-0 gap-4"
           :class="layoutMode === 'sidebar' ? 'min-w-[330px] max-w-[330px] max-h-[99%]' : 'min-w-[350px] max-w-[350px] max-h-[100%]'" 
       >
-        <!-- 系统运行模式 -->
-        <div class="bg-[#0A162C]/10 rounded-lg h-[90px] px-4 justify-between shrink-0 relative overflow-hidden" style="padding-top: 0.5rem;">
-          <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex py-3.5 px-4 relative -ml-1 -mr-4">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
-            <h3 class="text-[14px] font-bold text-white ml-1 leading-none">
-              系统运行模式
-            </h3>
-          </div>
-          <div class="w-full text-center mt-4 z-100">
-            <span class="px-3 py-1 bg-emerald-900/40 text-emerald-400 border border-emerald-500/10 rounded-full text-[13px] font-bold">自动模式</span>
-          </div>
+        <div class="flex-[4] min-h-0">
+          <PowerGenerationStat />
         </div>
-  
-        <div class="flex-[8]">
-          <RevenueChart />
+        <div class="flex-[4] min-h-0">
+          <InverterRank />
         </div>
-  
-        <div class="flex-[10] -mt-2">
-          <ForecastChart title="发电预测" />
-        </div>
-  
-        <div class="flex-[10] -mt-2">
-          <ForecastChart title="负荷预测" />
+        <div class="flex-[4] min-h-0">
+          <InverterStatus />
         </div>
       </div>
     </div>
   </template>
   
   <script setup>
-  import AssetPanel from '@/components/dashboard/AssetPanel.vue' 
-  import PowerPie from '@/components/dashboard/PowerPie.vue' 
   import CenterMetrics from '@/components/dashboard/CenterMetrics.vue' 
-  import BalanceChart from '@/components/dashboard/BalanceChart.vue' 
-  import RevenueChart from '@/components/dashboard/RevenueChart.vue' 
-  import ForecastChart from '@/components/dashboard/ForecastChart.vue' 
+  import StationIntro from '@/components/energy/StationIntro.vue' 
+  import GridPointData from '@/components/energy/GridPointData.vue' 
+  import SocialContribution from '@/components/energy/SocialContribution.vue' 
+  import PowerRadiationChart from '@/components/energy/PowerRadiationChart.vue' 
+  import PowerGenerationStat from '@/components/energy/PowerGenerationStat.vue' 
+  import InverterRank from '@/components/energy/InverterRank.vue' 
+  import InverterStatus from '@/components/energy/InverterStatus.vue' 
 
+  // 页面布局配置，和原有看板保持一致
   definePageMeta({
     layout: 'layout'
   })
-
-  // 从父组件注入状态和方法
+  // 从父组件注入布局状态，兼容sidebar模式
   const layoutState = inject('layoutState');
   const { layoutMode } = layoutState;
+
+  // 光伏页面专属核心指标数据，适配CenterMetrics组件
+  const pvMetrics = [
+    { title: '实时功率(MW)', value: '38,642', change: '↑1.6%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
+    { title: '日发电量(万kWh)', value: '26,8', change: '↓11.4%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
+    { title: '最大出力(MW)', value: '12,380', change: '↑1.6%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
+    { title: '小时数(小时)', value: '4,156', change: '↓11.4%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
+    { title: '年累计发电量(万kWh)', value: '28,602', change: '↑8.2%', vs: 'vs 同期', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
+  ];
   </script>
