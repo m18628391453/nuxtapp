@@ -580,12 +580,19 @@ watch(() => route.path, (newPath) => {
   }
 }, { immediate: true })
 
+const handleAddTabEvent = (event: CustomEvent) => {
+  const { name, route, index } = event.detail
+  addTab({ name, route, index, isFixed: false })
+}
+
 onMounted(() => {
   loadTabsFromSession()
   document.addEventListener('click', handleClickOutside)
+  window.addEventListener('add-tab', handleAddTabEvent as EventListener)
 })
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('add-tab', handleAddTabEvent as EventListener)
 })
 </script>
 <style scoped>

@@ -167,6 +167,8 @@ const handleMenuClick = (item: MenuItem, index: number) => {
     if (activeIndex.value === index) return
     activeIndex.value = index
     updateActiveMenu(item) 
+    // 注意：这里只更新activeMenu，不跳转路由
+    // 让Sidebar更新内容，但不自动跳转
     emit('menu-change', {
         name: item.name,
         index: index,
