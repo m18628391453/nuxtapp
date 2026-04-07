@@ -10,50 +10,55 @@
         paddingTop: '2px',
         opacity: 0.99 
     }: null"
+    @dragover.prevent="handleContainerDragOver"
+    @drop="handleContainerDrop"
   >
-    <div
-      v-for="tab in renderTabsList"
-      :key="tab.route"
-      class="relative h-full flex items-center px-4 cursor-pointer text-sm transition-all duration-200 group"
-      :class="[
-        activeTabRoute === tab.route
-          ? 'tab-active text-white'
-          : 'tab-inactive text-gray-200 hover:text-white'
-      ]"
-      @click="goToTab(tab.route)"
-      @contextmenu.prevent="openContextMenu($event, tab.route)"
-      :draggable="!(tab.route === '/dashboard/overview' || tab.route === '/')"
-      @dragstart="handleDragStart(tab)"
-      @dragover.prevent="handleDragOver($event, tab)"
-      @drop="handleDrop(tab)"
-      @dragend="handleDragEnd"
-    >
-      <!-- 首页显示房子图标，其他显示名称 -->
-      <span v-if="tab.route === '/dashboard/overview' || tab.route === '/'">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-      </span>
-      <span v-else>{{ tab.name }}</span>
-      <!-- 固定标签显示图钉按钮，非固定标签显示关闭按钮（首页不显示） -->
-      <button
-        v-if="tab.route !== '/dashboard/overview' && tab.route !== '/'"
-        @click.stop="tab.isFixed ? toggleFixed(tab.route) : closeTab(tab.route)"
-        class="ml-2 -mr-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#32AFFF1F] hover:text-white transition-all duration-200 opacity-100 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+    <!-- 使用 transition-group 实现列表动画 -->
+    <transition-group name="tab-list" tag="div" class="flex items-center h-full">
+      <div
+        v-for="tab in renderTabsList"
+        :key="tab.route"
+        class="relative h-full flex items-center px-3 mx-1 cursor-pointer text-sm transition-all duration-200 group"
         :class="[
-          activeTabRoute === tab.route ? 'opacity-100 pointer-events-auto' : ''
+          activeTabRoute === tab.route
+            ? 'tab-active text-white'
+            : 'tab-inactive text-gray-200 hover:text-white'
         ]"
+        @click="goToTab(tab.route)"
+        @contextmenu.prevent="openContextMenu($event, tab.route)"
+        :draggable="!(tab.route === '/dashboard/overview' || tab.route === '/')"
+        @dragstart="handleDragStart(tab, $event)"
+        @dragover.prevent="handleDragOver($event, tab)"
+        @drop="handleDrop(tab, $event)"
+        @dragend="handleDragEnd"
       >
-        <!-- 固定标签显示图钉图标 -->
-        <svg v-if="tab.isFixed" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-        </svg>
-        <!-- 非固定标签显示关闭图标 -->
-        <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
+        <!-- 首页显示房子图标，其他显示名称 -->
+        <span v-if="tab.route === '/dashboard/overview' || tab.route === '/'">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+        </span>
+        <span v-else>{{ tab.name }}</span>
+        <!-- 固定标签显示图钉按钮，非固定标签显示关闭按钮（首页不显示） -->
+        <button
+          v-if="tab.route !== '/dashboard/overview' && tab.route !== '/'"
+          @click.stop="tab.isFixed ? toggleFixed(tab.route) : closeTab(tab.route)"
+          class="ml-2 -mr-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#32AFFF1F] hover:text-white transition-all duration-200 opacity-100 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+          :class="[
+            activeTabRoute === tab.route ? 'opacity-100 pointer-events-auto' : ''
+          ]"
+        >
+          <!-- 固定标签显示图钉图标 -->
+          <svg v-if="tab.isFixed" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          </svg>
+          <!-- 非固定标签显示关闭图标 -->
+          <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </transition-group>
     <!-- 右键菜单 - 完整功能版 -->
     <div
       v-if="contextMenu.show"
@@ -420,24 +425,28 @@ const closeRightTabs = (route: string) => {
   contextMenu.value.show = false
 }
 
-// ==================== 拖拽相关方法 - 已修改为插入逻辑 ====================
+// ==================== 拖拽相关方法 - 完全优化版 ====================
 // 开始拖拽
-const handleDragStart = (tab: TabItem) => {
+const handleDragStart = (tab: TabItem, e: DragEvent) => {
   draggingTab.value = tab
-  ;(event?.target as HTMLElement).style.opacity = '0.5'
+  ;(e.target as HTMLElement).style.opacity = '0.5'
+  if (e.dataTransfer) {
+    e.dataTransfer.effectAllowed = 'move'
+  }
 }
 
-// 拖拽悬浮
+// 拖拽悬浮（在标签上）
 const handleDragOver = (e: DragEvent, targetTab: TabItem) => {
   e.preventDefault()
+  e.dataTransfer!.dropEffect = 'move'
   // 仅允许同类型标签（固定/非固定）之间拖拽
   if (draggingTab.value?.isFixed !== targetTab.isFixed) return
   // 首页标签不允许被拖拽覆盖
   if (targetTab.route === '/dashboard/overview' || targetTab.route === '/') return
 }
 
-// 拖拽放下（核心修改：从交换改为插入）
-const handleDrop = (targetTab: TabItem) => {
+// 拖拽放下（在标签上）- 优化：根据鼠标位置判断插左边还是右边
+const handleDrop = (targetTab: TabItem, e: DragEvent) => {
   if (!draggingTab.value) return
   
   // 校验：1. 不是自己 2. 类型相同（固定/非固定） 3. 不是首页
@@ -449,6 +458,12 @@ const handleDrop = (targetTab: TabItem) => {
     return
   }
 
+  // 获取目标元素的位置信息
+  const targetRect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+  // 计算鼠标在目标标签中的水平中心位置
+  const mouseX = e.clientX
+  const targetMiddleX = targetRect.left + targetRect.width / 2
+  
   // 1. 先找到拖拽标签在原数组中的位置
   const dragIndex = tabsList.value.findIndex(t => t.route === draggingTab.value!.route)
   // 2. 找到目标标签在原数组中的位置
@@ -459,23 +474,75 @@ const handleDrop = (targetTab: TabItem) => {
   // 3. 把拖拽标签从原位置取出来
   const [movedTab] = tabsList.value.splice(dragIndex, 1)
   
-  // 4. 计算插入位置：如果原来的位置在目标前面，取出来后数组长度变了，目标索引要减1
-  const insertIndex = dragIndex < targetIndex ? targetIndex - 1 : targetIndex
+  // 4. 计算插入位置
+  let insertIndex: number
+  // 如果原来的位置在目标前面，取出来后数组长度变了，目标索引要先减1
+  const adjustedTargetIndex = dragIndex < targetIndex ? targetIndex - 1 : targetIndex
   
-  // 5. 把拖拽标签插入到新位置
+  // 5. 根据鼠标位置决定插左边还是右边
+  if (mouseX < targetMiddleX) {
+    // 鼠标在目标左半部分，插入到目标左边
+    insertIndex = adjustedTargetIndex
+  } else {
+    // 鼠标在目标右半部分，插入到目标右边
+    insertIndex = adjustedTargetIndex + 1
+  }
+  
+  // 6. 把拖拽标签插入到新位置
   tabsList.value.splice(insertIndex, 0, movedTab)
   
-  // 6. 保存到sessionStorage
+  // 7. 保存到sessionStorage
+  saveTabsToSession()
+}
+
+// 拖拽悬浮（在容器空白处）
+const handleContainerDragOver = (e: DragEvent) => {
+  e.preventDefault()
+  if (!draggingTab.value) return
+  e.dataTransfer!.dropEffect = 'move'
+}
+
+// 拖拽放下（在容器空白处）- 新增：拖到最后
+const handleContainerDrop = (e: DragEvent) => {
+  if (!draggingTab.value) return
+  
+  // 首页不处理
+  if (draggingTab.value.route === '/dashboard/overview' || draggingTab.value.route === '/') return
+  
+  // 1. 找到拖拽标签在原数组中的位置
+  const dragIndex = tabsList.value.findIndex(t => t.route === draggingTab.value!.route)
+  if (dragIndex === -1) return
+
+  // 2. 把拖拽标签从原位置取出来
+  const [movedTab] = tabsList.value.splice(dragIndex, 1)
+  
+  // 3. 找到对应区域的最后位置插入
+  // 先重新获取一下当前的列表状态（因为上面splice改变了数组）
+  const currentHomeTab = tabsList.value.find(t => t.route === '/dashboard/overview' || t.route === '/')
+  const currentFixedTabs = tabsList.value.filter(t => !(t.route === '/dashboard/overview' || t.route === '/') && t.isFixed)
+  
+  let insertIndex: number
+  if (movedTab.isFixed) {
+    // 如果是固定标签，插入到固定标签区域的最后（也就是Home后面 + 固定标签数量）
+    insertIndex = (currentHomeTab ? 1 : 0) + currentFixedTabs.length
+  } else {
+    // 如果是非固定标签，插入到整个数组的最后
+    insertIndex = tabsList.value.length
+  }
+  
+  // 4. 插入
+  tabsList.value.splice(insertIndex, 0, movedTab)
+  
+  // 5. 保存
   saveTabsToSession()
 }
 
 // 拖拽结束
-const handleDragEnd = () => {
-  ;(event?.target as HTMLElement).style.opacity = '1'
+const handleDragEnd = (e: DragEvent) => {
+  ;(e.target as HTMLElement).style.opacity = '1'
   draggingTab.value = null
 }
 
-// ==================== 原有生命周期和监听保留 ====================
 // 监听路由变化，添加新 Tab
 watch(() => route.path, (newPath) => {
   // 初始化阶段，只恢复状态，不新增Tab
@@ -522,8 +589,6 @@ onUnmounted(() => {
 })
 </script>
 <style scoped>
-/* 原有样式完全保留，半分未改 */
-/* 滚动条样式优化，贴合设计稿深色风格 */
 ::-webkit-scrollbar {
   height: 2px;
 }
@@ -534,7 +599,6 @@ onUnmounted(() => {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-/* 非激活Tab样式 */
 .tab-inactive {
   border-radius: 4px;
   position: relative;
@@ -545,7 +609,6 @@ onUnmounted(() => {
   margin-top: 1px;
   height: calc(100% - 3px);
 }
-/* 非激活Tab之间的分隔线 */
 .tab-inactive + .tab-inactive::before {
   content: '';
   position: absolute;
@@ -555,7 +618,6 @@ onUnmounted(() => {
   width: 1px;
   background: rgba(255,255,255,0.1);
 }
-/* 激活Tab核心样式 - 贴合设计稿的底部衔接曲线 */
 .tab-active {
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
@@ -566,7 +628,6 @@ onUnmounted(() => {
   padding-bottom: 2px;
   height: calc(100% - 1px);
 }
-/* 底部衔接曲线 - 左下角 */
 .tab-active::before {
   content: '';
   position: absolute;
@@ -577,7 +638,6 @@ onUnmounted(() => {
   background: radial-gradient(circle at top left, transparent 70%, #0F3B6E 70%);
   z-index: 1;
 }
-/* 底部衔接曲线 - 右下角 */
 .tab-active::after {
   content: '';
   position: absolute;
@@ -588,7 +648,6 @@ onUnmounted(() => {
   background: radial-gradient(circle at top right, transparent 70%, #0F3B6E 70%);
   z-index: 1;
 }
-/* 覆盖底部边框，实现和下方内容无缝衔接 */
 .tab-active > span {
   position: relative;
   z-index: 2;
@@ -597,12 +656,14 @@ onUnmounted(() => {
 .tab-active::after {
   pointer-events: none;
 }
-
-/* 新增拖拽样式 */
 div[draggable="true"] {
   cursor: grab;
 }
 div[draggable="true"]:active {
   cursor: grabbing;
+}
+
+.tab-list-move {
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 </style>
