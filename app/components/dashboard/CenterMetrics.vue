@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="mb-1">
-        <span class="text-[26px] font-semibold font-mono tracking-wider leading-none text-[#32AFFF]" style="textShadow: '0 0 10px rgba(34,211,238,0.3)';">
+        <span class="text-[26px] font-semibold font-mono tracking-wider leading-none text-[#32AFFF]" :style="{ textShadow: '0 0 10px rgba(34,211,238,0.3)' }">
           {{ item.value }}
         </span>
       </div>
@@ -26,16 +26,28 @@
 </template>
 
 <script setup>
-const metrics = [
-  { title: '今日用电量(kWh)', value: '38,642', change: '↑1.6%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
-  { title: '综合电费_风平谷折算(元)', value: '26,814', change: '↓节约', vs: '¥3,280', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
-  { title: '光伏发电量(kWh)', value: '12,380', change: '↑1.6%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
-  { title: '储能套利收益_今日(元)', value: '4,156', change: 'SOC 74%', vs: '· 充放21次', valueColor: 'text-[#32AFFF]', arrowColor: 'text-gray-400' },
-  { title: '碳排放强度_双碳(tCO₂/万元)', value: '0.382', change: '↓11.4%', vs: 'vs 目标', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
-  { title: '绿电消纳占比_GEC(%)', value: '32.1', change: '↑2.4%', vs: 'vs 上月', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
-];
+// 定义 props，接收外部传入的指标数据
+const props = defineProps({
+  // 指标数据数组
+  metricsData: {
+    type: Array,
+    required: false,
+    default: () => []
+  }
+})
 
- // 从父组件注入状态和方法
- const layoutState = inject('layoutState');
-  const { layoutMode } = layoutState;
+// 从父组件注入状态和方法
+const layoutState = inject('layoutState')
+const { layoutMode } = layoutState
+
+// 默认指标数据（保持原有样式和功能不变）
+const defaultMetrics = []
+
+// 计算最终使用的 metrics：优先使用外部传入的数据，否则使用默认数据
+const metrics = computed(() => {
+  if (props.metricsData && props.metricsData.length > 0) {
+    return props.metricsData
+  }
+  return defaultMetrics
+})
 </script>
