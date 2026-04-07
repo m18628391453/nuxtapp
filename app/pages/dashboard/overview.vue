@@ -78,11 +78,11 @@
 
 <script setup>
 import AssetPanel from '@/components/dashboard/AssetPanel.vue' 
-import PowerPie from '@/components/dashboard/PowerPie.vue' 
 import CenterMetrics from '@/components/dashboard/CenterMetrics.vue' 
 import BalanceChart from '@/components/dashboard/BalanceChart.vue' 
-import LineBarChart from '@/components/dashboard/LineBarChart.vue' 
 import ForecastChart from '@/components/dashboard/ForecastChart.vue' 
+import PowerPie from '@/components/chart/PowerPie.vue' 
+import LineBarChart from '@/components/chart/LineBarChart.vue' 
 
 definePageMeta({
 layout: 'layout'

@@ -82,7 +82,7 @@
   import GridPointData from '@/components/energy/GridPointData.vue' 
   import SocialContribution from '@/components/energy/SocialContribution.vue' 
   import PowerRadiationChart from '@/components/energy/PowerRadiationChart.vue' 
-  import LineBarChart from '@/components/dashboard/LineBarChart.vue' 
+  import LineBarChart from '@/components/chart/LineBarChart.vue' 
   import InverterStatus from '@/components/energy/InverterStatus.vue' 
   
   definePageMeta({
