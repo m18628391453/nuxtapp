@@ -47,19 +47,18 @@ import MenuTabs from '../components/MenuTabs.vue'
 const showSettings = ref(false)
 const isClientReady = ref(false)
 
-// 定义核心状态
+// 核心状态，完全保留原有逻辑
 const layoutMode = ref('fullscreen')
 const sidebarCollapsed = ref(false)
 const theme = ref('dark')
 const activeMenu = ref(null)
-const refreshKey = ref(0) // 定义一个刷新用的 Key
+const refreshKey = ref(0)
 
-// 封装强制刷新的方法
 const forceRefreshPage = () => {
   refreshKey.value += 1
 }
 
-// 菜单数据写死在顶层，分发下去
+// ========== 核心修改：仅更新能源管理的子菜单，其他顶级菜单保持原样 ==========
 const menuList = ref([
   { 
     name: '首页', route: '/', icon: 'Home', index: 0,
@@ -68,12 +67,27 @@ const menuList = ref([
       { name: '能源看板', route: '/dashboard/energy', icon: 'TvMinimal', index: 1 }
     ]
   },
-  { name: '能源管理', route: '/energy', icon: 'Zap', index: 1, 
+  { 
+    name: '能源管理', route: '', icon: 'Zap', index: 1,
     subMenu: [
-      { name: '能源监测', route: '/energy/monitor', icon: 'Monitor', index: 0 },
-    ] 
+      { 
+        name: '光伏监测', route: '', icon: 'Sun', index: 0,
+        subMenu: [
+          { name: '光伏总览', route: '/energy/pvoverview', index: 0 },
+          { name: '逆变器监视', route: '/energy/pvinverter', index: 1 },
+          { name: '告警总览', route: '/energy/pvalarm', index: 2 }
+        ]
+      },
+      { 
+        name: '风电监测', route: '', icon: 'Wind', index: 1,
+        subMenu: [
+          { name: '风电总览', route: '/energy/windoverview', index: 0 },
+          { name: '风机监视', route: '/energy/windturbine', index: 1 },
+        ]
+      }
+    ]
   },
-  { name: '储能管理', route: '/storage', icon: 'Battery', index: 2, 
+  { name: '储能管理', route: '/storage', icon: 'Battery', index: 2,
     subMenu: [
       { name: '储能监测', route: '/storage/monitor', icon: 'Monitor', index: 0 },
     ]
@@ -87,7 +101,7 @@ const menuList = ref([
   { name: '系统设置', route: '/system', icon: 'Shield', index: 9, subMenu: [] },
 ])
 
-// 挂载时从本地存储拉取数据
+// 挂载逻辑完全保留
 onMounted(() => {
   layoutMode.value = getCache(CacheKey.LAYOUT_MODE, 'fullscreen')
   sidebarCollapsed.value = getCache(CacheKey.SIDEBAR_COLLAPSED, false)
@@ -96,23 +110,19 @@ onMounted(() => {
   isClientReady.value = true
 })
 
-// 封装修改状态的方法并同步到本地缓存
 const updateLayoutMode = (mode) => {
   layoutMode.value = mode
   setCache(CacheKey.LAYOUT_MODE, mode)
 }
-
 const toggleSidebar = () => {
   sidebarCollapsed.value = !sidebarCollapsed.value
   setCache(CacheKey.SIDEBAR_COLLAPSED, sidebarCollapsed.value)
 }
-
 const updateActiveMenu = (menu) => {
   activeMenu.value = menu
   setCache(CacheKey.ACTIVE_MENU, menu)
 }
 
-// 将状态和方法注入给所有子组件
 provide('layoutState', {
   layoutMode,
   sidebarCollapsed,
@@ -120,11 +130,10 @@ provide('layoutState', {
   activeMenu,
   menuList
 })
-
 provide('layoutActions', {
   updateLayoutMode,
   toggleSidebar,
   updateActiveMenu,
-  forceRefreshPage // 注入给子组件用
+  forceRefreshPage
 })
 </script>
