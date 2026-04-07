@@ -18,7 +18,7 @@
       <div
         v-for="tab in renderTabsList"
         :key="tab.route"
-        class="relative h-full flex items-center px-3 mx-1 cursor-pointer text-sm transition-all duration-200 group"
+        class="relative h-full flex items-center px-3 mx-0.5 cursor-pointer text-sm transition-all duration-200 group"
         :class="[
           activeTabRoute === tab.route
             ? 'tab-active text-white'
@@ -612,7 +612,7 @@ onUnmounted(() => {
 .tab-inactive + .tab-inactive::before {
   content: '';
   position: absolute;
-  left: -4px;
+  left: -2.5px;
   top: 20%;
   height: 60%;
   width: 1px;
@@ -635,7 +635,7 @@ onUnmounted(() => {
   left: -8px;
   width: 8px;
   height: 8px;
-  background: radial-gradient(circle at top left, transparent 70%, #0F3B6E 70%);
+  background: radial-gradient(circle at top left, transparent 70%, #32AFFF1F 50%);
   z-index: 1;
 }
 .tab-active::after {
@@ -645,7 +645,7 @@ onUnmounted(() => {
   right: -8px;
   width: 8px;
   height: 8px;
-  background: radial-gradient(circle at top right, transparent 70%, #0F3B6E 70%);
+  background: radial-gradient(circle at top right, transparent 70%, #32AFFF1F 50%);
   z-index: 1;
 }
 .tab-active > span {
