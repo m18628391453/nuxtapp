@@ -71,7 +71,7 @@ const menuList = ref([
     name: '能源管理', route: '', icon: 'Zap', index: 1,
     subMenu: [
       { 
-        name: '光伏监测', route: '', icon: 'Sun', index: 0,
+        name: '光伏监测', route: '/energy/pv', icon: 'Sun', index: 0,
         subMenu: [
           { name: '光伏总览', route: '/energy/pvoverview', index: 0 },
           { name: '逆变器监视', route: '/energy/pvinverter', index: 1 },
@@ -79,7 +79,7 @@ const menuList = ref([
         ]
       },
       { 
-        name: '风电监测', route: '', icon: 'Wind', index: 1,
+        name: '风电监测', route: '/energy/wind', icon: 'Wind', index: 1,
         subMenu: [
           { name: '风电总览', route: '/energy/windoverview', index: 0 },
           { name: '风机监视', route: '/energy/windturbine', index: 1 },
