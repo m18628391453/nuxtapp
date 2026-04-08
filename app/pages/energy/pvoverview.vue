@@ -20,7 +20,7 @@
 
       <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg overflow-hidden z-10" :style="{
         backgroundImage: `url('/image/pvmain.png')`,
-        backgroundSize: layoutMode === 'sidebar' ? '110%' : '105%',
+        backgroundSize: layoutMode === 'sidebar' ? '100%' : '85%',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat'
       }">
