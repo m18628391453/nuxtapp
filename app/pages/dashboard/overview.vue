@@ -66,7 +66,7 @@
       </div>
 
       <!-- 收益分析图表 -->
-      <div class="flex-[8]">
+      <div class="flex-[8] mt-1">
         <LineBarChart 
           title="收益分析" 
           :bar-data="[380, 550, 380, 550]"
@@ -75,11 +75,11 @@
       </div>
 
       <div class="flex-[10] -mt-2">
-        <ForecastChart title="发电预测" />
+        <LineChart title="发电预测" />
       </div>
 
       <div class="flex-[10] -mt-2">
-        <ForecastChart title="负荷预测" />
+        <LineChart title="负荷预测" />
       </div>
     </div>
   </div>
@@ -88,9 +88,9 @@
 <script setup>
 import AssetPanel from '@/components/dashboard/AssetPanel.vue' 
 import CenterMetrics from '@/components/dashboard/CenterMetrics.vue' 
-import BalanceChart from '@/components/dashboard/BalanceChart.vue' 
-import ForecastChart from '@/components/dashboard/ForecastChart.vue' 
+import BalanceChart from '~/components/chart/BalanceChart.vue' 
 import ProgressivePie from '@/components/chart/ProgressivePie.vue'
+import LineChart from '@/components/chart/LineChart.vue' 
 import LineBarChart from '@/components/chart/LineBarChart.vue' 
 
 definePageMeta({
