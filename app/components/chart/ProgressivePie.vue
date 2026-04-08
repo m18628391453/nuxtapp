@@ -10,8 +10,9 @@
     <div class="flex items-center gap-4 flex-1 min-h-0 pt-2 -mt-5">
       <div 
         ref="chartContainer" 
-        class="flex items-center justify-center shrink-0 -ml-2"
-        :style="{ width: `${pieSize}px`, height: `${pieSize}px` }"
+        class="flex items-center justify-center shrink-0"
+        :class="layout === 'row' ?  '-ml-5' : '-ml-2'" 
+        :style="{ width: `${pieSize}px`, height: `${pieSize}px`, marginLeft: `${layout === 'row' ? '-25': '0'}px` }"
       >
         <canvas 
           ref="canvasRef" 

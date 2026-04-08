@@ -53,8 +53,10 @@
       </div>
 
       <div class="flex-[4] min-h-0">
-        <ProgressivePie title="逆变器运行状态" center-title="总台数" unit="台" layout="row" :pie-size="170"
-          :inner-radius-ratio="0.425" :pie-data="[
+        <ProgressivePie title="逆变器运行状态" center-title="总台数" unit="台" layout="row" :pie-size="200"
+          :inner-radius-ratio="0.4" 
+          :max-thickness="0.6"
+          :pie-data="[
             { name: '安全告警', value: 5, color: '#FACC15', gradientStart: '#CA8A04' },
             { name: '停机告警', value: 10, color: '#10B981', gradientStart: '#0D9488' },
             { name: '电量告警', value: 15, color: '#F97316', gradientStart: '#EA580C' },
