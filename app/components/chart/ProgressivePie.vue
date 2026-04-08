@@ -33,7 +33,7 @@
 
       <div class="flex-1 flex flex-col gap-3 justify-center pr-2 overflow-y-auto -ml-4">
         <div v-for="(item, idx) in pieData" :key="idx" 
-             :class="layout === 'row' ? 'flex items-center justify-between -pl-1' : 'flex flex-col gap-0.5 -pl-4'">
+             :class="layout === 'row' ? 'flex items-center justify-between -pl-2' : 'flex flex-col gap-0.5 -pl-4'">
           
           <div class="flex items-center gap-2">
             <div class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ backgroundColor: item.color, boxShadow: `0 0 6px ${item.color}80` }"></div>

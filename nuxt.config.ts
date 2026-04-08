@@ -15,6 +15,13 @@ export default defineNuxtConfig({
     }
   },
   vite: {
+    css: {
+      preprocessorOptions: {
+        less: {
+          javascriptEnabled: true, // 启用 Less JS 特性（避免解析报错）
+        }
+      }
+    },
     optimizeDeps: {
       include: [
         'vue-echarts',
