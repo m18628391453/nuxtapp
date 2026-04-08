@@ -53,9 +53,9 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 
 const props = defineProps({
-  title: { type: String, default: '各系统用电组成' },
-  centerTitle: { type: String, default: '总用电量(kWh)' },
-  unit: { type: String, default: 'kWh' },
+  title: { type: String, default: '' },
+  centerTitle: { type: String, default: '' },
+  unit: { type: String, default: '' },
   layout: { type: String, default: 'column' },
   pieSize: { type: Number, default: 175 },
   innerRadiusRatio: { type: Number, default: 0.45 },
@@ -63,13 +63,9 @@ const props = defineProps({
   maxThickness: { type: Number, default: 0.35 },
   pieData: {
     type: Array,
-    default: () => [
-      { name: '对虾车间', value: 4544, color: '#54D1FF', gradientStart: '#33A8FFC0' },
-      { name: '鲈鱼车间', value: 3321, color: '#5DE999', gradientStart: '#3DD17AC0' },
-      { name: '水藻车间', value: 3113, color: '#76E8F0', gradientStart: '#55D0E0C0' },
-    ]
+    default: () => []
   },
-  customPadding: { type: Object, default: () => ({ padding: '0.5rem 1.2rem 1rem 1.5rem' }) }
+  customPadding: { type: Object, default: () => ({ padding: '0.5rem 1rem 1rem 1.2rem' }) }
 });
 
 const chartContainer = ref(null);
@@ -249,7 +245,7 @@ const drawChart = () => {
   ctx.shadowBlur = 0;
   
   // 绘制中心文字
-  const fontSize1 = Math.max(12, Math.floor(radius * 0.11));
+  const fontSize1 = Math.max(15, Math.floor(radius * 0.11));
   const fontSize2 = Math.max(9, Math.floor(radius * 0.06));
   
   ctx.font = `bold ${fontSize1}px monospace`;

@@ -9,7 +9,16 @@
         <AssetPanel />
       </div>
       <div class="flex-[5] min-h-0">
-        <ProgressivePie />
+        <ProgressivePie 
+            title="各系统用电组成"
+            center-title="总用电量(kWh)"
+            unit="kWh"
+            :pie-data="[
+              { name: '对虾车间', value: 4544, color: '#54D1FF', gradientStart: '#33A8FFC0' },
+              { name: '鲈鱼车间', value: 3321, color: '#5DE999', gradientStart: '#3DD17AC0' },
+              { name: '水藻车间', value: 3113, color: '#76E8F0', gradientStart: '#55D0E0C0' },
+            ]"
+        />
       </div>
     </div>
 
