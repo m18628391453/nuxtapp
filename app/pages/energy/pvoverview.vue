@@ -69,7 +69,19 @@
         </div>
   
         <div class="flex-[4] min-h-0">
-          <InverterStatus />
+          <PowerPie 
+            title="逆变器运行状态"
+            center-title="总台数"
+            unit="台"
+            layout="row"
+            :pie-data="[
+              { name: '运行正常', value: 80, color: '#32AFFF', gradientStart: '#1E70B8' },
+              { name: '停机告警', value: 10, color: '#10B981', gradientStart: '#0D9488' },
+              { name: '安全告警', value: 5, color: '#FACC15', gradientStart: '#CA8A04' },
+              { name: '电量告警', value: 15, color: '#F97316', gradientStart: '#EA580C' },
+              { name: '通讯中断', value: 15, color: '#22D3EE', gradientStart: '#0891B2' },
+            ]"
+          />
         </div>
       </div>
     </div>
@@ -84,6 +96,7 @@
   import PowerRadiationChart from '@/components/energy/PowerRadiationChart.vue' 
   import LineBarChart from '@/components/chart/LineBarChart.vue' 
   import InverterStatus from '@/components/energy/InverterStatus.vue' 
+  import PowerPie from '@/components/chart/PowerPie.vue'
   
   definePageMeta({
     layout: 'layout'
