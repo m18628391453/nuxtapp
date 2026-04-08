@@ -14,15 +14,15 @@
           <span class="text-[14px] font-bold text-[#32AFFF]">光伏系统</span>
           <StatusBadge text="并网运行" />
         </div>
-        <div class="flex flex-col gap-3 mt-1">
+        <div class="flex flex-col gap-1 mt-1">
           <div v-for="(item, index) in pvData" :key="index" class="flex items-center justify-between w-full">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1">
               <svg class="w-3 h-3 text-[#32AFFF] fill-current" viewBox="0 0 12 12">
                 <path d="M6 0L12 6L6 12L0 6L6 0Z" />
               </svg>
               <span class="text-[11px] font-bold text-gray-200">{{ item.label }}</span>
             </div>
-            <div class="flex items-baseline gap-2">
+            <div class="flex items-baseline gap-1">
               <span class="text-[14px] text-[#32AFFF] font-mono" style="font-weight: 400;">{{ item.value }}</span>
               <span class="text-[12px] " style="color: rgb(255, 255, 255, 0.6)">{{ item.unit }}</span>
             </div>
@@ -32,7 +32,7 @@
       </div>
   
       <!-- 储能系统段落 -->
-      <div class="flex flex-col gap-3 -mt-2">
+      <div class="flex flex-col gap-3 -mt-3">
         <div class="flex items-center justify-between">
           <span class="text-[14px] font-bold text-[#32AFFF]">{{ energyStorageData.title }}</span>
           <StatusBadge :text="energyStorageData.status" />
@@ -75,17 +75,17 @@
       </div>
   
       <!-- 核心负荷段落 -->
-      <div class="flex flex-col gap-3 -mt-2">
+      <div class="flex flex-col gap-3 -mt-3">
         <span class="text-[14px] font-bold text-[#32AFFF]">核心负荷_1.5MW</span>
-        <div class="grid grid-cols-[0.75fr_0.5fr_0.5fr_0.5fr_1fr]">
+        <div class="grid grid-cols-[1fr_0.5fr_0.5fr_0.5fr_1.2fr]">
           <span class="text-[12px] text-gray-300"></span>
-          <span class="text-[12px] text-gray-300 text-center font-medium">总数</span>
-          <span class="text-[12px] text-gray-300 text-center font-medium">运行数</span>
-          <span class="text-[12px] text-gray-300 text-center font-medium">异常数</span>
-          <span class="text-[12px] text-gray-300 text-center font-medium">当前总功率(kW)</span>
+          <span class="text-[12px] text-gray-300 text-center font-medium" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: default;" >&nbsp;&nbsp;&nbsp;总数</span>
+          <span class="text-[12px] text-gray-300 text-center font-medium" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: default;" >运行数</span>
+          <span class="text-[12px] text-gray-300 text-center font-medium" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: default;" >异常数</span>
+          <span class="text-[12px] text-gray-300 text-center font-medium" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: default;" >当前总功率(kW)</span>
         </div>
         <div class="flex flex-col gap-1 -mt-3">
-          <div v-for="(item, index) in loadData" :key="index" class="grid grid-cols-[0.75fr_0.5fr_0.5fr_0.5fr_1fr] items-center bg-gradient-to-r from-[#071123]/50 to-transparent rounded-full px-3 py-2 border-b border-cyan-800/20 shadow-[0_2px_8px_rgba(6,182,212,0.1)]">
+          <div v-for="(item, index) in loadData" :key="index" class="grid grid-cols-[1fr_0.5fr_0.5fr_0.5fr_1.2fr] items-center bg-gradient-to-r from-[#071123]/50 to-transparent rounded-full px-3 py-2 border-b border-cyan-800/20 shadow-[0_2px_8px_rgba(6,182,212,0.1)]">
             <div class="flex items-center gap-2">
               <div class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_4px_rgba(34,211,238,0.7)]"></div>
               <span class="text-[12px] font-medium text-white">{{ item.name }}</span>
