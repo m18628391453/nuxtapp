@@ -132,6 +132,28 @@ const getOuterRadiusRatio = (idx, totalCount, rank) => {
   return INNER_RADIUS_RATIO + thickness;
 };
 
+/**
+ * 创建沿扇形角度方向的渐变
+ */
+const createAngularGradient = (ctx, centerX, centerY, innerRadius, outerRadius, startRad, endRad, colorStart, colorEnd) => {
+  // 计算渐变线的起点和终点（沿扇形中间半径的圆弧切线方向）
+  const midRadius = (innerRadius + outerRadius) / 2;
+  
+  // 渐变起点：扇形起始边中点
+  const startX = centerX + Math.cos(startRad) * midRadius;
+  const startY = centerY + Math.sin(startRad) * midRadius;
+  
+  // 渐变终点：扇形结束边中点
+  const endX = centerX + Math.cos(endRad) * midRadius;
+  const endY = centerY + Math.sin(endRad) * midRadius;
+  
+  const gradient = ctx.createLinearGradient(startX, startY, endX, endY);
+  gradient.addColorStop(0, colorStart);
+  gradient.addColorStop(1, colorEnd);
+  
+  return gradient;
+};
+
 // 绘制图表
 const drawChart = () => {
   const canvas = canvasRef.value;
@@ -210,21 +232,21 @@ const drawChart = () => {
     ctx.arc(centerX, centerY, outerRadius, endRad, startRad, true);
     ctx.closePath();
     
-    // 创建渐变 (沿着半径方向)
-    const angleMid = (startRad + endRad) / 2;
-    const grad = ctx.createLinearGradient(
-      centerX + Math.cos(angleMid) * innerRadius,
-      centerY + Math.sin(angleMid) * innerRadius,
-      centerX + Math.cos(angleMid) * outerRadius,
-      centerY + Math.sin(angleMid) * outerRadius
+    // 使用沿角度方向的渐变（从扇形起始边到结束边）
+    const gradientStartColor = item.gradientStart || (item.color + 'C0');
+    const gradientEndColor = item.color;
+    
+    const grad = createAngularGradient(
+      ctx, centerX, centerY, 
+      innerRadius, outerRadius, 
+      startRad, endRad, 
+      gradientStartColor, gradientEndColor
     );
-    grad.addColorStop(0, item.gradientStart || (item.color + 'C0'));
-    grad.addColorStop(1, item.color);
     
     ctx.fillStyle = grad;
     ctx.fill();
     
-    // 添加阴影光晕效果
+    // 添加阴影光晕效果（先保存状态，避免阴影影响边框）
     ctx.save();
     ctx.shadowBlur = 6;
     ctx.shadowColor = `${item.color}80`;
