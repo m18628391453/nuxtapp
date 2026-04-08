@@ -2,7 +2,7 @@
   <div class="flex w-full h-full gap-4 box-border overflow-hidden bg-transparent text-white font-sans "
     :class="layoutMode === 'sidebar' ? '-mt-2 py-3' : 'p-4'">
     <div class="flex flex-col h-full max-h-[100%] shrink-0 gap-4"
-      :class="layoutMode === 'sidebar' ? 'min-w-[325px] max-w-[325px]' : 'min-w-[345px] max-w-[345px]'">
+      :class="layoutMode === 'sidebar' ? 'min-w-[355px] max-w-[355px]' : 'min-w-[365px] max-w-[365px]'">
       <div class="flex-[4] min-h-0">
         <StationIntro />
       </div>
@@ -18,8 +18,8 @@
       <!-- 中间主图区域 仅修改此区域内内容，其他所有样式、属性完全保留 -->
       <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg overflow-hidden z-10" :style="{
         backgroundImage: `url('/image/pvmain.png')`,
-        backgroundSize: layoutMode === 'sidebar' ? '85%' : '76%',
-        backgroundPosition: layoutMode === 'sidebar' ? 'center 10px' : 'center 0px',
+        backgroundSize: layoutMode === 'sidebar' ? '80%' : '72%',
+        backgroundPosition: layoutMode === 'sidebar' ? 'center -10px' : 'center -5px',
         backgroundRepeat: 'no-repeat'
       }">
         <!-- 原有脉冲动画 完全保留 -->
@@ -30,8 +30,8 @@
         </div>
 
         <!-- 逆变器 左上区域 可微调top/left数值 -->
-        <div class="absolute top-[4%] z-20 text-center" :class="layoutMode === 'sidebar' ? 'left-[7%]': 'left-[14%]'">
-          <h4 class="text-[17px] font-bold text-white mb-3">逆变器</h4>
+        <div class="absolute top-[4%] z-20 text-center" :class="layoutMode === 'sidebar' ? 'left-[14%]': 'left-[16%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">逆变器</h4>
           <div class="flex flex-col gap-1.5 text-[14px] text-left">
             <p><span class="text-gray-300">输入功率：</span><span class="text-[#32AFFF] font-medium">960 MW</span></p>
             <p><span class="text-gray-300">输出功率：</span><span class="text-[#32AFFF] font-medium">720 MW</span></p>
@@ -41,8 +41,8 @@
         </div>
 
         <!-- 箱变 顶部中间区域 可微调top数值 -->
-        <div class="absolute top-[2%] left-1/2 -translate-x-1/2 z-20 text-center">
-          <h4 class="text-[17px] font-bold text-white mb-3">箱变</h4>
+        <div class="absolute left-1/2 -translate-x-1/2 z-20 text-center"  :class="layoutMode === 'sidebar' ? 'top-[0%]': 'top-[0%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">箱变</h4>
           <div class="flex flex-col gap-1.5 text-[14px] text-left">
             <p><span class="text-gray-300">有功功率：</span><span class="text-[#32AFFF] font-medium">960 MW</span></p>
             <p><span class="text-gray-300">告警条数：</span><span class="text-[#32AFFF] font-medium">0 条</span></p>
@@ -50,8 +50,8 @@
         </div>
 
         <!-- 升压站 右上区域 可微调top/right数值 -->
-        <div class="absolute top-[8%] z-20 text-center" :class="layoutMode === 'sidebar' ? 'right-[8%]': 'right-[12%]'">
-          <h4 class="text-[17px] font-bold text-white mb-3">升压站</h4>
+        <div class="absolute top-[8%] z-20 text-center" :class="layoutMode === 'sidebar' ? 'right-[12%]': 'right-[14%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">升压站</h4>
           <div class="flex flex-col gap-1.5 text-[14px] text-left">
             <p><span class="text-gray-300">输入功率：</span><span class="text-[#32AFFF] font-medium">960 MW</span></p>
             <p><span class="text-gray-300">用电量：</span><span class="text-[#32AFFF] font-medium">960 万kWh</span></p>
@@ -59,8 +59,8 @@
         </div>
 
         <!-- 养殖车间 左下区域 可微调bottom/left数值 -->
-        <div class="absolute bottom-[12%] z-20 text-center" :class="layoutMode === 'sidebar' ? 'left-[7%]': 'left-[14%]'">
-          <h4 class="text-[17px] font-bold text-white mb-3">养殖车间</h4>
+        <div class="absolute bottom-[12%] z-20 text-center" :class="layoutMode === 'sidebar' ? 'left-[14%]': 'left-[16%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">养殖车间</h4>
           <div class="flex flex-col gap-1.5 text-[14px] text-left">
             <p><span class="text-gray-300">正常运行：</span><span class="text-[#32AFFF] font-medium">99 条</span></p>
             <p><span class="text-gray-300">离网状态：</span><span class="text-[#32AFFF] font-medium">11 条</span></p>
@@ -70,8 +70,8 @@
         </div>
 
         <!-- 储能 底部中间区域 可微调bottom数值 -->
-        <div class="absolute bottom-[0%] left-1/2 -translate-x-1/2 z-20 text-center">
-          <h4 class="text-[17px] font-bold text-white mb-3">储能</h4>
+        <div class="absolute left-1/2 -translate-x-1/2 z-20 text-center" :class="layoutMode === 'sidebar' ? 'bottom-[5%]': 'bottom-[0%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">储能</h4>
           <div class="flex flex-col gap-1.5 text-[14px] text-left">
             <p><span class="text-gray-300">输入功率：</span><span class="text-[#32AFFF] font-medium">960 MW</span></p>
             <p><span class="text-gray-300">用电量：</span><span class="text-[#32AFFF] font-medium">960 万kWh</span></p>
@@ -79,8 +79,8 @@
         </div>
 
         <!-- 组串 右下区域 可微调bottom/right数值 -->
-        <div class="absolute bottom-[10%] z-20 text-center"  :class="layoutMode === 'sidebar' ? 'right-[8%]': 'right-[14%]'">
-          <h4 class="text-[17px] font-bold text-white mb-3">组串</h4>
+        <div class="absolute bottom-[10%] z-20 text-center"  :class="layoutMode === 'sidebar' ? 'right-[12%]': 'right-[14%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent" >组串</h4>
           <div class="flex flex-col gap-1.5 text-[14px] text-left">
             <p><span class="text-gray-300">输入功率：</span><span class="text-[#32AFFF] font-medium">960 MW</span></p>
             <p><span class="text-gray-300">用电量：</span><span class="text-[#32AFFF] font-medium">960 万kWh</span></p>
@@ -93,7 +93,7 @@
       </div>
     </div>
     <div class="flex flex-col h-full shrink-0 gap-4"
-      :class="layoutMode === 'sidebar' ? 'min-w-[330px] max-w-[330px] max-h-[99%]' : 'min-w-[350px] max-w-[350px] max-h-[100%]'">
+      :class="layoutMode === 'sidebar' ? 'min-w-[350px] max-w-[350px] max-h-[99%]' : 'min-w-[360px] max-w-[360px] max-h-[100%]'">
       <div class="flex-[4] min-h-0">
         <LineBarChart title="发电量统计" :buttons="['时', '日', '月']" :x-axis-data="['8:00', '10:00', '12:00', '14:00']"
           :bar-data="[190, 270, 190, 270]"
@@ -107,7 +107,8 @@
           :y-axis-max="350" :y-axis-interval="50" :bar-width="10" />
       </div>
       <div class="flex-[4] min-h-0">
-        <ProgressivePie title="逆变器运行状态" center-title="总台数" unit="台" layout="row" :pie-size="200"
+        <ProgressivePie title="逆变器运行状态" center-title="总台数" unit="台" layout="row" 
+          :pie-size="200"
           :inner-radius-ratio="0.4" 
           :max-thickness="0.6"
           :pie-data="[

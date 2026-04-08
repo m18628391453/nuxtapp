@@ -3,16 +3,21 @@
     :class="layoutMode === 'sidebar' ? '-mt-2 py-3' : 'p-4'">
     <!-- 左侧 -->
     <div class="flex flex-col h-full max-h-[100%] shrink-0"
-      :class="layoutMode === 'sidebar' ? 'min-w-[325px] max-w-[325px] f' : 'min-w-[345px] max-w-[345px]'">
+      :class="layoutMode === 'sidebar' ? 'min-w-[355px] max-w-[355px] f' : 'min-w-[365px] max-w-[365px]'">
       <div class="flex-[9] min-h-0">
         <AssetPanel />
       </div>
       <div class="flex-[5] min-h-0">
-        <ProgressivePie title="各系统用电组成" center-title="总用电量(kWh)" unit="kWh" :pie-data="[
-          { name: '对虾车间', value: 4544, color: '#54D1FF', gradientStart: '#33A8FFC0' },
-          { name: '鲈鱼车间', value: 3321, color: '#5DE999', gradientStart: '#3DD17AC0' },
-          { name: '水藻车间', value: 3113, color: '#76E8F0', gradientStart: '#55D0E0C0' },
-        ]" />
+        <ProgressivePie title="各系统用电组成" center-title="总用电量(kWh)" unit="kWh" 
+          :pie-size="240"
+          :inner-radius-ratio="0.4" 
+          :max-thickness="0.6"
+          :pie-data="[
+            { name: '对虾车间', value: 4544, color: '#54D1FF', gradientStart: '#33A8FFC0' },
+            { name: '鲈鱼车间', value: 3321, color: '#5DE999', gradientStart: '#3DD17AC0' },
+            { name: '水藻车间', value: 3113, color: '#76E8F0', gradientStart: '#55D0E0C0' },
+          ]" 
+        />
       </div>
     </div>
 
@@ -43,7 +48,7 @@
 
     <!-- 右侧 -->
     <div class="flex flex-col h-full  shrink-0"
-      :class="layoutMode === 'sidebar' ? 'min-w-[330px] max-w-[330px] max-h-[99%]' : 'min-w-[350px] max-w-[350px] max-h-[100%]'">
+      :class="layoutMode === 'sidebar' ? 'min-w-[360px] max-w-[360px] max-h-[99%]' : 'min-w-[370px] max-w-[370px] max-h-[100%]'">
       <!-- 系统运行模式 -->
       <div class="bg-[#0A162C]/10 rounded-lg h-[90px] px-4 justify-between shrink-0 relative overflow-hidden"
         style="padding-top: 0.5rem;">

@@ -13,9 +13,12 @@ export const CacheKey = {
   
   export const getCache = <T>(key: string, defaultValue: T): T => {
     if (typeof window === 'undefined') return defaultValue
+    let item: string | null = localStorage.getItem(key)
     try {
-      const item = localStorage.getItem(key)
-      return item ? JSON.parse(item) : defaultValue
+      if (item && ((item.startsWith("{") && item.endsWith("}")) || (item.startsWith(`"`) && item.endsWith(`"`)) || (item === 'true' || item === 'false'))) {
+        return item ? JSON.parse(item) : item as T;
+      }
+      return item as T;
     } catch (e) {
       console.error(`读取缓存失败: ${key}`, e)
       return defaultValue
