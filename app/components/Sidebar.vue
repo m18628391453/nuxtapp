@@ -64,7 +64,7 @@
               <div
                 v-for="subItem in item.subMenu"
                 :key="subItem.route"
-                class="relative w-full px-4 py-2 rounded-lg cursor-pointer group transition-all duration-200"
+                class="relative w-full px-4 py-1.5 rounded-lg cursor-pointer group transition-all duration-200"
                 :class="[
                   activeSubMenuRoute === subItem.route
                     ? 'bg-[#00B0FF] text-white'
