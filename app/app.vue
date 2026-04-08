@@ -3,8 +3,8 @@
       :style="{ 
           backgroundImage: `url('/image/background.png')`, 
           backgroundSize: 'auto',  
-          backgroundPosition: 'center -120px',
-          backgroundRepeat: 'repeat-y',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
           opacity: 0.99 
       }"
   >
