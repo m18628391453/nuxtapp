@@ -75,7 +75,7 @@
             unit="台"
             layout="row"
             :pie-size="170"
-            :inner-radius-ratio="0.4"
+            :inner-radius-ratio="0.425"
             :pie-data="[
               { name: '安全告警', value: 5, color: '#FACC15', gradientStart: '#CA8A04' },
               { name: '停机告警', value: 10, color: '#10B981', gradientStart: '#0D9488' },
