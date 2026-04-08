@@ -7,9 +7,19 @@
       </h3>
     </div>
 
-    <div class="flex items-center gap-4 flex-1 min-h-0 pt-2 -mt-2">
-      <div ref="chartContainer" :class="`relative w-[${props.pieSize || '180'}px] min-w-[150px] h-full flex items-center justify-center shrink-0`">
-        <canvas ref="canvasRef" :width="canvasSize.width" :height="canvasSize.height" class="w-full h-full" style="display: block;"></canvas>
+    <div class="flex items-center gap-4 flex-1 min-h-0 pt-2 -mt-5">
+      <div 
+        ref="chartContainer" 
+        class="flex items-center justify-center shrink-0 -ml-2"
+        :style="{ width: `${pieSize}px`, height: `${pieSize}px` }"
+      >
+        <canvas 
+          ref="canvasRef" 
+          :width="pieSize" 
+          :height="pieSize" 
+          class="block"
+          :style="{ width: `${pieSize}px`, height: `${pieSize}px` }"
+        ></canvas>
         
         <!-- 自定义tooltip -->
         <div v-if="tooltipVisible" 
@@ -20,7 +30,7 @@
         </div>
       </div>
 
-      <div class="flex-1 flex flex-col gap-3 justify-center pr-2 overflow-y-auto">
+      <div class="flex-1 flex flex-col gap-3 justify-center pr-2 overflow-y-auto -ml-3">
         <div v-for="(item, idx) in pieData" :key="idx" 
              :class="layout === 'row' ? 'flex items-center justify-between -pl-1' : 'flex flex-col gap-0.5'">
           
@@ -47,14 +57,10 @@ const props = defineProps({
   centerTitle: { type: String, default: '总用电量(kWh)' },
   unit: { type: String, default: 'kWh' },
   layout: { type: String, default: 'column' },
-  pieSize: { type: Number, default: 180 },
-  innerRadiusRatio: { type: Number, default: 0.2 },
-  // 最小厚度比例（最内圈环形的厚度，范围 0.02~0.15，默认 0.05）
-  minThickness: { type: Number, default: 0.12 },
-  // 最大厚度比例（最外圈环形的厚度，范围 0.05~0.25，默认 0.15）
-  maxThickness: { type: Number, default: 0.2 },
-  // ===================================
-  
+  pieSize: { type: Number, default: 175 },
+  innerRadiusRatio: { type: Number, default: 0.45 },
+  minThickness: { type: Number, default: 0.3 },
+  maxThickness: { type: Number, default: 0.35 },
   pieData: {
     type: Array,
     default: () => [
@@ -68,7 +74,6 @@ const props = defineProps({
 
 const chartContainer = ref(null);
 const canvasRef = ref(null);
-const canvasSize = ref({ width: 200, height: 200 });
 const tooltipVisible = ref(false);
 const tooltipX = ref(0);
 const tooltipY = ref(0);
@@ -114,22 +119,18 @@ const getThicknessRankMap = () => {
  * 根据排名计算外半径比例
  * 内半径固定 = innerRadiusRatio
  * 外半径 = innerRadiusRatio + 厚度比例
- * 厚度比例 = minThickness + (rank / maxRank) * (maxThickness - minThickness)
  */
 const getOuterRadiusRatio = (idx, totalCount, rank) => {
-  // 使用传入的可配置参数
   const MIN_THICKNESS = Math.max(0.02, Math.min(0.15, props.minThickness));
   const MAX_THICKNESS = Math.max(0.05, Math.min(0.25, props.maxThickness));
   const INNER_RADIUS_RATIO = Math.max(0.3, Math.min(0.8, props.innerRadiusRatio));
   
-  // 如果只有一个数据，取中间厚度
   if (totalCount === 1) {
     const midThickness = (MIN_THICKNESS + MAX_THICKNESS) / 2;
     return INNER_RADIUS_RATIO + midThickness;
   }
   
-  // 等差数列计算厚度比例
-  const t = rank / (totalCount - 1);  // 0 ~ 1
+  const t = rank / (totalCount - 1);
   const thickness = MIN_THICKNESS + t * (MAX_THICKNESS - MIN_THICKNESS);
   
   return INNER_RADIUS_RATIO + thickness;
@@ -138,18 +139,13 @@ const getOuterRadiusRatio = (idx, totalCount, rank) => {
 // 绘制图表
 const drawChart = () => {
   const canvas = canvasRef.value;
-  const container = chartContainer.value;
-  if (!canvas || !container) return;
+  if (!canvas) return;
   
-  const rect = container.getBoundingClientRect();
-  const width = rect.width;
-  const height = rect.height;
+  const width = props.pieSize;
+  const height = props.pieSize;
   if (width <= 0 || height <= 0) return;
   
-  canvas.width = width;
-  canvas.height = height;
-  canvasSize.value = { width, height };
-  
+  // canvas 尺寸已经通过属性设置好了，这里只需要获取
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, width, height);
   
@@ -197,7 +193,7 @@ const drawChart = () => {
     const startRad = (angle.startDeg * Math.PI) / 180;
     const endRad = (angle.endDeg * Math.PI) / 180;
     
-    // 保存当前扇区信息
+    // 保存当前扇区信息（用于tooltip的坐标需要相对于canvas）
     sectors.push({
       idx: angle.idx,
       name: item.name,
@@ -264,7 +260,7 @@ const drawChart = () => {
   
   ctx.font = `${fontSize2}px sans-serif`;
   ctx.fillStyle = '#9CA3AF';
-  ctx.fillText(props.centerTitle, centerX, centerY + 15);
+  ctx.fillText(props.centerTitle, centerX, centerY + 10);
 };
 
 // 鼠标移动检测tooltip
@@ -320,6 +316,7 @@ const handleCanvasMouseLeave = () => {
   if (canvasRef.value) canvasRef.value.style.cursor = 'default';
 };
 
+// 监听数据变化重绘
 const handleResize = () => {
   nextTick(() => {
     drawChart();
@@ -329,12 +326,6 @@ const handleResize = () => {
 onMounted(() => {
   nextTick(() => {
     drawChart();
-    if (chartContainer.value) {
-      resizeObserver = new ResizeObserver(() => {
-        drawChart();
-      });
-      resizeObserver.observe(chartContainer.value);
-    }
     window.addEventListener('resize', handleResize);
     const canvas = canvasRef.value;
     if (canvas) {
@@ -345,7 +336,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if (resizeObserver) resizeObserver.disconnect();
   window.removeEventListener('resize', handleResize);
   const canvas = canvasRef.value;
   if (canvas) {
@@ -359,10 +349,12 @@ watch(() => props.pieData, () => {
 }, { deep: true });
 
 watch(() => props.pieSize, () => {
-  drawChart();
+  // pieSize 变化时，需要等待 DOM 更新后再重绘
+  nextTick(() => {
+    drawChart();
+  });
 });
 
-// 监听新增的可配置参数
 watch(() => props.innerRadiusRatio, () => {
   drawChart();
 });

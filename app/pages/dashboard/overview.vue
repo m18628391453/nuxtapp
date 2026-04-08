@@ -9,7 +9,7 @@
         <AssetPanel />
       </div>
       <div class="flex-[5] min-h-0">
-        <PowerPie />
+        <ProgressivePie />
       </div>
     </div>
 
@@ -81,7 +81,7 @@ import AssetPanel from '@/components/dashboard/AssetPanel.vue'
 import CenterMetrics from '@/components/dashboard/CenterMetrics.vue' 
 import BalanceChart from '@/components/dashboard/BalanceChart.vue' 
 import ForecastChart from '@/components/dashboard/ForecastChart.vue' 
-import PowerPie from '@/components/chart/PowerPie.vue' 
+import ProgressivePie from '@/components/chart/ProgressivePie.vue'
 import LineBarChart from '@/components/chart/LineBarChart.vue' 
 
 definePageMeta({
