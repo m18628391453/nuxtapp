@@ -6,10 +6,10 @@
       <div class="flex-[4] min-h-0">
         <StationIntro />
       </div>
-      <div class="flex-[4.5] min-h-0">
+      <div class="flex-[5] min-h-0">
         <GridPointData />
       </div>
-      <div class="flex-[4.25] min-h-0">
+      <div class="flex-[4] min-h-0">
         <SocialContribution />
       </div>
     </div>

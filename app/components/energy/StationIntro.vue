@@ -13,13 +13,13 @@
         <img 
           src="/image/pvstation.png" 
           alt="光伏电站实景" 
-          class="w-[45%] rounded object-cover shrink-0 -mt-3"
+          class="w-[42.5%] rounded object-cover shrink-0 -mt-3"
         />
         <!-- 电站核心信息列表 优化换行对齐 解决地址换行跑位问题 -->
         <div class="flex flex-col gap-1 flex-1">
-          <p v-for="(item, index) in stationInfo" :key="index" class="flex items-start gap-1 text-[13px]">
+          <p v-for="(item, index) in stationInfo" :key="index" class="flex items-start gap-0 text-[13px]">
             <span class="text-gray-300 shrink-0">{{ item.label }}：</span>
-            <span class="text-[#FEFEFE] font-medium flex-1">{{ item.value }}</span>
+            <span class="text-[#FEFEFE] font-normal flex-1">{{ item.value }}</span>
           </p>
         </div>
       </div>
