@@ -1,24 +1,24 @@
 <template>
-  <div class="w-full h-full min-h-screen bg-[#0a1a33] overflow-auto p-6 font-sans text-white">
+  <div class="w-full h-full min-h-screen bg-transparent overflow-auto p-3 font-sans text-white">
     <!-- 顶部状态筛选栏 -->
-    <div class="flex justify-end items-center gap-6 mb-6">
-      <label class="flex items-center gap-2 cursor-pointer text-sm">
+    <div class="flex justify-end items-center gap-6 mb-6 bg-[#FFFFFF0F] py-3 px-3" >
+      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
         <input type="checkbox" class="w-4 h-4 accent-blue-500" />
         <span>全部 600</span>
       </label>
-      <label class="flex items-center gap-2 cursor-pointer text-sm">
+      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
         <input type="checkbox" class="w-4 h-4 accent-blue-500" />
         <span>正常 25</span>
       </label>
-      <label class="flex items-center gap-2 cursor-pointer text-sm">
+      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
         <input type="checkbox" class="w-4 h-4 accent-red-500" />
         <span>停机 1</span>
       </label>
-      <label class="flex items-center gap-2 cursor-pointer text-sm">
+      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
         <input type="checkbox" class="w-4 h-4 accent-yellow-500" />
         <span>告警 2</span>
       </label>
-      <label class="flex items-center gap-2 cursor-pointer text-sm">
+      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
         <input type="checkbox" class="w-4 h-4 accent-gray-400" />
         <span>通讯中断 1</span>
       </label>
