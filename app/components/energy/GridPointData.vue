@@ -25,39 +25,32 @@
       <div class="flex items-center justify-between w-full mb-5" :class="layoutMode === 'sidebar' ? 'px-2' : 'px-4'">
         <!-- 正向有功电能 -->
         <div class="flex flex-col items-center">
-          <div class="w-16 h-16 rounded-full border border-cyan-400/30 bg-[#0F3460]/20 flex items-center justify-center mb-3 shadow-[0_0_10px_rgba(34,211,238,0.15)]">
-            <!-- 内联电表图标 无外部依赖 -->
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="3" width="18" height="18" rx="2" stroke="#32AFFF" stroke-width="2"/>
-              <path d="M8 7H16" stroke="#32AFFF" stroke-width="2" stroke-linecap="round"/>
-              <path d="M12 7V12" stroke="#32AFFF" stroke-width="2" stroke-linecap="round"/>
-              <circle cx="12" cy="16" r="2" fill="#32AFFF"/>
-            </svg>
+          <div class="w-16 h-16 rounded-full border border-transparent bg-transparent flex items-center justify-center mb-3">
+            <img 
+              src="/image/positive.png"  
+              class="w-[100%] rounded object-cover shrink-0 -mt-1"
+            />
           </div>
           <p class="text-white text-[13px] mb-1.5">正向有功电能(万kWh)</p>
-          <p class="text-[#32AFFF] text-[20px] font-bold leading-none tracking-wide">{{ gridData.forwardActiveEnergy }}</p>
+          <p class="text-[#32AFFF] text-[20px] font-medium leading-none tracking-wide">{{ gridData.forwardActiveEnergy }}</p>
         </div>
         <!-- 反向有功电能 -->
         <div class="flex flex-col items-center">
-          <div class="w-16 h-16 rounded-full border border-cyan-400/30 bg-[#0F3460]/20 flex items-center justify-center mb-3 shadow-[0_0_10px_rgba(34,211,238,0.15)]">
-            <!-- 内联反向电表图标 无外部依赖 -->
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="3" width="18" height="18" rx="2" stroke="#32AFFF" stroke-width="2"/>
-              <path d="M7 12H17" stroke="#32AFFF" stroke-width="2" stroke-linecap="round"/>
-              <path d="M17 12L13 8" stroke="#32AFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M17 12L13 16" stroke="#32AFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="12" cy="16" r="2" fill="#32AFFF" opacity="0.5"/>
-            </svg>
+          <div class="w-16 h-16 rounded-full border border-transparent bg-transparent flex items-center justify-center mb-3">
+            <img 
+              src="/image/negative.png"  
+              class="w-[100%] rounded object-cover shrink-0 -mt-1"
+            />
           </div>
           <p class="text-white text-[13px] mb-1.5">反向有功电能(万kWh)</p>
-          <p class="text-[#32AFFF] text-[20px] font-bold leading-none tracking-wide">{{ gridData.reverseActiveEnergy }}</p>
+          <p class="text-[#32AFFF] text-[20px] font-medium leading-none tracking-wide">{{ gridData.reverseActiveEnergy }}</p>
         </div>
       </div>
       <!-- 电网参数3*3网格 完全匹配设计稿布局 -->
       <div class="grid grid-cols-3 gap-3 flex-1">
         <div v-for="item in gridParams" :key="item.label" class="bg-[#0A162C]/40 rounded-md px-3 py-2.5 flex items-center justify-between">
-          <span class="text-gray-200 text-[16px] font-medium">{{ item.label }}</span>
-          <span class="text-[#32AFFF] text-[18px] font-semibold">{{ item.value }}</span>
+          <span class="text-gray-200 text-[12px] font-medium">{{ item.label }}</span>
+          <span class="text-[#32AFFF] text-[13px] font-semibold">{{ item.value }}</span>
         </div>
       </div>
     </div>
