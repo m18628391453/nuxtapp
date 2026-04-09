@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-[#0A162C]/10 rounded-lg flex flex-col h-full w-full relative overflow-hidden" style="padding: 0.5rem 0rem 1rem 1.5rem;">
+  <div class="bg-[#0A162C]/10 rounded-lg flex flex-col h-full w-full relative overflow-hidden" style="padding: 0.5rem 0rem 0rem 1.25rem;">
     <!-- 标题栏 完全沿用原有组件样式 一字未改 -->
     <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-3 -mr-4 -pt-5">
       <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
       <h3 class="text-[14px] font-bold text-white ml-1 leading-none">电站简介</h3>
     </div>
     <!-- 内容区域 仅优化样式 核心功能、数据完全保留 -->
-    <div class="flex-1 min-h-0 w-full mt-8 flex flex-col justify-between">
+    <div class="flex-1 w-full h-full mt-8 flex flex-col">
       <!-- 上半部分：电站实景图+核心信息 -->
       <div class="flex items-center gap-2 mb-3">
         <!-- 电站实景图 保留原有路径 新增圆角匹配设计稿 -->
@@ -24,7 +24,7 @@
         </div>
       </div>
       <!-- 下半部分：天气预报卡片组 优化等宽布局+半透明背景 -->
-      <div class="flex w-full gap-1">
+      <div class="flex w-full max-h-[120px] gap-1 mt-1">
         <div 
           v-for="(weather, index) in weatherList" 
           :key="index"
