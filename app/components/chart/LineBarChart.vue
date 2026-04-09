@@ -10,7 +10,7 @@
           :key="btn" 
           @click="activeBtn = btn"
           class="px-2 py-0.5 text-[10px] rounded transition-all" 
-          :class="btn === activeBtn ? 'bg-cyan-600/30 text-[#32AFFF] border border-cyan-500/50 cursor-pointer' : 'text-gray-500 hover:text-gray-300 cursor-pointer'"
+          :class="btn === activeBtn ? 'bg-cyan-600/30 text-[#32AFFF] border border-cyan-500/50 cursor-pointer' : 'text-[#FFFFFFCC] hover:text-gray-300 cursor-pointer'"
         >
           {{ btn }}
         </button>

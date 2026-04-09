@@ -6,20 +6,20 @@
       <h3 class="text-[14px] font-bold text-white ml-1 leading-none">电站简介</h3>
     </div>
     <!-- 内容区域 仅优化样式 核心功能、数据完全保留 -->
-    <div class="flex-1 min-h-0 w-full mt-4 flex flex-col justify-between">
+    <div class="flex-1 min-h-0 w-full mt-8 flex flex-col justify-between">
       <!-- 上半部分：电站实景图+核心信息 -->
-      <div class="flex items-center gap-2 mb-5">
+      <div class="flex items-center gap-2 mb-3">
         <!-- 电站实景图 保留原有路径 新增圆角匹配设计稿 -->
         <img 
           src="/image/pvstation.png" 
           alt="光伏电站实景" 
-          class="w-[42.5%] rounded object-cover shrink-0 -mt-3"
+          class="w-[43%] rounded object-cover shrink-0 -mt-3"
         />
         <!-- 电站核心信息列表 优化换行对齐 解决地址换行跑位问题 -->
-        <div class="flex flex-col gap-1 flex-1">
-          <p v-for="(item, index) in stationInfo" :key="index" class="flex items-start gap-0 text-[13px]">
-            <span class="text-gray-300 shrink-0">{{ item.label }}：</span>
-            <span class="text-[#FEFEFE] font-normal flex-1">{{ item.value }}</span>
+        <div class="flex flex-col gap-0.5 flex-1 -mt-2 ml-0.5">
+          <p v-for="(item, index) in stationInfo" :key="index" class="flex items-start gap-0 text-[12px]">
+            <span class="text-[#FFFFFFAA] shrink-0">{{ item.label }}：</span>
+            <span class="text-[#FFFFFF] font-normal flex-1">{{ item.value }}</span>
           </p>
         </div>
       </div>
@@ -28,11 +28,11 @@
         <div 
           v-for="(weather, index) in weatherList" 
           :key="index"
-          class="flex-1 w-full min-w-0 bg-[#0A162C]/50 rounded-lg p-2 flex flex-col items-center justify-center text-center"
+          class="flex-1 w-full min-w-0 bg-[#3AB2FF1F] rounded px-2 py-1 flex flex-col items-center justify-center text-center"
         >
-          <p class="text-white text-[14px] font-normal mb-2">{{ weather.date }}</p>
+          <p class="text-[#FFFFFFAA] text-[14px] font-normal mb-2">{{ weather.date }}</p>
           <component :is="weather.icon" class="w-8 h-8 text-[#32AFFF] mb-2" />
-          <p class="text-white text-[12px] font-normal mb-1">{{ weather.temp }}</p>
+          <p class="text-[#FFFFFF] text-[12px] font-normal mb-1">{{ weather.temp }}</p>
         </div>
       </div>
     </div>

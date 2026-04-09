@@ -170,7 +170,7 @@ const chartOption = computed(() => {
   border: 1px solid #376eef90;
   border-radius: 4px;
   padding: 2px 6px;
-  color: #FFFFFF;
+  color: #FFFFFFCC;
   font-size: 10px;
   font-weight: 400;
   outline: none;

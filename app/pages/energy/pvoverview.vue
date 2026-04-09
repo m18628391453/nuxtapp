@@ -2,7 +2,7 @@
   <div class="flex w-full h-full gap-4 box-border overflow-hidden bg-transparent text-white font-sans "
     :class="layoutMode === 'sidebar' ? '-mt-2 py-3' : 'p-4'">
     <div class="flex flex-col h-full max-h-[100%] shrink-0 gap-4"
-      :class="layoutMode === 'sidebar' ? 'min-w-[355px] max-w-[355px]' : 'min-w-[365px] max-w-[365px]'">
+      :class="layoutMode === 'sidebar' ? 'min-w-[360px] max-w-[360px]' : 'min-w-[370px] max-w-[370px]'">
       <div class="flex-[4] min-h-0">
         <StationIntro />
       </div>
@@ -93,7 +93,7 @@
       </div>
     </div>
     <div class="flex flex-col h-full shrink-0 gap-4"
-      :class="layoutMode === 'sidebar' ? 'min-w-[350px] max-w-[350px] max-h-[99%]' : 'min-w-[360px] max-w-[360px] max-h-[100%]'">
+      :class="layoutMode === 'sidebar' ? 'min-w-[365px] max-w-[365px] max-h-[99%]' : 'min-w-[375px] max-w-[375px] max-h-[100%]'">
       <div class="flex-[4] min-h-0">
         <LineBarChart title="发电量统计" :buttons="['时', '日', '月']" :x-axis-data="['8:00', '10:00', '12:00', '14:00']"
           :bar-data="[190, 270, 190, 270]"

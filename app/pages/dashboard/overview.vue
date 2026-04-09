@@ -3,7 +3,7 @@
     :class="layoutMode === 'sidebar' ? '-mt-2 py-3' : 'p-4'">
     <!-- 左侧 -->
     <div class="flex flex-col h-full max-h-[100%] shrink-0"
-      :class="layoutMode === 'sidebar' ? 'min-w-[355px] max-w-[355px] f' : 'min-w-[365px] max-w-[365px]'">
+      :class="layoutMode === 'sidebar' ? 'min-w-[360px] max-w-[360px] f' : 'min-w-[370px] max-w-[370px]'">
       <div class="flex-[9] min-h-0">
         <AssetPanel />
       </div>
@@ -48,7 +48,7 @@
 
     <!-- 右侧 -->
     <div class="flex flex-col h-full  shrink-0"
-      :class="layoutMode === 'sidebar' ? 'min-w-[360px] max-w-[360px] max-h-[99%]' : 'min-w-[370px] max-w-[370px] max-h-[100%]'">
+      :class="layoutMode === 'sidebar' ? 'min-w-[365px] max-w-[365px] max-h-[99%]' : 'min-w-[375px] max-w-[375px] max-h-[100%]'">
       <!-- 系统运行模式 -->
       <div class="bg-[#0A162C]/10 rounded-lg h-[90px] px-4 justify-between shrink-0 relative overflow-hidden"
         style="padding-top: 0.5rem;">

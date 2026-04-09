@@ -1,9 +1,9 @@
 <template>
   <!-- 外层加容器，控制整体左右边距，完全贴合设计稿 -->
-  <div class="w-full px-8 py-1">
+  <div class="w-full px-4 py-1">
     <!-- 内层flex布局，根据指标数量自动调整 -->
     <div class="flex w-full items-center " :style="layoutStyle">
-      <div v-for="(item, idx) in metrics" :key="idx" class="flex flex-col justify-center py-1" :style="itemStyle">
+      <div v-for="(item, idx) in metrics" :key="idx" class="flex flex-col justify-center py-1 gap-0" :style="itemStyle">
         <!-- 标题容器：相对定位，用于悬浮提示，完全保留原有功能 -->
         <div class="relative w-full mb-1 group">
           <p class="w-full"
@@ -65,7 +65,7 @@ const layoutStyle = computed(() => {
     case 6:
       return {
         justifyContent: 'space-between',
-        gap: '0.25rem',
+        gap: '0.75rem',
       }
     // 5个指标时：居中，间隙适中
     case 5:

@@ -5,7 +5,7 @@
         <div class="absolute left-[-16px] top-[-4px] bottom-[-4px] w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
         <h3 class="text-[14px] font-bold text-white ml-1.5 leading-none z-10">能源供需平衡分析</h3>
         <div class="flex rounded-md p-0.5 relative z-10">
-          <button v-for="btn in ['今日', '昨日', '本月', '今年']" :key="btn" class="px-2 py-0.5 text-[10px] rounded transition-all" :class="btn === '今日' ? 'bg-cyan-600/30 text-[#32AFFF] border border-cyan-500/50 cursor-pointer' : 'text-gray-500 hover:text-gray-300 cursor-pointer'">{{ btn }}</button>
+          <button v-for="btn in ['今日', '昨日', '本月', '今年']" :key="btn" class="px-2 py-0.5 text-[10px] rounded transition-all" :class="btn === '今日' ? 'bg-cyan-600/30 text-[#32AFFF] border border-cyan-500/50 cursor-pointer' : 'text-[#FFFFFFCC] hover:text-gray-300 cursor-pointer'">{{ btn }}</button>
         </div>
       </div>
       <div class="flex-1 relative min-h-0 w-full mt-2">

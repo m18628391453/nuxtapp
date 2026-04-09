@@ -21,10 +21,16 @@
                   :style=" layoutMode !== 'fullscreen' ? { 
                       backgroundImage: `url('/image/background.png')`, 
                       backgroundSize: '100%',  
-                      backgroundPosition: 'center -60px',
+                      backgroundPosition: 'center -100px',
                       backgroundRepeat: 'repeat',
                       opacity: 0.99 
-                  } : null"
+                  } : { 
+                      backgroundImage: `url('/image/background.png')`, 
+                      backgroundSize: '100%',  
+                      backgroundPosition: 'center -200px',
+                      backgroundRepeat: 'repeat',
+                      opacity: 0.99 
+                  }"
               >
                   <MenuTabs />
                   <slot />
