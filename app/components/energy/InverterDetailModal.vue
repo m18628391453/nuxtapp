@@ -10,8 +10,8 @@
               <a-select
                 v-model:value="selectedInverter"
                 :bordered="false"
-                class="custom-dark-select"
-                style="width: 160px;"
+                class="custom-dark-select top-select"
+                style="width: 160px; font-size: 14px;"
                 :getPopupContainer="(triggerNode) => triggerNode.parentNode"
               >
                 <a-select-option value="N01-01">N01-01组串式逆变器</a-select-option>
@@ -27,12 +27,12 @@
   
           <div class="w-full h-px bg-[#D9D9D92A]"></div>
   
-          <div class="flex items-center gap-8 px-6 py-4">
+          <div class="flex items-center gap-3 px-6 py-4">
             <button 
               v-for="tab in tabs" 
               :key="tab.key"
               @click="activeTab = tab.key"
-              class="relative flex items-center gap-1 px-5 py-1.5 rounded text-sm transition-all duration-200"
+              class="relative flex items-center px-3 py-1.5 rounded text-sm transition-all duration-200"
               :class="activeTab === tab.key ? 'bg-[#32AFFF] text-white font-medium' : 'text-gray-400 hover:text-gray-200'"
             >
               {{ tab.label }}
@@ -213,6 +213,15 @@
     font-weight: 400 !important;
     font-size: 12px !important;
     color: #FFFFFF !important;
+    display: flex;
+    align-items: center;
+  }
+
+  :deep(.top-select.custom-dark-select .ant-select-selection-item) {
+    font-family: "Microsoft YaHei", sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
+    color: #32AFFF !important;
     display: flex;
     align-items: center;
   }
