@@ -33,6 +33,7 @@
           <input 
             type="checkbox" 
             :checked="filter.checked"
+            @change="handleFilterChange(filter)"
             class="w-4 h-4 rounded-[2px] bg-transparent border border-[#FFFFFF2A] appearance-none relative flex items-center justify-center transition-colors checked:border-[#32AFFF] checked:bg-transparent
             after:content-[''] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:flex after:items-center after:justify-center
             checked:after:content-['✓'] checked:after:text-[12px] checked:after:font-bold checked:after:text-[#32AFFF]"
@@ -57,8 +58,7 @@
           :style="{
             backgroundColor: 'rgba(50,175,255,0.1)',
             boxShadow: currentAreaId === area.id ? '0 0 4px rgba(50,175,255,0.8)' : '',
-          }
-          "
+          }"
         >
           <div class="absolute top-2 left-0 h-[28px] pl-3 pr-6 flex items-center justify-start z-10"
                style="background: linear-gradient(90deg, #19ADD8 0%, #0E9ED3 50%, #4FB2E5 100%); clip-path: polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%);">
@@ -112,25 +112,29 @@
           :key="device.id"
           @click="() => { showInverterModal = true; currentDeviceId = device.id }"
           :class="[
-            'relative rounded-[2px] transition-all duration-300 flex flex-col min-h-[160px] cursor-pointer pt-10 pb-3 px-3',
-            currentDeviceId === device.id && device.status === 'normal' ? 'border-[#3AB2FF6F]' : 'border-[#FFFFFF0F]',
-            'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]'
+            'relative rounded-[2px] transition-all duration-300 flex flex-col min-h-[160px] cursor-pointer pt-10 pb-3 px-3 border',
+            'hover:bg-[#0E2544]',
+            device.status === 'normal' ? 'hover:border-[#32AFFFBF]' :
+            device.status === 'alarm' ? 'hover:border-[#FF4D4FBF]' :
+            device.status === 'warning' ? 'hover:border-[#E4B243BF]' :
+            'hover:border-[#888888BF]'
           ]"
-          
           :style="{
-            backgroundColor: device.status === 'normal' ? '#FFFFFF0F' :
+            backgroundColor: device.status === 'normal' ? 'rgba(50,175,255,0.06)' :
                              device.status === 'alarm' ? 'rgba(255,77,79,0.1)' :
                              device.status === 'warning' ? 'rgba(228,178,67,0.1)' :
                              'rgba(136,136,136,0.1)',
-            border: device.status === 'normal' ? '1px solid #32AFFF0F' :
-                    device.status === 'alarm' ? '1px solid #FF4D4F0F' :
-                    device.status === 'warning' ? '1px solid #E4B2430F' :
-                    '1px solid #8888880F',
+            borderColor: currentDeviceId === device.id ? (
+                           device.status === 'normal' ? '#32AFFF' :
+                           device.status === 'alarm' ? '#FF4D4F' :
+                           device.status === 'warning' ? '#E4B243' :
+                           '#888888'
+                         ) : 'rgba(255,255,255,0.06)',
             boxShadow: currentDeviceId === device.id ? (
-                         device.status === 'normal' ? '0 0 4px rgba(50,175,255,0.8)' :
-                         device.status === 'alarm' ? '0 0 4px rgba(255,77,79,0.8)' :
-                         device.status === 'warning' ? '0 0 4px rgba(228,178,67,0.8)' :
-                         '0 0 4px rgba(136,136,136,0.8)'
+                         device.status === 'normal' ? '0 0 8px rgba(50,175,255,0.6)' :
+                         device.status === 'alarm' ? '0 0 8px rgba(255,77,79,0.6)' :
+                         device.status === 'warning' ? '0 0 8px rgba(228,178,67,0.6)' :
+                         '0 0 8px rgba(136,136,136,0.6)'
                        ) : 'none'
           }"
         >
@@ -145,7 +149,6 @@
           </div>
 
           <div class="flex gap-2 h-full items-center">
-            
             <div class="flex flex-col items-center justify-center w-[45%]">
               <div class="w-[68px] h-[55px] flex items-center justify-center"
                    :style="{
@@ -173,7 +176,6 @@
             </div>
 
             <div class="flex flex-col justify-center w-[55%] text-[12px] space-y-[6px]">
-              
               <div class="flex flex-col">
                 <span class="text-[#FFFFFF99] leading-tight mb-1">有功功率</span>
                 <div class="flex items-baseline"
@@ -187,7 +189,6 @@
                   <span class="text-[#FFFFFF99] scale-90 ml-1">kW</span>
                 </div>
               </div>
-              
               <div class="flex flex-col">
                 <span class="text-[#FFFFFF99] leading-tight mb-1">日发电量</span>
                 <div class="flex items-baseline"
@@ -201,7 +202,6 @@
                   <span class="text-[#FFFFFF99] scale-90 ml-1">kWh</span>
                 </div>
               </div>
-              
               <div class="flex flex-col">
                 <span class="text-[#FFFFFF99] leading-tight mb-1">等效小时数</span>
                 <div class="flex items-baseline"
@@ -215,7 +215,6 @@
                   <span class="text-[#FFFFFF99] scale-90 ml-1">h</span>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -238,7 +237,6 @@ const layoutOptions = ref([
   { label: '图标布局', value: 'card' },
   { label: 'table布局', value: 'table' }
 ])
-// 控制弹窗的显示状态
 const showInverterModal = ref(false);
 
 const filterOptions = ref([
@@ -249,9 +247,25 @@ const filterOptions = ref([
   { label: '通讯中断 1', value: 'offline', checked: false }
 ])
 
+// 奶奶写的核心逻辑1：处理勾选框联动
+const handleFilterChange = (clickedFilter) => {
+  if (clickedFilter.value === 'all') {
+    // 如果点的是“全部”
+    const newState = !clickedFilter.checked;
+    filterOptions.value.forEach(item => {
+      item.checked = item.value === 'all' ? newState : false;
+    });
+  } else {
+    // 如果点的是其他选项
+    clickedFilter.checked = !clickedFilter.checked;
+    // 只要有点选其他，就把“全部”取消勾选
+    const allFilter = filterOptions.value.find(item => item.value === 'all');
+    if (allFilter) allFilter.checked = false;
+  }
+}
+
 const currentPage = ref(1)
 const currentAreaId = ref(1)
-// 奶奶给你加了这个状态，用来记录当前点选的是哪个设备，这样发光效果才能生效！
 const currentDeviceId = ref(1) 
 
 const areaList = ref([
