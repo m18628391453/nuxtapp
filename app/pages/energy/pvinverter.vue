@@ -110,32 +110,16 @@
         <div 
           v-for="device in deviceList" 
           :key="device.id"
-          @click="() => { showInverterModal = true; currentDeviceId = device.id }"
+          @click="() => { currentDeviceId = device.id }"
+          @dbclick="() => { showInverterModal = true; currentDeviceId = device.id }"
           :class="[
-            'relative rounded-[2px] transition-all duration-300 flex flex-col min-h-[160px] cursor-pointer pt-10 pb-3 px-3 border',
-            'hover:bg-[#0E2544]',
-            device.status === 'normal' ? 'hover:border-[#32AFFFBF]' :
-            device.status === 'alarm' ? 'hover:border-[#FF4D4FBF]' :
-            device.status === 'warning' ? 'hover:border-[#E4B243BF]' :
-            'hover:border-[#888888BF]'
+            'relative rounded-[2px] transition-all duration-200 cursor-pointer min-h-[160px] flex flex-col pt-10 pb-3 px-3 border bg-[#0A1A30]',
+            currentDeviceId === device.id ? getDeviceActiveBorderClass(device.status) : 'border-[#FFFFFF0F]',
+            getDeviceHoverClass(device.status)
           ]"
           :style="{
-            backgroundColor: device.status === 'normal' ? 'rgba(50,175,255,0.06)' :
-                             device.status === 'alarm' ? 'rgba(255,77,79,0.1)' :
-                             device.status === 'warning' ? 'rgba(228,178,67,0.1)' :
-                             'rgba(136,136,136,0.1)',
-            borderColor: currentDeviceId === device.id ? (
-                           device.status === 'normal' ? '#32AFFF' :
-                           device.status === 'alarm' ? '#FF4D4F' :
-                           device.status === 'warning' ? '#E4B243' :
-                           '#888888'
-                         ) : 'rgba(255,255,255,0.06)',
-            boxShadow: currentDeviceId === device.id ? (
-                         device.status === 'normal' ? '0 0 8px rgba(50,175,255,0.6)' :
-                         device.status === 'alarm' ? '0 0 8px rgba(255,77,79,0.6)' :
-                         device.status === 'warning' ? '0 0 8px rgba(228,178,67,0.6)' :
-                         '0 0 8px rgba(136,136,136,0.6)'
-                       ) : 'none'
+            backgroundColor: getDeviceBgColor(device.status),
+            boxShadow: currentDeviceId === device.id ? getDeviceActiveShadow(device.status) : 'none'
           }"
         >
           <div class="absolute top-2 left-0 px-3 py-1 text-[13px] font-bold text-white z-10 rounded-br-[4px] rounded-tr-[4px]"
@@ -225,7 +209,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import InverterDetailModal from '@/components/energy/InverterDetailModal.vue'
 
 definePageMeta({
@@ -247,26 +231,64 @@ const filterOptions = ref([
   { label: '通讯中断 1', value: 'offline', checked: false }
 ])
 
-// 奶奶写的核心逻辑1：处理勾选框联动
+// 奶奶改的核心逻辑1：处理勾选框联动（全选和其他互斥）
 const handleFilterChange = (clickedFilter) => {
   if (clickedFilter.value === 'all') {
-    // 如果点的是“全部”
-    const newState = !clickedFilter.checked;
+    // 勾选全选 → 取消所有其他选项
+    const isChecked = !clickedFilter.checked;
     filterOptions.value.forEach(item => {
-      item.checked = item.value === 'all' ? newState : false;
+      item.checked = item.value === 'all' ? isChecked : false;
     });
   } else {
-    // 如果点的是其他选项
+    // 勾选其他选项 → 取消全选
     clickedFilter.checked = !clickedFilter.checked;
-    // 只要有点选其他，就把“全部”取消勾选
     const allFilter = filterOptions.value.find(item => item.value === 'all');
     if (allFilter) allFilter.checked = false;
+    
+    // 额外：如果所有其他选项都取消了，也不会自动勾选全选（保持原有逻辑）
   }
 }
 
 const currentPage = ref(1)
 const currentAreaId = ref(1)
 const currentDeviceId = ref(1) 
+
+// 奶奶加的：设备状态相关样式计算函数（复用中间区域的hover/选中逻辑）
+const getDeviceActiveBorderClass = (status) => {
+  switch(status) {
+    case 'normal': return 'border-[#3AB2FF6F]'; // 正常-蓝色（和中间区域一致）
+    case 'alarm': return 'border-[#FF4D4F6F]'; // 告警-红色
+    case 'warning': return 'border-[#E4B2436F]'; // 警告-黄色
+    default: return 'border-[#8888886F]'; // 离线/停机-灰色
+  }
+}
+
+const getDeviceHoverClass = (status) => {
+  switch(status) {
+    case 'normal': return 'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]'; // 正常hover
+    case 'alarm': return 'hover:border-[#FF4D4F3F] hover:bg-[#0E2544]'; // 告警hover
+    case 'warning': return 'hover:border-[#E4B2433F] hover:bg-[#0E2544]'; // 警告hover
+    default: return 'hover:border-[#8888883F] hover:bg-[#0E2544]'; // 离线hover
+  }
+}
+
+const getDeviceBgColor = (status) => {
+  switch(status) {
+    case 'normal': return 'rgba(50,175,255,0.06)';
+    case 'alarm': return 'rgba(255,77,79,0.1)';
+    case 'warning': return 'rgba(228,178,67,0.1)';
+    default: return 'rgba(136,136,136,0.1)';
+  }
+}
+
+const getDeviceActiveShadow = (status) => {
+  switch(status) {
+    case 'normal': return '0 0 8px rgba(50,175,255,0.6)';
+    case 'alarm': return '0 0 8px rgba(255,77,79,0.6)';
+    case 'warning': return '0 0 8px rgba(228,178,67,0.6)';
+    default: return '0 0 8px rgba(136,136,136,0.6)';
+  }
+}
 
 const areaList = ref([
   { id: 1, name: '1#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
