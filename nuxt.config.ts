@@ -1,7 +1,10 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@ant-design-vue/nuxt'
+  ],
   css: ['~/assets/css/global.css'],
   app: {
     head: {

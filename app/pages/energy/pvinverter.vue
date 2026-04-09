@@ -110,7 +110,7 @@
         <div 
           v-for="device in deviceList" 
           :key="device.id"
-          @click="currentDeviceId = device.id"
+          @click="() => { showInverterModal = true; currentDeviceId = device.id }"
           :class="[
             'relative rounded-[2px] transition-all duration-300 flex flex-col min-h-[160px] cursor-pointer pt-10 pb-3 px-3',
             currentDeviceId === device.id && device.status === 'normal' ? 'border-[#3AB2FF6F]' : 'border-[#FFFFFF0F]',
@@ -221,11 +221,13 @@
         </div>
       </div>
     </div>
+    <InverterDetailModal v-model:visible="showInverterModal" />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import InverterDetailModal from '@/components/energy/InverterDetailModal.vue'
 
 definePageMeta({
   layout: 'layout'
@@ -236,6 +238,8 @@ const layoutOptions = ref([
   { label: '图标布局', value: 'card' },
   { label: 'table布局', value: 'table' }
 ])
+// 控制弹窗的显示状态
+const showInverterModal = ref(false);
 
 const filterOptions = ref([
   { label: '全部 600', value: 'all', checked: false },
