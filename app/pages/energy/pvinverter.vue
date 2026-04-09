@@ -1,71 +1,102 @@
 <template>
-  <div class="w-full h-full min-h-screen bg-transparent overflow-auto p-3 font-sans text-white">
-    <!-- 顶部状态筛选栏 -->
-    <div class="flex justify-end items-center gap-6 mb-6 bg-[#FFFFFF0F] py-3 px-3" >
-      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
-        <input type="checkbox" class="w-4 h-4 accent-blue-500" />
-        <span>全部 600</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
-        <input type="checkbox" class="w-4 h-4 accent-blue-500" />
-        <span>正常 25</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
-        <input type="checkbox" class="w-4 h-4 accent-red-500" />
-        <span>停机 1</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
-        <input type="checkbox" class="w-4 h-4 accent-yellow-500" />
-        <span>告警 2</span>
-      </label>
-      <label class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99]">
-        <input type="checkbox" class="w-4 h-4 accent-gray-400" />
-        <span>通讯中断 1</span>
-      </label>
+  <div class="w-full h-full min-h-screen bg-[#061122] overflow-auto px-4 py-4 font-yahei text-white">
+    <div class="flex justify-between items-center mb-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] max-h-[56px]">
+      <div class="flex items-center">
+        <button
+          v-for="layout in layoutOptions"
+          :key="layout.value"
+          @click="currentLayout = layout.value"
+          :class="[
+            'w-8 h-7 flex items-center justify-center border transition-all duration-200',
+            currentLayout === layout.value 
+              ? 'border-[#FFFFFF2A] text-[#32AFFF] bg-[#32AFFF10]' 
+              : 'border-[#FFFFFF2A] text-[#FFFFFF99] bg-transparent hover:bg-[#FFFFFF0A]',
+            layout.value === 'card' ? 'rounded-l-[2px] border-r-0' : 'rounded-r-[2px]'
+          ]"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <template v-if="layout.value === 'card'">
+              <path d="M3 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3zm10 0a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1V3zM3 13a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6zm10 0a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1v-6z" />
+            </template>
+            <template v-else>
+              <path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4zm0 6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2zm0 6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2z" />
+            </template>
+          </svg>
+        </button>
+      </div>
+      <div class="flex items-center gap-6">
+        <label 
+          v-for="filter in filterOptions" 
+          :key="filter.value" 
+          class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99] hover:text-white transition-colors"
+        >
+          <input 
+            type="checkbox" 
+            :checked="filter.checked"
+            class="w-4 h-4 rounded-[2px] bg-transparent border border-[#FFFFFF2A] appearance-none relative flex items-center justify-center transition-colors checked:border-[#32AFFF] checked:bg-transparent
+            after:content-[''] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:flex after:items-center after:justify-center
+            checked:after:content-['✓'] checked:after:text-[12px] checked:after:font-bold checked:after:text-[#32AFFF]"
+          />
+          <span>{{ filter.label }}</span>
+        </label>
+      </div>
     </div>
 
-    <!-- 区域卡片模块 -->
-    <div class="mb-8">
-      <div class="grid grid-cols-8 gap-4 mb-6">
+    <div class="mb-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] max-h-[380px] min-h-[360px]">
+      <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
         <div 
           v-for="area in areaList" 
           :key="area.id"
-          class="relative rounded bg-[#112546] border border-blue-800/50 overflow-hidden"
+          @click="currentAreaId = area.id"
+          :class="[
+            'relative rounded-[2px] px-3 pb-3 pt-[42px] transition-all duration-200 cursor-pointer min-h-[135px] flex flex-col justify-end',
+            'bg-[#0A1A30] border',
+            currentAreaId === area.id ? 'border-[#3AB2FF6F]' : 'border-[#FFFFFF0F]',
+            'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]'
+          ]"
+          :style="{
+            backgroundColor: 'rgba(50,175,255,0.1)',
+            boxShadow: currentAreaId === area.id ? '0 0 4px rgba(50,175,255,0.8)' : '',
+          }
+          "
         >
-          <!-- 区域标题栏 -->
-          <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-2 font-semibold text-white flex items-center justify-between">
-            <span>{{ area.name }}</span>
-            <!-- 告警角标 -->
-            <span v-if="area.warnCount" class="absolute top-1 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {{ area.warnCount }}
+          <div class="absolute top-2 left-0 h-[28px] pl-3 pr-6 flex items-center justify-start z-10"
+               style="background: linear-gradient(90deg, #19ADD8 0%, #0E9ED3 50%, #4FB2E5 100%); clip-path: polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%);">
+            <span class="font-bold text-[14px] text-white tracking-wide">
+              {{ area.name }}
             </span>
           </div>
-          <!-- 区域数据 -->
-          <div class="p-3 text-sm space-y-1">
-            <div class="flex justify-between">
-              <span class="text-blue-200">日发电量(kWh):</span>
-              <span class="font-semibold">{{ area.dailyPower }}</span>
+          
+          <span v-if="area.warnCount" class="absolute top-1 right-2 bg-[#FF4B4B] text-white text-[12px] font-bold rounded-full w-[22px] h-[22px] flex items-center justify-center z-10 shadow-md">
+            {{ area.warnCount }}
+          </span>
+
+          <div class="text-[13px] w-full flex flex-col gap-[6px]">
+            <div class="flex justify-between items-center w-full">
+              <span class="text-[#FFFFFF99]">日发电量(kWh):</span>
+              <span class="font-bold text-white text-[14px]">{{ area.dailyPower }}</span>
             </div>
-            <div class="flex justify-between">
-              <span class="text-blue-200">实时功率(kW):</span>
-              <span class="font-semibold">{{ area.realTimePower }}</span>
+            <div class="flex justify-between items-center w-full">
+              <span class="text-[#FFFFFF99]">实时功率(kW):</span>
+              <span class="font-bold text-white text-[14px]">{{ area.realTimePower }}</span>
             </div>
-            <div class="flex justify-between">
-              <span class="text-blue-200">装机容量(kWp):</span>
-              <span class="font-semibold">{{ area.installedCapacity }}</span>
+            <div class="flex justify-between items-center w-full">
+              <span class="text-[#FFFFFF99]">装机容量(kWp):</span>
+              <span class="font-bold text-white text-[14px]">{{ area.installedCapacity }}</span>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- 分页 -->
-      <div class="flex justify-center items-center gap-3">
+      
+      <div class="flex justify-center items-center gap-3 -mt-2">
         <button 
           v-for="page in [1,2,3]" 
           :key="page"
           :class="[
-            'w-6 h-6 rounded-full flex items-center justify-center text-sm',
-            currentPage === page ? 'bg-blue-500 text-white font-semibold' : 'bg-transparent text-blue-200 hover:bg-blue-800/50'
+            'w-7 h-7 rounded-full flex items-center justify-center text-sm border transition-all',
+            currentPage === page 
+              ? 'bg-[#32AFFF] text-white border-[#32AFFF] font-bold shadow-[0_0_8px_rgba(50,175,255,0.5)]' 
+              : 'bg-transparent text-white border-[#FFFFFF33] hover:border-[#32AFFF] hover:text-[#32AFFF]'
           ]"
           @click="currentPage = page"
         >
@@ -74,64 +105,118 @@
       </div>
     </div>
 
-    <!-- 逆变器设备卡片模块 -->
-    <div class="mt-8">
-      <div class="grid grid-cols-8 gap-4">
+    <div class="mt-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] ">
+      <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
         <div 
           v-for="device in deviceList" 
           :key="device.id"
+          @click="currentDeviceId = device.id"
           :class="[
-            'rounded overflow-hidden border transition-all',
-            device.status === 'normal' ? 'bg-[#112546] border-blue-500/70' : '',
-            device.status === 'alarm' ? 'bg-[#2a1520] border-red-500' : '',
-            device.status === 'warning' ? 'bg-[#2a2518] border-yellow-500' : '',
-            device.status === 'stop' ? 'bg-[#1e2530] border-gray-400' : '',
+            'relative rounded-[2px] transition-all duration-300 flex flex-col min-h-[160px] cursor-pointer pt-10 pb-3 px-3',
+            currentDeviceId === device.id && device.status === 'normal' ? 'border-[#3AB2FF6F]' : 'border-[#FFFFFF0F]',
+            'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]'
           ]"
+          
+          :style="{
+            backgroundColor: device.status === 'normal' ? '#FFFFFF0F' :
+                             device.status === 'alarm' ? 'rgba(255,77,79,0.1)' :
+                             device.status === 'warning' ? 'rgba(228,178,67,0.1)' :
+                             'rgba(136,136,136,0.1)',
+            border: device.status === 'normal' ? '1px solid #32AFFF0F' :
+                    device.status === 'alarm' ? '1px solid #FF4D4F0F' :
+                    device.status === 'warning' ? '1px solid #E4B2430F' :
+                    '1px solid #8888880F',
+            boxShadow: currentDeviceId === device.id ? (
+                         device.status === 'normal' ? '0 0 4px rgba(50,175,255,0.8)' :
+                         device.status === 'alarm' ? '0 0 4px rgba(255,77,79,0.8)' :
+                         device.status === 'warning' ? '0 0 4px rgba(228,178,67,0.8)' :
+                         '0 0 4px rgba(136,136,136,0.8)'
+                       ) : 'none'
+          }"
         >
-          <!-- 设备编号标题 -->
-          <div :class="[
-            'px-3 py-2 font-semibold text-white',
-            device.status === 'normal' ? 'bg-blue-500/80' : '',
-            device.status === 'alarm' ? 'bg-red-500' : '',
-            device.status === 'warning' ? 'bg-yellow-500' : '',
-            device.status === 'stop' ? 'bg-gray-500' : '',
-          ]">
+          <div class="absolute top-2 left-0 px-3 py-1 text-[13px] font-bold text-white z-10 rounded-br-[4px] rounded-tr-[4px]"
+               :style="{
+                 background: device.status === 'normal' ? '#32AFFF' :
+                             device.status === 'alarm' ? 'linear-gradient(45deg, #FF4D4F, #FD6365)' :
+                             device.status === 'warning' ? 'linear-gradient(45deg, #E4B243, #FDCF68)' :
+                             'linear-gradient(45deg, #888888, #999999)'
+               }">
             {{ device.name }}
           </div>
-          <!-- 设备数据内容 -->
-          <div class="p-3 flex gap-3">
-            <!-- 逆变器图标 -->
-            <div :class="[
-              'w-16 h-16 rounded flex items-center justify-center shrink-0',
-              device.status === 'normal' ? 'bg-blue-500/20 text-blue-400' : '',
-              device.status === 'alarm' ? 'bg-red-500/20 text-red-400' : '',
-              device.status === 'warning' ? 'bg-yellow-500/20 text-yellow-400' : '',
-              device.status === 'stop' ? 'bg-gray-500/20 text-gray-400' : '',
-            ]">
-              <svg class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1 4v12h8V6H8zm2 2h4v8h-4V8z" />
-                <path d="M9 10h2v4H9v-4zm4 0h2v4h-2v-4z" />
-              </svg>
-            </div>
-            <!-- 数据列表 -->
-            <div class="text-sm space-y-1 flex-1">
-              <div class="flex justify-between">
-                <span class="opacity-80">有功功率</span>
-                <span class="font-semibold">{{ device.activePower }} kW</span>
+
+          <div class="flex gap-2 h-full items-center">
+            
+            <div class="flex flex-col items-center justify-center w-[45%]">
+              <div class="w-[68px] h-[55px] flex items-center justify-center"
+                   :style="{
+                     color: device.status === 'normal' ? '#32AFFF' :
+                            device.status === 'alarm' ? '#FF4D4F' :
+                            device.status === 'warning' ? '#E4B243' :
+                            '#888888'
+                   }">
+                <svg t="1775716366040" class="w-full h-full" viewBox="0 0 1118 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="35010" fill="currentColor">
+                  <path d="M1083.076923 74.486154a12.8 12.8 0 0 0 11.667692-7.532308l22.252308-48.836923A12.8 12.8 0 0 0 1105.329231 0H12.849231A12.8 12.8 0 0 0 1.181538 18.116923l22.252308 48.836923a12.8 12.8 0 0 0 11.667692 7.532308 12.750769 12.750769 0 0 1 12.8 12.8v849.181538a12.8 12.8 0 0 1-12.8 12.8H14.769231a12.750769 12.750769 0 0 0-12.8 12.8v48.836923A12.8 12.8 0 0 0 14.769231 1024h1086.326154a12.849231 12.849231 0 0 0 12.8-12.849231v-48.836923a12.8 12.8 0 0 0-12.8-12.8H1083.076923a12.8 12.8 0 0 1-12.8-12.8V87.286154a12.750769 12.750769 0 0 1 12.8-12.8z m-91.470769 856.615384a12.849231 12.849231 0 0 1-12.8 12.8H139.273846a12.849231 12.849231 0 0 1-12.849231-12.8V91.175385a12.8 12.8 0 0 1 12.849231-12.8h839.532308a12.8 12.8 0 0 1 12.8 12.8z" p-id="35011"></path>
+                  <path d="M933.513846 117.710769H577.969231a18.904615 18.904615 0 0 0-18.904616 18.904616v748.8a18.855385 18.855385 0 0 0 18.904616 18.855384h355.544615a18.855385 18.855385 0 0 0 18.855385-18.855384V136.615385a18.904615 18.904615 0 0 0-18.855385-18.904616z m-93.538461 521.846154a18.806154 18.806154 0 0 1-18.855385 18.855385H686.769231a18.855385 18.855385 0 0 1-18.904616-18.855385V384a18.904615 18.904615 0 0 1 18.904616-18.904615h134.350769a18.855385 18.855385 0 0 1 18.855385 18.904615zM500.824615 117.710769H184.664615a18.855385 18.855385 0 0 0-18.855384 18.904616v748.8a18.806154 18.806154 0 0 0 18.855384 18.855384h316.16a18.855385 18.855385 0 0 0 18.904616-18.855384V136.615385a18.904615 18.904615 0 0 0-18.904616-18.904616z m-201.846153 540.553846L343.433846 526.769231l-86.055384-31.507693 63.507692-130.067692h72.664615L343.433846 462.769231l86.055385 18.756923z" p-id="35012"></path>
+                </svg>
               </div>
-              <div class="flex justify-between">
-                <span class="opacity-80">日发电量</span>
-                <span class="font-semibold">{{ device.dailyPower }} kWh</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="opacity-80">等效小时数</span>
-                <span class="font-semibold">{{ device.equivalentHours }} h</span>
+              
+              <div class="mt-2 flex items-baseline"
+                   :style="{
+                     color: device.status === 'normal' ? '#32AFFF' :
+                            device.status === 'alarm' ? '#FF4D4F' :
+                            device.status === 'warning' ? '#E4B243' :
+                            '#888888'
+                   }">
+                <span class="font-bold text-[15px]">{{ device.installedCapacity }}</span>
+                <span class="text-[12px] ml-[2px]">kWp</span>
               </div>
             </div>
-          </div>
-          <!-- 底部装机容量 -->
-          <div class="px-3 py-1 text-sm border-t border-white/10">
-            <span class="font-semibold">{{ device.installedCapacity }} kWp</span>
+
+            <div class="flex flex-col justify-center w-[55%] text-[12px] space-y-[6px]">
+              
+              <div class="flex flex-col">
+                <span class="text-[#FFFFFF99] leading-tight mb-1">有功功率</span>
+                <div class="flex items-baseline"
+                     :style="{
+                       color: device.status === 'normal' ? '#32AFFF' :
+                              device.status === 'alarm' ? '#FF4D4F' :
+                              device.status === 'warning' ? '#E4B243' :
+                              '#888888'
+                     }">
+                  <span class="font-bold text-[15px]">{{ device.activePower }}</span>
+                  <span class="text-[#FFFFFF99] scale-90 ml-1">kW</span>
+                </div>
+              </div>
+              
+              <div class="flex flex-col">
+                <span class="text-[#FFFFFF99] leading-tight mb-1">日发电量</span>
+                <div class="flex items-baseline"
+                     :style="{
+                       color: device.status === 'normal' ? '#32AFFF' :
+                              device.status === 'alarm' ? '#FF4D4F' :
+                              device.status === 'warning' ? '#E4B243' :
+                              '#888888'
+                     }">
+                  <span class="font-bold text-[13px]">{{ device.dailyPower }}</span>
+                  <span class="text-[#FFFFFF99] scale-90 ml-1">kWh</span>
+                </div>
+              </div>
+              
+              <div class="flex flex-col">
+                <span class="text-[#FFFFFF99] leading-tight mb-1">等效小时数</span>
+                <div class="flex items-baseline"
+                     :style="{
+                       color: device.status === 'normal' ? '#32AFFF' :
+                              device.status === 'alarm' ? '#FF4D4F' :
+                              device.status === 'warning' ? '#E4B243' :
+                              '#888888'
+                     }">
+                  <span class="font-bold text-[13px]">{{ device.equivalentHours }}</span>
+                  <span class="text-[#FFFFFF99] scale-90 ml-1">h</span>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
@@ -142,15 +227,29 @@
 <script setup>
 import { ref } from 'vue'
 
-// 保留原有页面布局配置
 definePageMeta({
   layout: 'layout'
 })
 
-// 分页状态 - 匹配设计稿当前选中第2页
-const currentPage = ref(2)
+const currentLayout = ref('card')
+const layoutOptions = ref([
+  { label: '图标布局', value: 'card' },
+  { label: 'table布局', value: 'table' }
+])
 
-// 区域列表数据 - 1:1匹配设计稿内容
+const filterOptions = ref([
+  { label: '全部 600', value: 'all', checked: false },
+  { label: '正常 25', value: 'normal', checked: true },
+  { label: '停机 1', value: 'stop', checked: true },
+  { label: '告警 2', value: 'alarm', checked: false },
+  { label: '通讯中断 1', value: 'offline', checked: false }
+])
+
+const currentPage = ref(1)
+const currentAreaId = ref(1)
+// 奶奶给你加了这个状态，用来记录当前点选的是哪个设备，这样发光效果才能生效！
+const currentDeviceId = ref(1) 
+
 const areaList = ref([
   { id: 1, name: '1#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
   { id: 2, name: '2#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 21 },
@@ -170,7 +269,6 @@ const areaList = ref([
   { id: 16, name: '16#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
 ])
 
-// 逆变器设备列表数据 - 1:1匹配设计稿状态与数值
 const deviceList = ref([
   { id: 1, name: 'N01-01', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
   { id: 2, name: 'N01-02', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
@@ -192,8 +290,8 @@ const deviceList = ref([
 </script>
 
 <style scoped>
-/* 适配大屏滚动，保证布局不溢出 */
-* {
-  box-sizing: border-box;
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 </style>
