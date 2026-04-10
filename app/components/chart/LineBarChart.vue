@@ -1,33 +1,30 @@
 <template>
   <div class="bg-[#0A162C]/10 rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden">
-    <div class="flex items-center justify-between mb-2 shrink-0 relative py-1">
+    <div class="flex items-center justify-between mb-2 shrink-0 relative h-[33px] max-h-[33px]">
       <div class="absolute -left-1 top-[-4px] bottom-[-4px] w-1/2 bg-gradient-to-r from-[#173A6B]/60 to-transparent pointer-events-none"></div>
-      <div class="absolute -left-1 top-[-4px] bottom-[-4px] w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
+      <div class="absolute -left-1 top-[-4px] bottom-[-4px] w-1 bg-cyan-400"></div>
       <h3 class="text-[14px] font-bold text-white ml-4 leading-none z-10">{{ title }}</h3>
-      <div class="flex rounded-md p-0.5 relative z-10">
+      <div class="flex rounded-md p-0.5 relative z-10 py-1">
         <button 
           v-for="btn in buttons" 
           :key="btn" 
           @click="activeBtn = btn"
-          class="px-2 py-0.5 text-[10px] rounded transition-all" 
+          class="px-2 text-[10px] rounded transition-all" 
           :class="btn === activeBtn ? 'bg-cyan-600/30 text-[#32AFFF] border border-cyan-500/50 cursor-pointer' : 'text-[#FFFFFFCC] hover:text-gray-300 cursor-pointer'"
         >
           {{ btn }}
         </button>
       </div>
     </div>
-
-    <div class="flex-1 min-h-[180px] w-full relative -mt-3">
+    <div class="flex-1 min-h-[160px] w-full relative -mt-3" style="height: 90%;">
       <VueECharts :option="chartOption" autoresize />
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, computed } from 'vue';
 import VueECharts from 'vue-echarts';
 import * as echarts from 'echarts';
-
 // 定义父组件传过来的参数
 const props = defineProps({
   title: { type: String, default: '收益分析' },
@@ -42,15 +39,17 @@ const props = defineProps({
   },
   barWidth: { type: Number, default: 14 },
   yAxisMax: { type: Number, default: 700 },
-  yAxisInterval: { type: Number, default: 100 }
+  yAxisInterval: { type: Number, default: 100 },
+  lineColor: { type: String, default: '#F59E0B' },
+  lineAreaColor: { 
+    type: Array, 
+    default: () => ['rgba(245, 158, 11, 0.4)', 'rgba(245, 158, 11, 0.0)'] 
+  }
 });
-
 const activeBtn = ref(props.buttons[0]);
-
 const chartOption = computed(() => {
   const seriesArray = [];
   const actualLineXAxisData = props.lineXAxisData.length > 0 ? props.lineXAxisData : props.xAxisData;
-
   // 1. 柱状图配置
   if (props.barData && props.barData.length > 0) {
     seriesArray.push({
@@ -72,7 +71,6 @@ const chartOption = computed(() => {
       }
     });
   }
-
   // 2. 折线图配置
   if (props.lineData && props.lineData.length > 0) {
     seriesArray.push({
@@ -83,17 +81,16 @@ const chartOption = computed(() => {
       smooth: true, 
       symbol: 'circle',
       symbolSize: 4,
-      itemStyle: { color: '#F59E0B' }, 
-      lineStyle: { color: '#F59E0B', width: 2 },
+      itemStyle: { color: props.lineColor }, 
+      lineStyle: { color: props.lineColor, width: 1 },
       areaStyle: {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: 'rgba(245, 158, 11, 0.4)' }, 
-          { offset: 1, color: 'rgba(245, 158, 11, 0.0)' }  
+          { offset: 0, color: props.lineAreaColor[0] }, 
+          { offset: 1, color: props.lineAreaColor[1] }  
         ])
       }
     });
   }
-
   // 兜底逻辑
   if (seriesArray.length === 0) {
      seriesArray.push({
@@ -113,7 +110,6 @@ const chartOption = computed(() => {
       }
     });
   }
-
   return {
     grid: { top: 30, right: 10, bottom: 20, left: 35 },
     tooltip: {
