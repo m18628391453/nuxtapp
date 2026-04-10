@@ -110,8 +110,7 @@
         <div 
           v-for="device in deviceList" 
           :key="device.id"
-          @click="() => { currentDeviceId = device.id }"
-          @dbclick="() => { showInverterModal = true; currentDeviceId = device.id }"
+          @click="() => { showInverterModal = true; currentDeviceId = device.id }"
           :class="[
             'relative rounded-[2px] transition-all duration-200 cursor-pointer min-h-[160px] flex flex-col pt-10 pb-3 px-3 border bg-[#0A1A30]',
             currentDeviceId === device.id ? getDeviceActiveBorderClass(device.status) : 'border-[#FFFFFF0F]',
