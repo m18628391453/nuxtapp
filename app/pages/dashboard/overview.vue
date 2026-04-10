@@ -4,41 +4,36 @@
     <!-- 左侧 -->
     <div class="flex flex-col h-full max-h-[100%] shrink-0"
       :class="layoutMode === 'sidebar' ? 'min-w-[360px] max-w-[360px] f' : 'min-w-[370px] max-w-[370px]'">
+      <!-- 资产信息面板 -->
       <div class="flex-[9] min-h-0">
         <AssetPanel />
       </div>
+
+      <!-- 用电组成饼状图 -->
       <div class="flex-[5] min-h-0">
-        <ProgressivePie title="各系统用电组成" center-title="总用电量(kWh)" unit="kWh" 
-          :pie-size="240"
-          :inner-radius-ratio="0.4" 
-          :max-thickness="0.6"
-          :pie-data="[
+        <ProgressivePie title="各系统用电组成" center-title="总用电量(kWh)" unit="kWh" :pie-size="240" :inner-radius-ratio="0.4"
+          :max-thickness="0.6" :pie-data="[
             { name: '对虾车间', value: 4544, color: '#54D1FF', gradientStart: '#33A8FFC0' },
             { name: '鲈鱼车间', value: 3321, color: '#5DE999', gradientStart: '#3DD17AC0' },
             { name: '水藻车间', value: 3113, color: '#76E8F0', gradientStart: '#55D0E0C0' },
-          ]" 
-        />
+          ]" />
       </div>
     </div>
 
     <!-- 中间 -->
     <div class="flex-1 flex flex-col gap-4 h-full min-w-[600px]">
+      <!-- 顶部指标数据 -->
       <TopMetrics :metrics-data="customMetrics" />
 
-      <!-- 3D 厂房视图区域 -->
-      <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg  overflow-hidden z-1000"
-        :style="{
+      <!-- 厂房视图区域 -->
+      <FactoryView 
+        :custom-style="{
           backgroundImage: `url('/image/main.png')`,
           backgroundSize: layoutMode === 'sidebar' ? '110%' : '105%',
           backgroundPosition: 'center center',
           backgroundRepeat: 'no-repeat'
-        }">
-        <div class="absolute w-full h-full pointer-events-none">
-          <div
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-cyan-500/10 rounded-full animate-pulse">
-          </div>
-        </div>
-      </div>
+        }"
+      />
 
       <!-- 能源供需平衡分析 -->
       <div class="flex-[1.5] min-h-0" :class="layoutMode === 'sidebar' ? '-mt-3 mb-3' : ''">
@@ -50,26 +45,14 @@
     <div class="flex flex-col h-full  shrink-0"
       :class="layoutMode === 'sidebar' ? 'min-w-[365px] max-w-[365px] max-h-[99%]' : 'min-w-[375px] max-w-[375px] max-h-[100%]'">
       <!-- 系统运行模式 -->
-      <div class="bg-[#0A162C]/10 rounded-lg h-[90px] px-4 justify-between shrink-0 relative overflow-hidden"
-        style="padding-top: 0.5rem;">
-        <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex py-3.5 px-4 relative -ml-1 -mr-4">
-          <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
-          <h3 class="text-[14px] font-bold text-white ml-1 leading-none">
-            系统运行模式
-          </h3>
-        </div>
-        <div class="w-full text-center mt-4 z-100">
-          <span
-            class="px-3 py-1 bg-emerald-900/40 text-emerald-400 border border-emerald-500/10 rounded-full text-[13px] font-bold">自动模式</span>
-        </div>
-      </div>
+      <OperationMode title="系统运行模式" modeText="自动模式" />
 
       <!-- 收益分析图表 -->
       <div class="flex-[8] mt-1">
         <LineBarChart title="收益分析" :bar-data="[380, 550, 380, 550]" :x-axis-data="['光伏', '风电', '储能', '辅助服务']" />
       </div>
 
-      <div class="flex-[10] -mt-2">
+      <div class="flex-[10] -mt-1.5">
         <LineChart title="发电预测" />
       </div>
 
@@ -87,6 +70,8 @@ import BalanceChart from '@/components/chart/BalanceChart.vue'
 import ProgressivePie from '@/components/chart/ProgressivePie.vue'
 import LineChart from '@/components/chart/LineChart.vue'
 import LineBarChart from '@/components/chart/LineBarChart.vue'
+import OperationMode from '@/components/dashboard/OperationMode.vue'
+import FactoryView from '@/components/dashboard/FactoryView.vue'
 
 definePageMeta({
   layout: 'layout'
