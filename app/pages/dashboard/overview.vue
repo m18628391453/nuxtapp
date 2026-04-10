@@ -48,66 +48,19 @@
         <LineBarChart title="收益分析" :bar-data="[380, 550, 380, 550]" :x-axis-data="['光伏', '风电', '储能', '辅助服务']" />
       </div>
 
-      <!-- 发电预测（3条线示例） -->
+      <!-- 发电预测（原封不动5条线数据） -->
       <div class="flex-[10] -mt-1.5">
         <LineChart 
           title="发电预测" 
-          :x-axis-data="['00:00','03:00','06:00','09:00','12:00','15:00','18:00','21:00','24:00']"
-          :y-axis-config="{ max: 100, interval: 8 }"
-          :series-data="[
-            {
-              name: '光伏预测',
-              color: '#00D0FF',
-              gradientStart: 'rgba(0, 208, 255, 0.3)',
-              gradientEnd: 'rgba(0, 208, 255, 0)',
-              data: [10,15,25,30,35,28,20,15,10]
-            },
-            {
-              name: '风电预测',
-              color: '#1DFF8B',
-              gradientStart: 'rgba(29,255,139,0.3)',
-              gradientEnd: 'rgba(29,255,139,0)',
-              data: [8,12,18,22,20,15,10,8,10]
-            },
-            {
-              name: '总发电',
-              color: '#FFB800',
-              gradientStart: 'rgba(255,184,0,0.25)',
-              gradientEnd: 'rgba(255,184,0,0)',
-              extraConfig: {
-                lineStyle: {
-                  width: 1.2,
-                  shadowColor: 'rgba(255,184,0,0.6)',
-                  shadowBlur: 8
-                }
-              },
-              data: [18,27,43,52,55,43,30,23,20]
-            }
-          ]"
+          :series-data="originalFiveSeries"
         />
       </div>
 
-      <!-- 负荷预测（2条线示例） -->
+      <!-- 负荷预测（原封不动5条线数据） -->
       <div class="flex-[10] -mt-2">
         <LineChart 
           title="负荷预测" 
-          :y-axis-config="{ max: 35, interval: 5 }"
-          :series-data="[
-            {
-              name: '生产负荷',
-              color: '#F03900F0',
-              gradientStart: 'rgba(255,77,0,0.25)',
-              gradientEnd: 'rgba(255,77,0,0)',
-              data: [20,18,15,22,28,25,20,18,22]
-            },
-            {
-              name: '生活负荷',
-              color: '#00FFFF',
-              gradientStart: 'rgba(0,255,255,0.3)',
-              gradientEnd: 'rgba(0,255,255,0)',
-              data: [5,6,8,7,9,8,7,6,5]
-            }
-          ]"
+          :series-data="originalFiveSeries"
         />
       </div>
     </div>
@@ -123,6 +76,7 @@ import LineChart from '@/components/chart/LineChart.vue'
 import LineBarChart from '@/components/chart/LineBarChart.vue'
 import OperationMode from '@/components/dashboard/OperationMode.vue'
 import FactoryView from '@/components/dashboard/FactoryView.vue'
+import * as echarts from 'echarts'; // 记得导入echarts，因为数据里用了LinearGradient
 
 definePageMeta({
   layout: 'layout'
@@ -131,6 +85,89 @@ definePageMeta({
 // 从父组件注入状态和方法
 const layoutState = inject('layoutState');
 const { layoutMode } = layoutState;
+
+// ---------------- 核心：原封不动抄过来的5条线数据 ----------------
+const originalFiveSeries = [
+  {
+    name: '中期',
+    type: 'line',
+    color: '#00D0FF',
+    smooth: true,
+    showSymbol: false,
+    data: [20, 15, 22, 18, 25, 12, 10, 20],
+    lineStyle: { width: 1.0 },
+    areaStyle: {
+      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: 'rgba(0, 208, 255, 0.3)' },
+        { offset: 1, color: 'rgba(0, 208, 255, 0)' }
+      ])
+    }
+  },
+  {
+    name: '短期',
+    type: 'line',
+    color: '#1DFF8B',
+    smooth: true,
+    showSymbol: false,
+    data: [22, 18, 15, 20, 28, 15, 8, 15],
+    lineStyle: { width: 1.0 },
+    areaStyle: {
+      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: 'rgba(29, 255, 139, 0.3)' },
+        { offset: 1, color: 'rgba(29, 255, 139, 0)' }
+      ])
+    }
+  },
+  {
+    name: '中短期',
+    type: 'line',
+    color: '#FFB800',
+    smooth: true,
+    showSymbol: false,
+    data: [18, 20, 12, 15, 22, 20, 15, 18],
+    lineStyle: { width: 1.0 },
+    areaStyle: {
+      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: 'rgba(255, 184, 0, 0.25)' },
+        { offset: 1, color: 'rgba(255, 184, 0, 0)' }
+      ])
+    }
+  },
+  {
+    name: '超短期',
+    type: 'line',
+    color: '#F03900F0',
+    smooth: true,
+    showSymbol: false,
+    data: [25, 22, 18, 25, 20, 18, 12, 10],
+    lineStyle: { width: 1.0 },
+    areaStyle: {
+      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: 'rgba(255, 77, 0, 0.25)' },
+        { offset: 1, color: 'rgba(255, 77, 0, 0)' }
+      ])
+    }
+  },
+  {
+    name: '实际',
+    type: 'line',
+    color: '#00FFFF',
+    smooth: true,
+    showSymbol: false,
+    data: [15, 10, 20, 12, 30, 20, 16, 25],
+    lineStyle: {
+      width: 1.0,
+      shadowColor: 'rgba(0, 255, 255, 0.6)',
+      shadowBlur: 10
+    },
+    areaStyle: {
+      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: 'rgba(0, 255, 255, 0.3)' },
+        { offset: 1, color: 'rgba(0, 255, 255, 0)' }
+      ])
+    }
+  }
+];
 
 // 自定义指标数据
 const customMetrics = [
