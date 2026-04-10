@@ -4,7 +4,9 @@
     <!-- 中间 -->
     <div class="flex-1 flex flex-col gap-4 h-full min-w-[600px]">
       <!-- 设备视图 -->
-      <PlantView class="flex-1" />
+      <div class="flex-1 mt-0 mb-0">
+        <PlantView class="flex-1" />
+      </div>
       <!-- 能源供需平衡分析 -->
       <div class="flex-[1.5] max-h-[310px] h-[310px] shrink-0 mb-5 px-3">
         <BalanceChart />
