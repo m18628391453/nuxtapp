@@ -70,7 +70,7 @@ const menuList = ref([
     name: '首页', route: '/', icon: 'Home', index: 0,
     subMenu: [
       { name: '综合看板', route: '/dashboard/overview', icon: 'TvMinimal', index: 0 },
-      { name: '能源看板', route: '/dashboard/energy', icon: 'TvMinimal', index: 1 }
+      { name: '能量看板', route: '/dashboard/energy', icon: 'TvMinimal', index: 1 }
     ]
   },
   { 

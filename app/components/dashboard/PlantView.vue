@@ -49,7 +49,7 @@
         >
           <img :src="`/image/${node.icon}`" 
                :style="{ height: `${node.level <= 2 ? BASE_ICON_HEIGHT * LARGE_ICON_SCALE : BASE_ICON_HEIGHT}px` }"
-               class="object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.4)] relative z-10" 
+               class="object-contain relative z-10" 
                alt="device" />
           
           <div class="absolute bg-[#0B1B34]/90 border border-[#22D3EE]/30 rounded-md p-2 min-w-[140px] shadow-[0_0_10px_rgba(34,211,238,0.1)] backdrop-blur-sm z-20 pointer-events-none"
@@ -84,23 +84,17 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 
-// ==========================================
-// 👵 奶奶留给你们的配置区（随时在这里调整参数）
-// ==========================================
-
-// --- 1. 全局位置偏移配置 ---
+// --- 全局位置偏移配置 ---
 const GLOBAL_OFFSET_X = 15; // 往右偏填正数，往左偏填负数 (例如: 50)
 const GLOBAL_OFFSET_Y = -5; // 往下偏填正数，往上偏填负数 (例如: 30)
 
-// --- 2. 图标大小配置 ---
+// --- 图标大小配置 ---
 const BASE_ICON_HEIGHT = 120;  // 第三行图标的基础高度
 const LARGE_ICON_SCALE = 1.15; // 第一、二行图标放大的倍数 (1.2 就是大 20%)
 
-// --- 3. 动效光束配置 ---
+// --- 动效光束配置 ---
 const BEAM_LENGTH = 200; // 发光线的长度
 const BEAM_SPEED = 3;    // 发光线的移动速度
-
-// ==========================================
 
 // 虚拟画布尺寸
 const VIRTUAL_WIDTH = 1720;
@@ -112,7 +106,7 @@ const scaleRatio = ref(1);
 const offsetX = ref(0);
 const offsetY = ref(0);
 
-// --- 节点数据配置 (奶奶加了 level 字段来区分第几行) ---
+// --- 节点数据配置 ---
 const nodes = ref([
   // 第一行：10kV 级别 (level: 1)
   { id: 'grid', name: '市政电网', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'powergrid.png', level: 1, x: 250, y: 120 },
@@ -173,7 +167,7 @@ const getStatusText = (status) => {
   return map[status] || status
 }
 
-// --- 👵 核心：2D Canvas 发光线束引擎 ---
+// --- 核心：2D Canvas 发光线束引擎 ---
 let animationFrameId = null;
 let beams = [];
 
