@@ -16,7 +16,7 @@
         </button>
       </div>
     </div>
-    <div class="flex-1 min-h-[160px] w-full relative -mt-3" style="height: 90%;">
+    <div class="flex-1 w-full relative -mt-3">
       <VueECharts :option="chartOption" autoresize />
     </div>
   </div>

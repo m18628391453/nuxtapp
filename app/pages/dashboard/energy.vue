@@ -1,64 +1,60 @@
 <template>
-  <div class="flex w-full h-full p-4 gap-4 box-border overflow-hidden bg-transparent text-white font-sans">
-    <!-- 左侧区域 -->
-    <div class="flex-1 flex flex-col gap-4 h-full min-w-[500px]">
-      <!-- 上部：动态厂区视图 -->
+  <div class="flex w-full h-full  gap-4 box-border overflow-hidden bg-transparent text-white font-sans "
+    :class="layoutMode === 'sidebar' ? '-mt-2 py-3' : 'p-4'">
+    <!-- 中间 -->
+    <div class="flex-1 flex flex-col gap-4 h-full min-w-[600px]">
+      <!-- 设备视图 -->
       <PlantView class="flex-1" />
-      <!-- 下部：能源供需平衡分析 -->
-      <BalanceChart class="max-h-[340px] h-[340px] shrink-0 mb-5" />
+      <!-- 能源供需平衡分析 -->
+      <div class="flex-[1.5] max-h-[310px] h-[310px] shrink-0 mb-5 px-3">
+        <BalanceChart />
+      </div>
     </div>
 
-    <!-- 右侧区域（固定420px宽度） -->
-    <div class="min-w-[420px] max-w-[420px] flex flex-col h-full shrink-0 gap-4">
-      <!-- 模式切换 -->
+    <!-- 右侧 -->
+    <div class="flex flex-col h-full  shrink-0"
+      :class="layoutMode === 'sidebar' ? 'min-w-[400px] max-w-[400px] max-h-[99%]' : 'min-w-[425px] max-w-[425px] max-h-[100%]'">
+      <!-- 系统运行模式 -->
       <OperationMode title="模式切换" modeText="自动模式" />
-      
-      <!-- 电价信息 -->
-      <div class="flex-[8] -mt-1">
-        <ElectricityPrice class="min-h-[150px]" />
+
+      <!-- 收益分析图表 -->
+      <div class="flex-[8] mt-1">
+        <ElectricityPrice />
       </div>
 
-      <!-- 出力情况折线图 -->
-      <div class="flex-[10] -mt-8">
-        <LineBarChart 
-          title="出力情况"
-          :barData="[]"
-          :lineData="[320, 280, 300, 260, 310, 290, 270, 250, 260, 280, 270, 260]"
-          :lineXAxisData="['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']"
-          :yAxisMax="350"
-          :yAxisInterval="50"
-          :buttons="[]"
-          class="flex-1 min-h-[160px]"
-        />
+      <div class="flex-[10] -mt-3">
+        <LineChart title="出力情况" />
       </div>
-      
-      <!-- 负荷运行情况折线图 -->
-      <div class="flex-[10] -mt-6">
-        <LineBarChart 
-          title="负荷运行情况"
-          :barData="[]"
-          :lineData="[280, 250, 270, 300, 260, 290, 250, 270, 240, 260, 250, 240]"
-          :lineXAxisData="['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']"
-          :yAxisMax="350"
-          :yAxisInterval="50"
-          :buttons="[]"
-          lineColor="#10B981"
-          :lineAreaColor="['rgba(16, 185, 129, 0.4)', 'rgba(16, 185, 129, 0.0)']"
-          class="flex-1 min-h-[160px]"
-        />
+
+      <div class="flex-[10] -mt-2.5">
+        <LineChart title="负荷运行情况" />
       </div>
-      
     </div>
   </div>
 </template>
+
 <script setup>
-import PlantView from '@/components/dashboard/PlantView.vue';
-import BalanceChart from '@/components/chart/BalanceChart.vue';
-import LineBarChart from '@/components/chart/LineBarChart.vue';
-import OperationMode from '@/components/dashboard/OperationMode.vue';
-import ElectricityPrice from '@/components/dashboard/ElectricityPrice.vue';
+import PlantView from '@/components/dashboard/PlantView.vue'
+import BalanceChart from '@/components/chart/BalanceChart.vue'
+import LineChart from '@/components/chart/LineChart.vue'
+import OperationMode from '@/components/dashboard/OperationMode.vue'
+import ElectricityPrice from '@/components/dashboard/ElectricityPrice.vue'
 
 definePageMeta({
   layout: 'layout'
 })
+
+// 从父组件注入状态和方法
+const layoutState = inject('layoutState');
+const { layoutMode } = layoutState;
+
+// 自定义指标数据
+const customMetrics = [
+  { title: '今日用电量(kWh)', value: '38,642', change: '↑1.6%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
+  { title: '综合电费_风平谷折算(元)', value: '26,814', change: '↓节约', vs: '¥3,280', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
+  { title: '光伏发电量(kWh)', value: '12,380', change: '↑1.6%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
+  { title: '储能套利收益_今日(元)', value: '4,156', change: 'SOC 74%', vs: '· 充放21次', valueColor: 'text-[#32AFFF]', arrowColor: 'text-gray-400' },
+  { title: '碳排放强度_双碳(tCO₂/万元)', value: '0.382', change: '↓11.4%', vs: 'vs 目标', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
+  { title: '绿电消纳占比_GEC(%)', value: '32.1', change: '↑2.4%', vs: 'vs 上月', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
+];
 </script>
