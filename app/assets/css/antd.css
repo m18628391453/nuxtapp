@@ -1,0 +1,109 @@
+
+:deep(.area-title-select .ant-select-selector) {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+:deep(.area-title-select .ant-select-selection-item) {
+    color: #32AFFF !important;
+    font-size: 14px !important;
+}
+
+:deep(.area-title-select .ant-select-arrow) {
+    color: #32AFFF !important;
+    right: 0px !important;
+}
+
+/* 日期选择器输入框样式修复 */
+:deep(.custom-dark-datepicker.ant-picker) {
+    background-color: transparent !important;
+    border: 1px solid #1C3E73 !important;
+    color: #FFFFFF !important;
+}
+
+:deep(.custom-dark-datepicker .ant-picker-input > input) {
+    color: #FFFFFF !important;
+}
+
+:deep(.custom-dark-datepicker .ant-picker-suffix) {
+    color: #FFFFFF99 !important;
+}
+
+/* 统一 Select 选择器样式 */
+:deep(.custom-dark-select .ant-select-selector) {
+    background-color: transparent !important;
+    border: 1px solid #1C3E73 !important;
+    color: #FFFFFF !important;
+}
+
+:deep(.custom-dark-select .ant-select-selection-item) {
+    color: #FFFFFF !important;
+}
+
+:deep(.custom-dark-select .ant-select-arrow) {
+    color: #FFFFFF99 !important;
+}
+
+/* 全局弹窗样式修复：解决白屏关键点 */
+:global(.custom-dark-datepicker-dropdown),
+:global(.ant-picker-dropdown) {
+    background-color: #032748 !important;
+    border: 1px solid #1C3E73 !important;
+}
+
+:global(.ant-picker-panel-container) {
+    background: #032748 !important;
+}
+
+:global(.ant-picker-content th),
+:global(.ant-picker-content td),
+:global(.ant-picker-header),
+:global(.ant-picker-header button),
+:global(.ant-picker-cell),
+:global(.ant-picker-cell-inner) {
+    color: #FFFFFF !important;
+}
+
+:global(.ant-picker-cell:hover .ant-picker-cell-inner) {
+    background: #1C3E73 !important;
+}
+
+:global(.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner) {
+    background: #32AFFF !important;
+}
+
+:global(.ant-picker-header) {
+    border-bottom: 1px solid #1C3E73 !important;
+}
+
+:global(.ant-picker-footer) {
+    border-top: 1px solid #1C3E73 !important;
+    background: #032748 !important;
+}
+
+/* 修复 Select 下拉框的白色背景和字体颜色 */
+:global(.ant-select-dropdown) {
+    background-color: #032748 !important;
+    border: 1px solid #1C3E73 !important;
+}
+
+:global(.ant-select-item) {
+    color: #FFFFFF99 !important;
+}
+
+:global(.ant-select-item-option-active),
+:global(.ant-select-item-option-selected) {
+    background-color: #1C3E73 !important;
+    color: #FFFFFF !important;
+}
+
+:deep(.custom-dark-datepicker .ant-picker-clear) {
+    background: transparent !important;
+    color: #FFFFFF99 !important;
+}
+
+:deep(.custom-dark-datepicker .ant-picker-clear:hover) {
+    color: #FFFFFF !important;
+}
