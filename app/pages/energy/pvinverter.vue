@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full min-h-screen bg-[#061122] overflow-auto px-4 py-4 font-yahei text-white">
+  <div class="w-full h-full min-h-screen bg-transparent overflow-auto px-4 py-4 font-yahei text-white">
     <div class="flex justify-between items-center mb-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] max-h-[56px]">
       <div class="flex items-center">
         <button
