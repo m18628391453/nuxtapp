@@ -1,12 +1,12 @@
 <template>
   <div class="w-full h-full min-h-screen bg-transparent flex flex-col p-4 font-sans text-white gap-4 box-border">
-
     <!-- 只修改了这部分顶部指标栏 -->
     <div class="grid grid-cols-5 gap-2 h-[72px] shrink-0">
       <div v-for="(card, index) in summaryCards" :key="index"
-        class="bg-[#32AFFF2A] border border-[#32AFFF2F] rounded p-4 flex items-center gap-4 relative overflow-hidden transition-all duration-300 hover:border-[#32AFFF3F] hover:shadow-[0_0_15px_rgba(50,175,255,0.3)] cursor-pointer">
-        <div class="w-12 h-12 flex items-center justify-center shrink-0">
-          <component :is="card.icon" class="w-6 h-6" />
+        @click="activeCard = index"
+        :class="['bg-[#32AFFF2A] border border-[#32AFFF2F] rounded p-4 flex items-center gap-4 relative overflow-hidden transition-all duration-300 hover:border-[#32AFFF4F] hover:shadow-[0_0_14px_rgba(50,175,255,0.5)] cursor-pointer', activeCard === index ? 'shadow-[0_0_12px_rgba(50,175,255,0.5)] border-[#32AFFF4F]' : '']">
+        <div class="w-15 h-15 flex items-center justify-center shrink-0 ml-2">
+          <img :src="`/image/${card.icon}`" :alt="card.title" class="w-8" />
         </div>
         <div class="flex flex-col">
           <span class="text-[12px] text-[#FFFFFF99]">{{ card.title }}</span>
@@ -18,48 +18,71 @@
         </div>
       </div>
     </div>
-
     <!-- 下面的筛选栏、表格、分页都保持原样不动 -->
-    <div class="bg-[#FFFFFF0A] border border-[#FFFFFF1A] rounded-[4px] p-4 flex flex-wrap items-center gap-4 shrink-0">
-      <div class="flex items-center gap-2">
-        <span class="text-[14px] text-[#FFFFFF99]">选择日期:</span>
-        <a-range-picker v-model:value="searchDate" class="custom-dark-range-picker"
-          dropdownClassName="custom-dark-datepicker-dropdown"
-          :getPopupContainer="(triggerNode) => triggerNode.parentNode" />
+    <div class="bg-[#FFFFFF0A] border border-[#FFFFFF1A] rounded-[4px] p-4 flex flex-col gap-4 shrink-0">
+      <!-- 第一行筛选 - 调整列宽比例，按钮自动宽度 -->
+      <div class="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center">
+        <div class="flex items-center gap-2">
+          <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">设备名称:</span>
+          <a-input v-model:value="deviceName" placeholder="请输入" class="custom-dark-input w-full" />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">设备类型:</span>
+          <a-select v-model:value="filterType" class="custom-dark-select w-full"
+            :getPopupContainer="(triggerNode) => triggerNode.parentNode">
+            <a-select-option value="all">全部设备</a-select-option>
+            <a-select-option value="inverter">逆变器</a-select-option>
+            <a-select-option value="combiner">汇流箱</a-select-option>
+          </a-select>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">发生时间:</span>
+          <a-date-picker v-model:value="searchDate" class="custom-dark-datepicker w-full"
+            dropdownClassName="custom-dark-datepicker-dropdown"
+            :getPopupContainer="(triggerNode) => triggerNode.parentNode" />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">告警等级:</span>
+          <a-select v-model:value="filterLevel" class="custom-dark-select w-full"
+            :getPopupContainer="(triggerNode) => triggerNode.parentNode">
+            <a-select-option value="all">全部级别</a-select-option>
+            <a-select-option value="fatal">严重</a-select-option>
+            <a-select-option value="major">重要</a-select-option>
+          </a-select>
+        </div>
+        <div class="flex gap-2">
+          <a-button type="primary" class="!bg-[#32AFFF] !border-[#32AFFF] hover:!opacity-80 w-[64px] min-w-[64px]">查询</a-button>
+          <a-button
+            class="!bg-transparent !border-[#FFFFFF33] !text-[#FFFFFF99] hover:!text-white hover:!border-[#fefefe30] w-[64px] min-w-[64px]">重置</a-button>
+        </div>
       </div>
-
-      <div class="flex items-center gap-2">
-        <span class="text-[14px] text-[#FFFFFF99]">告警级别:</span>
-        <a-select v-model:value="filterLevel" class="custom-dark-select" style="width: 120px;"
-          :getPopupContainer="(triggerNode) => triggerNode.parentNode">
-          <a-select-option value="all">全部级别</a-select-option>
-          <a-select-option value="fatal">严重</a-select-option>
-          <a-select-option value="major">重要</a-select-option>
-        </a-select>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="text-[14px] text-[#FFFFFF99]">设备类型:</span>
-        <a-select v-model:value="filterType" class="custom-dark-select" style="width: 140px;"
-          :getPopupContainer="(triggerNode) => triggerNode.parentNode">
-          <a-select-option value="all">全部设备</a-select-option>
-          <a-select-option value="inverter">逆变器</a-select-option>
-          <a-select-option value="combiner">汇流箱</a-select-option>
-        </a-select>
-      </div>
-      <div class="flex-1 min-w-[200px]">
-        <a-input v-model:value="searchKey" placeholder="请输入搜索内容" class="custom-dark-input">
-          <template #prefix>
-            <svg class="w-4 h-4 text-[#FFFFFF66]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </template>
-        </a-input>
-      </div>
-      <div class="flex gap-2">
-        <a-button type="primary" class="!bg-[#32AFFF] !border-[#32AFFF] hover:!opacity-80">查询</a-button>
-        <a-button
-          class="!bg-transparent !border-[#FFFFFF33] !text-[#FFFFFF99] hover:!text-white hover:!border-white">重置</a-button>
+      <!-- 第二行筛选 - 调整列宽比例，只占前两列 -->
+      <div class="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center">
+        <div class="flex items-center gap-2">
+          <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">告警名称:</span>
+          <a-select v-model:value="alarmName" class="custom-dark-select w-full"
+            :getPopupContainer="(triggerNode) => triggerNode.parentNode">
+            <a-select-option value="all">全部告警</a-select-option>
+            <!-- 你可以在这里添加具体的告警名称选项 -->
+          </a-select>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">恢复状态:</span>
+          <a-select v-model:value="recoveryStatus" class="custom-dark-select w-full"
+            :getPopupContainer="(triggerNode) => triggerNode.parentNode">
+            <a-select-option value="all">全部状态</a-select-option>
+            <a-select-option value="unhandled">未恢复</a-select-option>
+            <a-select-option value="resolved">已恢复</a-select-option>
+          </a-select>
+        </div>
+        <div class="flex items-center gap-2"></div>
+        <div class="flex items-center gap-2"></div>
+        <div class="flex gap-2 opacity-0">
+          <a-button class="opacity-0 w-[64px] min-w-[64px]" >&nbsp;</a-button>
+          <a-button class="opacity-0 w-[64px] min-w-[64px]">&nbsp;</a-button>
+        </div>
+        <!-- 剩余空间留空，保持布局对齐 -->
+        <div></div>
       </div>
     </div>
     <div class="flex-1 bg-[#FFFFFF0A] border border-[#FFFFFF1A] rounded-[4px] flex flex-col min-h-0">
@@ -121,34 +144,30 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import dayjs from 'dayjs';
-
 definePageMeta({ layout: 'layout' })
-
-// 图标组件（新增用于顶部卡片）
-const PowerIcon = () => null;
-const ShieldIcon = () => null;
-const BatteryIcon = () => null;
-const WifiIcon = () => null;
-const BellIcon = () => null;
-
-// 顶部卡片数据（修改为5个，符合设计稿）
+// 顶部卡片选中状态
+const activeCard = ref(0);
+// 顶部卡片数据（修改为使用public/image下的图片）
 const summaryCards = ref([
-  { title: '停机告警(台)', value: '200', icon: PowerIcon },
-  { title: '安全告警(台)', value: '620', icon: ShieldIcon },
-  { title: '电量告警(台)', value: '4000', icon: BatteryIcon },
-  { title: '通讯告警(台)', value: '60', icon: WifiIcon },
-  { title: '其他告警(台)', value: '4000', icon: BellIcon }
+  { title: '停机告警(台)', value: '200', icon: 'switch.png' },
+  { title: '安全告警(台)', value: '620', icon: 'warnning.png' },
+  { title: '电量告警(台)', value: '4000', icon: 'record.png' },
+  { title: '通讯告警(台)', value: '60', icon: 'offline.png' },
+  { title: '其他告警(台)', value: '4000', icon: 'alarm.png' }
 ]);
-
 // 下面的所有数据和逻辑都保持原样不动
-const searchDate = ref([]);
+const searchDate = ref(null); // 从数组改为单个日期值，兼容单个日期选择器
 const filterLevel = ref('all');
 const filterType = ref('all');
 const searchKey = ref('');
+// 新增筛选条件（完全兼容原有逻辑）
+const deviceName = ref('');
+const alarmName = ref('all');
+const recoveryStatus = ref('all');
+
 const currentTab = ref('all');
 const tabs = [
   { label: '全部告警', key: 'all' },
@@ -166,7 +185,6 @@ const tableData = ref([
   { id: 'AL-20260411-007', deviceName: '8#汇流箱', levelText: '提示', levelColor: '#32AFFF', type: '开关状态', content: '支路空开已断开', time: '2026-04-11 05:45:12', status: 'resolved', statusText: '已处理' }
 ]);
 </script>
-
 <style scoped>
 @import url(../../assets/css/antd.css);
 .metric-value {
