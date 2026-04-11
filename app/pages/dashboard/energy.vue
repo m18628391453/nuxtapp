@@ -8,7 +8,7 @@
         <PlantView class="flex-1" />
       </div>
       <!-- 能源供需平衡分析 -->
-      <div class="flex-[1.5] max-h-[310px] h-[310px] shrink-0 mb-3 px-3">
+      <div class="flex-[1.5] max-h-[300px] h-[300px] shrink-0 mb-3 px-3">
         <BalanceChart />
       </div>
     </div>
