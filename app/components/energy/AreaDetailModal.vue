@@ -292,6 +292,7 @@ onUnmounted(() => {
 }
 :deep(.area-title-select .ant-select-selection-item) {
   color: #32AFFF !important;
+  font-size: 14px !important;
 }
 :deep(.area-title-select .ant-select-arrow) {
   color: #32AFFF !important;

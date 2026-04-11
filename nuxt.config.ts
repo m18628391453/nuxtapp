@@ -7,7 +7,6 @@ export default defineNuxtConfig({
   ],
   css: [
     '~/assets/css/global.css',
-    'ant-design-vue/dist/reset.css',
   ],
   app: {
     head: {
