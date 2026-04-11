@@ -5,7 +5,10 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@ant-design-vue/nuxt'
   ],
-  css: ['~/assets/css/global.css'],
+  css: [
+    '~/assets/css/global.css',
+    'ant-design-vue/dist/reset.css',
+  ],
   app: {
     head: {
       title: '综合能碳管理平台',  // 全局默认标题
