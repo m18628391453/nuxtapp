@@ -43,12 +43,14 @@
       </div>
     </div>
 
+    <!-- 中间：区域卡片 → 单击选中，双击弹窗 -->
     <div class="mb-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] max-h-[380px] min-h-[360px]">
       <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
         <div 
           v-for="area in areaList" 
           :key="area.id"
           @click="currentAreaId = area.id"
+          @dblclick="openAreaModal(area.id)"
           :class="[
             'relative rounded-[2px] px-3 pb-3 pt-[42px] transition-all duration-200 cursor-pointer min-h-[135px] flex flex-col justify-end',
             'bg-[#0A1A30] border',
@@ -70,7 +72,6 @@
           <span v-if="area.warnCount" class="absolute top-1 right-2 bg-[#FF4B4B] text-white text-[12px] font-bold rounded-full w-[22px] h-[22px] flex items-center justify-center z-10 shadow-md">
             {{ area.warnCount }}
           </span>
-
           <div class="text-[13px] w-full flex flex-col gap-[6px]">
             <div class="flex justify-between items-center w-full">
               <span class="text-[#FFFFFF99]">日发电量(kWh):</span>
@@ -105,12 +106,14 @@
       </div>
     </div>
 
+    <!-- 下部：逆变器卡片 → 单击选中，双击弹窗 -->
     <div class="mt-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] ">
       <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
         <div 
           v-for="device in deviceList" 
           :key="device.id"
-          @click="() => { showInverterModal = true; currentDeviceId = device.id }"
+          @click="currentDeviceId = device.id"
+          @dblclick="openInverterModal(device.id)"
           :class="[
             'relative rounded-[2px] transition-all duration-200 cursor-pointer min-h-[160px] flex flex-col pt-10 pb-3 px-3 border bg-[#0A1A30]',
             currentDeviceId === device.id ? getDeviceActiveBorderClass(device.status) : 'border-[#FFFFFF0F]',
@@ -130,7 +133,6 @@
                }">
             {{ device.name }}
           </div>
-
           <div class="flex gap-2 h-full items-center">
             <div class="flex flex-col items-center justify-center w-[45%]">
               <div class="w-[68px] h-[55px] flex items-center justify-center"
@@ -140,9 +142,9 @@
                             device.status === 'warning' ? '#E4B243' :
                             '#888888'
                    }">
-                <svg t="1775716366040" class="w-full h-full" viewBox="0 0 1118 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="35010" fill="currentColor">
-                  <path d="M1083.076923 74.486154a12.8 12.8 0 0 0 11.667692-7.532308l22.252308-48.836923A12.8 12.8 0 0 0 1105.329231 0H12.849231A12.8 12.8 0 0 0 1.181538 18.116923l22.252308 48.836923a12.8 12.8 0 0 0 11.667692 7.532308 12.750769 12.750769 0 0 1 12.8 12.8v849.181538a12.8 12.8 0 0 1-12.8 12.8H14.769231a12.750769 12.750769 0 0 0-12.8 12.8v48.836923A12.8 12.8 0 0 0 14.769231 1024h1086.326154a12.849231 12.849231 0 0 0 12.8-12.849231v-48.836923a12.8 12.8 0 0 0-12.8-12.8H1083.076923a12.8 12.8 0 0 1-12.8-12.8V87.286154a12.750769 12.750769 0 0 1 12.8-12.8z m-91.470769 856.615384a12.849231 12.849231 0 0 1-12.8 12.8H139.273846a12.849231 12.849231 0 0 1-12.849231-12.8V91.175385a12.8 12.8 0 0 1 12.849231-12.8h839.532308a12.8 12.8 0 0 1 12.8 12.8z" p-id="35011"></path>
-                  <path d="M933.513846 117.710769H577.969231a18.904615 18.904615 0 0 0-18.904616 18.904616v748.8a18.855385 18.855385 0 0 0 18.904616 18.855384h355.544615a18.855385 18.855385 0 0 0 18.855385-18.855384V136.615385a18.904615 18.904615 0 0 0-18.855385-18.904616z m-93.538461 521.846154a18.806154 18.806154 0 0 1-18.855385 18.855385H686.769231a18.855385 18.855385 0 0 1-18.904616-18.855385V384a18.904615 18.904615 0 0 1 18.904616-18.904615h134.350769a18.855385 18.855385 0 0 1 18.855385 18.904615zM500.824615 117.710769H184.664615a18.855385 18.855385 0 0 0-18.855384 18.904616v748.8a18.806154 18.806154 0 0 0 18.855384 18.855384h316.16a18.855385 18.855385 0 0 0 18.904616-18.855384V136.615385a18.904615 18.904615 0 0 0-18.904616-18.904616z m-201.846153 540.553846L343.433846 526.769231l-86.055384-31.507693 63.507692-130.067692h72.664615L343.433846 462.769231l86.055385 18.756923z" p-id="35012"></path>
+                <svg t="1775716366040" class="w-full h-full" viewBox="0 0 1118 1024" fill="currentColor">
+                  <path d="M1083.076923 74.486154a12.8 12.8 0 0 0 11.667692-7.532308l22.252308-48.836923A12.8 12.8 0 0 0 1105.329231 0H12.849231A12.8 12.8 0 0 0 1.181538 18.116923l22.252308 48.836923a12.8 12.8 0 0 0 11.667692 7.532308 12.750769 12.750769 0 0 1 12.8 12.8v849.181538a12.8 12.8 0 0 1-12.8 12.8H14.769231a12.750769 12.750769 0 0 0-12.8 12.8v48.836923A12.8 12.8 0 0 0 14.769231 1024h1086.326154a12.849231 12.849231 0 0 0 12.8-12.849231v-48.836923a12.8 12.8 0 0 0-12.8-12.8H1083.076923a12.8 12.8 0 0 1-12.8-12.8V87.286154a12.750769 12.750769 0 0 1 12.8-12.8z m-91.470769 856.615384a12.849231 12.849231 0 0 1-12.8 12.8H139.273846a12.849231 12.849231 0 0 1-12.849231-12.8V91.175385a12.8 12.8 0 0 1 12.849231-12.8h839.532308a12.8 12.8 0 0 1 12.8 12.8z" />
+                  <path d="M933.513846 117.710769H577.969231a18.904615 18.904615 0 0 0-18.904616 18.904616v748.8a18.855385 18.855385 0 0 0 18.904616 18.855384h355.544615a18.855385 18.855385 0 0 0 18.855385-18.855384V136.615385a18.904615 18.904615 0 0 0-18.855385-18.904616z m-93.538461 521.846154a18.806154 18.806154 0 0 1-18.855385 18.855385H686.769231a18.855385 18.855385 0 0 1-18.904616-18.855385V384a18.904615 18.904615 0 0 1 18.904616-18.904615h134.350769a18.855385 18.855385 0 0 1 18.855385 18.904615zM500.824615 117.710769H184.664615a18.855385 18.855385 0 0 0-18.855384 18.904616v748.8a18.806154 18.806154 0 0 0 18.855384 18.855384h316.16a18.855385 18.855385 0 0 0 18.904616-18.855384V136.615385a18.904615 18.904615 0 0 0-18.904616-18.904616z m-201.846153 540.553846L343.433846 526.769231l-86.055384-31.507693 63.507692-130.067692h72.664615L343.433846 462.769231l86.055385 18.756923z" />
                 </svg>
               </div>
               
@@ -157,7 +159,6 @@
                 <span class="text-[12px] ml-[2px]">kWp</span>
               </div>
             </div>
-
             <div class="flex flex-col justify-center w-[55%] text-[12px] space-y-[6px]">
               <div class="flex flex-col">
                 <span class="text-[#FFFFFF99] leading-tight mb-1">有功功率</span>
@@ -203,25 +204,29 @@
         </div>
       </div>
     </div>
+
+    <!-- 逆变器弹窗 -->
     <InverterDetailModal v-model:visible="showInverterModal" />
+    <!-- 区域弹窗 -->
+    <AreaDetailModal v-model:visible="showAreaModal" :area-id="currentAreaId" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import InverterDetailModal from '@/components/energy/InverterDetailModal.vue'
+import AreaDetailModal from '@/components/energy/AreaDetailModal.vue'
 
-definePageMeta({
-  layout: 'layout'
-})
+definePageMeta({ layout: 'layout' })
 
+// 布局切换
 const currentLayout = ref('card')
 const layoutOptions = ref([
   { label: '图标布局', value: 'card' },
   { label: 'table布局', value: 'table' }
 ])
-const showInverterModal = ref(false);
 
+// 筛选
 const filterOptions = ref([
   { label: '全部 600', value: 'all', checked: false },
   { label: '正常 25', value: 'normal', checked: true },
@@ -230,29 +235,39 @@ const filterOptions = ref([
   { label: '通讯中断 1', value: 'offline', checked: false }
 ])
 
-// 奶奶改的核心逻辑1：处理勾选框联动（全选和其他互斥）
 const handleFilterChange = (clickedFilter) => {
   if (clickedFilter.value === 'all') {
-    // 勾选全选 → 取消所有其他选项
     const isChecked = !clickedFilter.checked;
     filterOptions.value.forEach(item => {
       item.checked = item.value === 'all' ? isChecked : false;
     });
   } else {
-    // 勾选其他选项 → 取消全选
     clickedFilter.checked = !clickedFilter.checked;
     const allFilter = filterOptions.value.find(item => item.value === 'all');
     if (allFilter) allFilter.checked = false;
-    
-    // 额外：如果所有其他选项都取消了，也不会自动勾选全选（保持原有逻辑）
   }
 }
 
+// 分页与选中
 const currentPage = ref(1)
 const currentAreaId = ref(1)
 const currentDeviceId = ref(1) 
 
-// 奶奶加的：设备状态相关样式计算函数（复用中间区域的hover/选中逻辑）
+// 弹窗控制
+const showInverterModal = ref(false)
+const showAreaModal = ref(false)
+
+const openInverterModal = (id) => {
+  currentDeviceId.value = id
+  showInverterModal.value = true
+}
+
+const openAreaModal = (id) => {
+  currentAreaId.value = id
+  showAreaModal.value = true
+}
+
+// 设备样式
 const getDeviceActiveBorderClass = (status) => {
   switch(status) {
     case 'normal': return 'border-[#3AB2FF6F]'; // 正常-蓝色（和中间区域一致）
@@ -273,10 +288,10 @@ const getDeviceHoverClass = (status) => {
 
 const getDeviceBgColor = (status) => {
   switch(status) {
-    case 'normal': return 'rgba(50,175,255,0.06)';
-    case 'alarm': return 'rgba(255,77,79,0.1)';
-    case 'warning': return 'rgba(228,178,67,0.1)';
-    default: return 'rgba(136,136,136,0.1)';
+    case 'normal': return 'rgba(50,175,255,0.06)'
+    case 'alarm': return 'rgba(255,77,79,0.1)'
+    case 'warning': return 'rgba(228,178,67,0.1)'
+    default: return 'rgba(136,136,136,0.1)'
   }
 }
 
@@ -289,6 +304,7 @@ const getDeviceActiveShadow = (status) => {
   }
 }
 
+// 区域数据
 const areaList = ref([
   { id: 1, name: '1#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
   { id: 2, name: '2#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 21 },

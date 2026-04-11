@@ -33,7 +33,6 @@
       }">
         
         <canvas ref="canvasRef" :width="VIRTUAL_WIDTH" :height="VIRTUAL_HEIGHT" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
-
         <div class="absolute text-cyan-300 font-bold text-lg z-10" style="left: 60px; top: 250px;">10kV</div>
         <div class="absolute text-cyan-300 font-bold text-lg z-10" style="left: 60px; top: 520px;">380V</div>
 
