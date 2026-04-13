@@ -120,12 +120,12 @@ const offsetY = ref(0);
  * tOffX/tOffY: 数据面板专用偏移，用于统一对齐高度
  */
 const nodes = ref([
-  { id: 'grid', name: '市政电网', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'powergrid.png', level: 1, x: 250, y: 160, offX: 0, offY: 0, tOffX: 10, tOffY: 0, scale: 1.2 },
-  { id: 'pv', name: '光伏系统', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'pv.png', level: 1, x: 600, y: 160, offX: 0, offY: 22, tOffX: 10, tOffY: -22, scale: 1.2 },
-  { id: 'wind', name: '风电系统', type: 'clean', status: 'stopped', voltage: '3800', power: '1,000', icon: 'wind.png', level: 1, x: 950, y: 160, offX: 0, offY: 0, tOffX: 10, tOffY: 0, scale: 1.2 },
-  { id: 'diesel', name: '柴油发电', type: 'clean', status: 'standby', voltage: '3800', power: '1,000', icon: 'generator.png', level: 1, x: 1300, y: 160, offX: 0, offY: 15, tOffX: 10, tOffY: -15, scale: 1.2 },
+  { id: 'grid', name: '市政电网', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'powergrid.png', level: 1, x: 250, y: 160, offX: 0, offY: 0, tOffX: 10, tOffY: 0, scale: 1.1 },
+  { id: 'pv', name: '光伏系统', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'pv.png', level: 1, x: 600, y: 160, offX: 0, offY: 22, tOffX: 10, tOffY: -22, scale: 1.1 },
+  { id: 'wind', name: '风电系统', type: 'clean', status: 'stopped', voltage: '3800', power: '1,000', icon: 'wind.png', level: 1, x: 950, y: 160, offX: 0, offY: 0, tOffX: 10, tOffY: 0, scale: 1.1 },
+  { id: 'diesel', name: '柴油发电', type: 'clean', status: 'standby', voltage: '3800', power: '1,000', icon: 'generator.png', level: 1, x: 1300, y: 160, offX: 0, offY: 15, tOffX: 10, tOffY: -15, scale: 1.1 },
   
-  { id: 'transformer', name: '主变设备', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'transformer.png', level: 2, x: 400, y: 410, offX: 0, offY: -10, tOffX: 10, tOffY: 10, scale: 1.1 },
+  { id: 'transformer', name: '主变设备', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'transformer.png', level: 2, x: 400, y: 410, offX: 0, offY: -10, tOffX: 10, tOffY: 10, scale: 1.0 },
   
   { id: 'storage', name: '储能系统', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'storage.png', level: 3, x: 150, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
   { id: 'charger', name: '充电桩', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'charger.png', level: 3, x: 350, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
