@@ -8,17 +8,18 @@
       <div class="flex gap-6 text-[11px] text-[#9CA3AF] relative z-10">
         <div class="flex items-center gap-4">
           <span>类型说明:</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-[#059669] rounded-[1px]"></span> 清洁能源</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-[#4B5563] rounded-[1px]"></span> 关键负荷</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-[#6366F1] rounded-[1px]"></span> 可调负荷</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-[#DC2626] rounded-[1px]"></span> 可断负荷</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#059669]/60 border border-[#059669]/80 rounded-[1px]"></span> 清洁能源</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#4B5563]/60 border border-[#4B5563]/80 rounded-[1px]"></span> 关键负荷</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#6366F1]/60 border border-[#6366F1]/80 rounded-[1px]"></span> 可调负荷</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#DC2626]/60 border border-[#DC2626]/80 rounded-[1px]"></span> 可断负荷</span>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
           <span>状态说明:</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-[#10B981] rounded-[1px]"></span> 发电中</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-[#F59E0B] rounded-[1px]"></span> 未运行</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-[#3B82F6] rounded-[1px]"></span> 待机中</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-[#6B7280] rounded-[1px]"></span> 已离线</span>
+          <span v-for="s in ['running', 'stopped', 'standby', 'offline']" :key="s" 
+                class="px-2 py-0 rounded-full text-[9px] text-white/90"
+                :style="{ backgroundColor: getStatusColor(s, 0.15), color: getStatusColor(s, 1), border: `1px solid ${getStatusColor(s, 0.35)}` }">
+            {{ getStatusText(s) }}
+          </span>
         </div>
       </div>
     </div>
@@ -53,13 +54,22 @@
                class="object-contain relative z-10" 
                alt="device" />
           
-          <div class="absolute bg-[#0B1B34]/65 border border-[#22D3EE]/40 rounded-sm p-2 min-w-[130px] shadow-[0_0_15px_rgba(10,22,44,0.5)] backdrop-blur-md z-20 pointer-events-none"
+          <div class="absolute bg-[#0B1B34]/45 border border-[#22D3EE]/30 rounded-md p-2 min-w-[135px] shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-lg z-20 pointer-events-none transition-all"
                :style="node.level <= 2 
-                  ? { left: `calc(50% + ${(BASE_ICON_HEIGHT * LARGE_ICON_SCALE * (node.scale || 1))/2 + 10}px)`, top: '50%', transform: 'translateY(-50%)' }
-                  : { top: `calc(50% + ${(BASE_ICON_HEIGHT * (node.scale || 1))/2 - 10}px)`, left: '50%', transform: 'translateX(-50%)' }">
+                  ? { 
+                      left: `calc(50% + ${(BASE_ICON_HEIGHT * LARGE_ICON_SCALE * (node.scale || 1))/2 + (node.tOffX || 10)}px)`, 
+                      top: `calc(50% + ${node.tOffY || 0}px)`, 
+                      transform: 'translateY(-50%)' 
+                    }
+                  : { 
+                      top: `calc(50% + ${(BASE_ICON_HEIGHT * (node.scale || 1))/2 + (node.tOffY || -10)}px)`, 
+                      left: `calc(50% + ${node.tOffX || 0}px)`, 
+                      transform: 'translateX(-50%)' 
+                    }">
             <div class="flex justify-between items-center mb-1.5 border-b border-[#22D3EE]/20 pb-1">
               <span class="text-white text-[13px] font-bold tracking-wider">{{ node.name }}</span>
-              <span class="text-[10px] px-1.5 py-0.5 rounded text-white font-medium" :style="{ backgroundColor: getStatusColor(node.status) }">
+              <span class="text-[10px] px-1.5 py-0.5 rounded text-white font-medium shadow-[0_0_8px_rgba(0,0,0,0.3)]" 
+                    :style="{ backgroundColor: getStatusColor(node.status, 0.6), border: `1px solid ${getStatusColor(node.status, 0.8)}` }">
                 {{ getStatusText(node.status) }}
               </span>
             </div>
@@ -88,8 +98,8 @@ const GLOBAL_OFFSET_X = 0;
 const GLOBAL_OFFSET_Y = -50; 
 
 /** 样式配置 */
-const LINE_WIDTH = 2;       // 普通细线宽度
-const BUS_LINE_WIDTH = 6;    // 母线宽度配置
+const LINE_WIDTH = 2;       
+const BUS_LINE_WIDTH = 6;    
 const BASE_ICON_HEIGHT = 150;  
 const LARGE_ICON_SCALE = 1.1; 
 
@@ -107,47 +117,34 @@ const offsetY = ref(0);
 
 /**
  * 节点配置
- * scale: 缩放比例，默认1.0
- * offX/offY: 整体位置微调
+ * tOffX/tOffY: 数据面板专用偏移，用于统一对齐高度
  */
 const nodes = ref([
-  { id: 'grid', name: '市政电网', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'powergrid.png', level: 1, x: 250, y: 160, offX: 0, offY: 0, scale: 1.2 },
-  { id: 'pv', name: '光伏系统', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'pv.png', level: 1, x: 600, y: 160, offX: 0, offY: 22, scale: 1.2 },
-  { id: 'wind', name: '风电系统', type: 'clean', status: 'stopped', voltage: '3800', power: '1,000', icon: 'wind.png', level: 1, x: 950, y: 160, offX: 0, offY: 0, scale: 1.2 },
-  { id: 'diesel', name: '柴油发电', type: 'clean', status: 'standby', voltage: '3800', power: '1,000', icon: 'generator.png', level: 1, x: 1300, y: 160, offX: 0, offY: 15, scale: 1.2 },
+  { id: 'grid', name: '市政电网', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'powergrid.png', level: 1, x: 250, y: 160, offX: 0, offY: 0, tOffX: 10, tOffY: 0, scale: 1.2 },
+  { id: 'pv', name: '光伏系统', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'pv.png', level: 1, x: 600, y: 160, offX: 0, offY: 22, tOffX: 10, tOffY: -22, scale: 1.2 },
+  { id: 'wind', name: '风电系统', type: 'clean', status: 'stopped', voltage: '3800', power: '1,000', icon: 'wind.png', level: 1, x: 950, y: 160, offX: 0, offY: 0, tOffX: 10, tOffY: 0, scale: 1.2 },
+  { id: 'diesel', name: '柴油发电', type: 'clean', status: 'standby', voltage: '3800', power: '1,000', icon: 'generator.png', level: 1, x: 1300, y: 160, offX: 0, offY: 15, tOffX: 10, tOffY: -15, scale: 1.2 },
   
-  { id: 'transformer', name: '主变设备', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'transformer.png', level: 2, x: 400, y: 410, offX: 0, offY: -10, scale: 1.1 },
+  { id: 'transformer', name: '主变设备', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'transformer.png', level: 2, x: 400, y: 410, offX: 0, offY: -10, tOffX: 10, tOffY: 10, scale: 1.1 },
   
-  { id: 'storage', name: '储能系统', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'storage.png', level: 3, x: 150, y: 640, offX: 0, offY: -5, scale: 0.9 },
-  { id: 'charger', name: '充电桩', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'charger.png', level: 3, x: 350, y: 640, offX: 0, offY: -5, scale: 0.9 },
-  { id: 'heatpump', name: '热泵系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'pump.png', level: 3, x: 550, y: 640, offX: 0, offY: -5, scale: 0.9 },
-  { id: 'oxygen', name: '增氧设备', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'oxygener.png', level: 3, x: 750, y: 640, offX: 0, offY: -5, scale: 0.9 },
-  { id: 'waterpump', name: '循环水泵', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'waterpump.png', level: 3, x: 950, y: 640, offX: 0, offY: -5, scale: 0.9 },
-  { id: 'fodder', name: '投料系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'fodder.png', level: 3, x: 1150, y: 640, offX: 0, offY: -5, scale: 0.9 },
-  { id: 'office', name: '办公用电', type: 'interruptible', status: 'running', voltage: '3800', power: '1,000', icon: 'officepower.png', level: 3, x: 1350, y: 640, offX: 0, offY: -5, scale: 0.9 },
+  { id: 'storage', name: '储能系统', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'storage.png', level: 3, x: 150, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
+  { id: 'charger', name: '充电桩', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'charger.png', level: 3, x: 350, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
+  { id: 'heatpump', name: '热泵系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'pump.png', level: 3, x: 550, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
+  { id: 'oxygen', name: '增氧设备', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'oxygener.png', level: 3, x: 750, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
+  { id: 'waterpump', name: '循环水泵', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'waterpump.png', level: 3, x: 950, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
+  { id: 'fodder', name: '投料系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'fodder.png', level: 3, x: 1150, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
+  { id: 'office', name: '办公用电', type: 'interruptible', status: 'running', voltage: '3800', power: '1,000', icon: 'officepower.png', level: 3, x: 1350, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
 ])
 
-/**
- * 连线配置增强
- * offsetX: 横向偏移
- * offsetY: 纵向偏移
- */
 const lines = [
-  // 横向母线
   { id: 'bus_10kv', points: [[120, 280], [1450, 280]], isBus: true },
   { id: 'bus_380v', points: [[120, 540], [1450, 540]], isBus: true },
-
-  // 10kV 支线
   { id: 'link_grid', points: [[250, 240]], offsetX: 0, offsetY: 0, len: 40 },
   { id: 'link_pv', points: [[600, 240]], offsetX: 0, offsetY: 0, len: 40 },
   { id: 'link_wind', points: [[950, 240]], offsetX: 0, offsetY: 0, len: 40 },
   { id: 'link_diesel', points: [[1300, 240]], offsetX: 0, offsetY: 0, len: 40 },
-
-  // 主变支线
   { id: 'link_trans_in', points: [[400, 280]], offsetX: 0, offsetY: 0, len: 65 },
   { id: 'link_trans_out', points: [[400, 510]], offsetX: 0, offsetY: -30, len: 60 },
-
-  // 380V 负载支线
   { id: 'link_storage', points: [[150, 540]], offsetX: 4, offsetY: 0, len: 40 },
   { id: 'link_charger', points: [[350, 540]], offsetX: 0, offsetY: 0, len: 40 },
   { id: 'link_heatpump', points: [[550, 540]], offsetX: 0, offsetY: 0, len: 40 },
@@ -157,10 +154,17 @@ const lines = [
   { id: 'link_office', points: [[1350, 540]], offsetX: 0, offsetY: 0, len: 48 },
 ];
 
-const getStatusColor = (status) => {
-  const map = { 'running': '#10B981', 'stopped': '#F59E0B', 'standby': '#3B82F6', 'offline': '#6B7280' }
-  return map[status] || '#10B981'
+/** 增强：支持设置透明度的颜色方法 */
+const getStatusColor = (status, opacity = 1) => {
+  const map = { 
+    'running': `rgba(16, 185, 129, ${opacity})`, 
+    'stopped': `rgba(245, 158, 11, ${opacity})`, 
+    'standby': `rgba(59, 130, 246, ${opacity})`, 
+    'offline': `rgba(107, 114, 128, ${opacity})` 
+  }
+  return map[status] || `rgba(16, 185, 129, ${opacity})`
 }
+
 const getStatusText = (status) => {
   const map = { 'running': '发电中', 'stopped': '未运行', 'standby': '待机中', 'offline': '已离线' }
   return map[status] || status
@@ -197,27 +201,21 @@ const renderCanvas = () => {
   lines.forEach(line => {
     ctx.beginPath();
     ctx.lineWidth = line.isBus ? BUS_LINE_WIDTH : LINE_WIDTH;
-    
     const ox = line.offsetX || 0; 
     const oy = line.offsetY || 0;
     const pts = line.points;
-    
-    // 绘制起点
     const startX = pts[0][0] + ox;
     const startY = pts[0][1] + oy;
     ctx.moveTo(startX, startY);
 
     if (line.isBus) {
-      // 母线绘制
       for(let i=1; i<pts.length; i++) {
         ctx.lineTo(pts[i][0] + ox, pts[i][1] + oy);
       }
     } else {
-      // 支线绘制：如果有 len 则基于起点向下延伸
       if (line.len !== undefined) {
         ctx.lineTo(startX, startY + line.len);
       } else {
-        // 兼容原有的多点连线
         for(let i=1; i<pts.length; i++) {
           ctx.lineTo(pts[i][0] + ox, pts[i][1] + oy);
         }
@@ -227,7 +225,6 @@ const renderCanvas = () => {
   });
   ctx.restore();
 
-  // 绘制母线光束
   beams.forEach(beam => {
     beam.x += BEAM_SPEED;
     if (beam.x - BEAM_LENGTH > beam.endX) beam.x = beam.startX;
@@ -246,8 +243,6 @@ const renderCanvas = () => {
       ctx.strokeStyle = gradient;
       ctx.lineWidth = 3;
       ctx.lineCap = 'round';
-      ctx.shadowColor = 'gba(58, 178, 255, 0.5)';
-      ctx.shadowBlur = 10;
       ctx.stroke();
       ctx.restore();
     }
@@ -255,19 +250,14 @@ const renderCanvas = () => {
   animationFrameId = requestAnimationFrame(renderCanvas);
 }
 
-let resizeObserver = null;
 const handleResize = () => {
   if (!containerRef.value) return;
   const container = containerRef.value;
-  const cw = container.clientWidth;
-  const ch = container.clientHeight;
-  const scaleX = cw / VIRTUAL_WIDTH;
-  const scaleY = ch / VIRTUAL_HEIGHT;
+  const scaleX = container.clientWidth / VIRTUAL_WIDTH;
+  const scaleY = container.clientHeight / VIRTUAL_HEIGHT;
   scaleRatio.value = Math.min(scaleX, scaleY); 
-  const displayW = VIRTUAL_WIDTH * scaleRatio.value;
-  const displayH = VIRTUAL_HEIGHT * scaleRatio.value;
-  offsetX.value = (cw - displayW) / 2;
-  offsetY.value = (ch - displayH) / 2;
+  offsetX.value = (container.clientWidth - VIRTUAL_WIDTH * scaleRatio.value) / 2;
+  offsetY.value = (container.clientHeight - VIRTUAL_HEIGHT * scaleRatio.value) / 2;
 }
 
 onMounted(() => {
@@ -275,7 +265,7 @@ onMounted(() => {
     handleResize();
     initBeams();
     renderCanvas();
-    resizeObserver = new ResizeObserver(handleResize);
+    const resizeObserver = new ResizeObserver(handleResize);
     if (containerRef.value) resizeObserver.observe(containerRef.value);
     window.addEventListener('resize', handleResize);
   })
@@ -283,7 +273,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
-  if (resizeObserver) resizeObserver.disconnect();
   window.removeEventListener('resize', handleResize);
 })
 </script>
@@ -294,5 +283,10 @@ canvas {
 }
 .font-yahei {
   font-family: "Microsoft YaHei", sans-serif;
+}
+/* 优化磨砂面板的阴影和过渡 */
+.backdrop-blur-lg {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 </style>
