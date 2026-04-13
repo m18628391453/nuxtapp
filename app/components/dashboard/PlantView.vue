@@ -120,13 +120,14 @@ const offsetY = ref(0);
  * tOffX/tOffY: 数据面板专用偏移，用于统一对齐高度
  */
 const nodes = ref([
+  // 上层电网系统
   { id: 'grid', name: '市政电网', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'powergrid.png', level: 1, x: 250, y: 160, offX: 0, offY: 0, tOffX: 10, tOffY: 0, scale: 1.1 },
   { id: 'pv', name: '光伏系统', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'pv.png', level: 1, x: 600, y: 160, offX: 0, offY: 22, tOffX: 10, tOffY: -22, scale: 1.1 },
   { id: 'wind', name: '风电系统', type: 'clean', status: 'stopped', voltage: '3800', power: '1,000', icon: 'wind.png', level: 1, x: 950, y: 160, offX: 0, offY: 0, tOffX: 10, tOffY: 0, scale: 1.1 },
   { id: 'diesel', name: '柴油发电', type: 'clean', status: 'standby', voltage: '3800', power: '1,000', icon: 'generator.png', level: 1, x: 1300, y: 160, offX: 0, offY: 15, tOffX: 10, tOffY: -15, scale: 1.1 },
-  
+  // 中层电变系统
   { id: 'transformer', name: '主变设备', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'transformer.png', level: 2, x: 400, y: 410, offX: 0, offY: -10, tOffX: 10, tOffY: 10, scale: 1.0 },
-  
+  // 下层应用设备
   { id: 'storage', name: '储能系统', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'storage.png', level: 3, x: 150, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
   { id: 'charger', name: '充电桩', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'charger.png', level: 3, x: 350, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
   { id: 'heatpump', name: '热泵系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'pump.png', level: 3, x: 550, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
@@ -137,14 +138,18 @@ const nodes = ref([
 ])
 
 const lines = [
+  // 母线
   { id: 'bus_10kv', points: [[120, 280], [1450, 280]], isBus: true },
   { id: 'bus_380v', points: [[120, 540], [1450, 540]], isBus: true },
-  { id: 'link_grid', points: [[250, 240]], offsetX: 0, offsetY: 0, len: 40 },
-  { id: 'link_pv', points: [[600, 240]], offsetX: 0, offsetY: 0, len: 40 },
-  { id: 'link_wind', points: [[950, 240]], offsetX: 0, offsetY: 0, len: 40 },
-  { id: 'link_diesel', points: [[1300, 240]], offsetX: 0, offsetY: 0, len: 40 },
+  // 电网系统线
+  { id: 'link_grid', points: [[250, 240]], offsetX: 0, offsetY: -5, len: 45 },
+  { id: 'link_pv', points: [[600, 240]], offsetX: 0, offsetY: -5, len: 45 },
+  { id: 'link_wind', points: [[950, 240]], offsetX: 0, offsetY: -5, len: 45 },
+  { id: 'link_diesel', points: [[1300, 240]], offsetX: 0, offsetY: -5, len: 45 },
+  // 主变设备线
   { id: 'link_trans_in', points: [[400, 280]], offsetX: 0, offsetY: 0, len: 65 },
   { id: 'link_trans_out', points: [[400, 510]], offsetX: 0, offsetY: -30, len: 60 },
+  // 副线，设备应用线
   { id: 'link_storage', points: [[150, 540]], offsetX: 4, offsetY: 0, len: 40 },
   { id: 'link_charger', points: [[350, 540]], offsetX: 0, offsetY: 0, len: 40 },
   { id: 'link_heatpump', points: [[550, 540]], offsetX: 0, offsetY: 0, len: 40 },
