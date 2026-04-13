@@ -18,6 +18,13 @@ pnpm install
 pnpm dev
 ```
 
+智能图像处理：
+
+```
+# 可以进行抠图、去掉背景等操作
+https://www.remove.bg/zh
+```
+
 ## Production
 
 构建打包命令:
@@ -26,5 +33,3 @@ pnpm dev
 # pnpm
 pnpm build
 ```
-
-
