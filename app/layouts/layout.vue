@@ -139,7 +139,7 @@ main::before {
   inset: 0; 
   z-index: -1;
   pointer-events: none; 
-  background-image: url('/image/background.png');
+  background-image: url('/image/background.jpg');
   background-size: 100%;
   background-repeat: repeat;
   opacity: 0.45;
