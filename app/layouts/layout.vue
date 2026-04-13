@@ -112,7 +112,7 @@ onMounted(() => {
   layoutMode.value = getCache(CacheKey.LAYOUT_MODE, 'fullscreen')
   sidebarCollapsed.value = getCache(CacheKey.SIDEBAR_COLLAPSED, false)
   theme.value = getCache(CacheKey.THEME, 'dark')
-  activeMenu.value = getCache(CacheKey.ACTIVE_MENU, menuList.value[0])
+  activeMenu.value = getSessionCache(CacheKey.ACTIVE_MENU, menuList.value[0])
   isClientReady.value = true
 })
 
@@ -126,7 +126,7 @@ const toggleSidebar = () => {
 }
 const updateActiveMenu = (menu) => {
   activeMenu.value = menu
-  setCache(CacheKey.ACTIVE_MENU, menu)
+  setSessionCache(CacheKey.ACTIVE_MENU, menu)
 }
 
 provide('layoutState', {

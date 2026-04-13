@@ -149,6 +149,7 @@ const activeIndex = ref(
 )
 
 watch(activeMenu, (newVal) => {
+    debugger;
   activeIndex.value = menuList.value.findIndex((item: SubMenuItem) => item.route === newVal.route) || 0
 }, { immediate: true })
 
