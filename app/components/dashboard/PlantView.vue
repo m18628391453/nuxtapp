@@ -47,14 +47,16 @@
           }"
         >
           <img :src="`/image/${node.icon}`" 
-               :style="{ height: `${node.level <= 2 ? BASE_ICON_HEIGHT * LARGE_ICON_SCALE : BASE_ICON_HEIGHT}px` }"
+               :style="{ 
+                 height: `${(node.level <= 2 ? BASE_ICON_HEIGHT * LARGE_ICON_SCALE : BASE_ICON_HEIGHT) * (node.scale || 1.0)}px` 
+               }"
                class="object-contain relative z-10" 
                alt="device" />
           
           <div class="absolute bg-[#0B1B34]/65 border border-[#22D3EE]/40 rounded-sm p-2 min-w-[130px] shadow-[0_0_15px_rgba(10,22,44,0.5)] backdrop-blur-md z-20 pointer-events-none"
                :style="node.level <= 2 
-                  ? { left: `calc(50% + ${(BASE_ICON_HEIGHT * LARGE_ICON_SCALE)/2 + 10}px)`, top: '50%', transform: 'translateY(-50%)' }
-                  : { top: `calc(50% + ${BASE_ICON_HEIGHT/2 - 10}px)`, left: '50%', transform: 'translateX(-50%)' }">
+                  ? { left: `calc(50% + ${(BASE_ICON_HEIGHT * LARGE_ICON_SCALE * (node.scale || 1))/2 + 10}px)`, top: '50%', transform: 'translateY(-50%)' }
+                  : { top: `calc(50% + ${(BASE_ICON_HEIGHT * (node.scale || 1))/2 - 10}px)`, left: '50%', transform: 'translateX(-50%)' }">
             <div class="flex justify-between items-center mb-1.5 border-b border-[#22D3EE]/20 pb-1">
               <span class="text-white text-[13px] font-bold tracking-wider">{{ node.name }}</span>
               <span class="text-[10px] px-1.5 py-0.5 rounded text-white font-medium" :style="{ backgroundColor: getStatusColor(node.status) }">
@@ -85,8 +87,9 @@ import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 const GLOBAL_OFFSET_X = 0; 
 const GLOBAL_OFFSET_Y = -50; 
 
-const LINE_WIDTH = 2;
-const BUS_LINE_WIDTH = 4;
+/** 样式配置 */
+const LINE_WIDTH = 2;       // 普通细线宽度
+const BUS_LINE_WIDTH = 6;    // 母线宽度配置
 const BASE_ICON_HEIGHT = 150;  
 const LARGE_ICON_SCALE = 1.1; 
 
@@ -103,55 +106,55 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 
 /**
- * 节点配置（增加了 offX, offY 字段）
- * 如果觉得某个图标离母线太远，就调大 offY。
+ * 节点配置
+ * scale: 缩放比例，默认1.0
+ * offX/offY: 整体位置微调
  */
 const nodes = ref([
-  // 10kV 级别
-  { id: 'grid', name: '市政电网', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'powergrid.png', level: 1, x: 250, y: 160, offX: 0, offY: 0 },
-  { id: 'pv', name: '光伏系统', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'pv.png', level: 1, x: 600, y: 160, offX: 0, offY: 0 },
-  { id: 'wind', name: '风电系统', type: 'clean', status: 'stopped', voltage: '3800', power: '1,000', icon: 'wind.png', level: 1, x: 950, y: 160, offX: 0, offY: 0 },
-  { id: 'diesel', name: '柴油发电', type: 'clean', status: 'standby', voltage: '3800', power: '1,000', icon: 'generator.png', level: 1, x: 1300, y: 160, offX: 0, offY: 0 },
+  { id: 'grid', name: '市政电网', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'powergrid.png', level: 1, x: 250, y: 160, offX: 0, offY: 0, scale: 1.2 },
+  { id: 'pv', name: '光伏系统', type: 'clean', status: 'running', voltage: '3800', power: '1,000', icon: 'pv.png', level: 1, x: 600, y: 160, offX: 0, offY: 22, scale: 1.2 },
+  { id: 'wind', name: '风电系统', type: 'clean', status: 'stopped', voltage: '3800', power: '1,000', icon: 'wind.png', level: 1, x: 950, y: 160, offX: 0, offY: 0, scale: 1.2 },
+  { id: 'diesel', name: '柴油发电', type: 'clean', status: 'standby', voltage: '3800', power: '1,000', icon: 'generator.png', level: 1, x: 1300, y: 160, offX: 0, offY: 15, scale: 1.2 },
   
-  // 主变
-  { id: 'transformer', name: '主变设备', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'transformer.png', level: 2, x: 400, y: 410, offX: 0, offY: 0 },
+  { id: 'transformer', name: '主变设备', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'transformer.png', level: 2, x: 400, y: 410, offX: 0, offY: -10, scale: 1.1 },
   
-  // 380V 负载级别
-  { id: 'storage', name: '储能系统', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'storage.png', level: 3, x: 150, y: 640, offX: 0, offY: -5 },
-  { id: 'charger', name: '充电桩', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'charger.png', level: 3, x: 350, y: 640, offX: 0, offY: -5 },
-  { id: 'heatpump', name: '热泵系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'pump.png', level: 3, x: 550, y: 640, offX: 0, offY: -5 },
-  { id: 'oxygen', name: '增氧设备', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'oxygener.png', level: 3, x: 750, y: 640, offX: 0, offY: -5 },
-  { id: 'waterpump', name: '循环水泵', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'waterpump.png', level: 3, x: 950, y: 640, offX: 0, offY: -5 },
-  { id: 'fodder', name: '投料系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'fodder.png', level: 3, x: 1150, y: 640, offX: 0, offY: -5 },
-  { id: 'office', name: '办公用电', type: 'interruptible', status: 'running', voltage: '3800', power: '1,000', icon: 'officepower.png', level: 3, x: 1350, y: 640, offX: 0, offY: -5 },
+  { id: 'storage', name: '储能系统', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'storage.png', level: 3, x: 150, y: 640, offX: 0, offY: -5, scale: 0.9 },
+  { id: 'charger', name: '充电桩', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'charger.png', level: 3, x: 350, y: 640, offX: 0, offY: -5, scale: 0.9 },
+  { id: 'heatpump', name: '热泵系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'pump.png', level: 3, x: 550, y: 640, offX: 0, offY: -5, scale: 0.9 },
+  { id: 'oxygen', name: '增氧设备', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'oxygener.png', level: 3, x: 750, y: 640, offX: 0, offY: -5, scale: 0.9 },
+  { id: 'waterpump', name: '循环水泵', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'waterpump.png', level: 3, x: 950, y: 640, offX: 0, offY: -5, scale: 0.9 },
+  { id: 'fodder', name: '投料系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'fodder.png', level: 3, x: 1150, y: 640, offX: 0, offY: -5, scale: 0.9 },
+  { id: 'office', name: '办公用电', type: 'interruptible', status: 'running', voltage: '3800', power: '1,000', icon: 'officepower.png', level: 3, x: 1350, y: 640, offX: 0, offY: -5, scale: 0.9 },
 ])
 
 /**
- * 连线配置（增加了 offsetX 字段用于竖线左右偏移微调）
+ * 连线配置增强
+ * offsetX: 横向偏移
+ * offsetY: 纵向偏移
  */
 const lines = [
-  // 横向母线 (isBus 为 true)
+  // 横向母线
   { id: 'bus_10kv', points: [[120, 280], [1450, 280]], isBus: true },
   { id: 'bus_380v', points: [[120, 540], [1450, 540]], isBus: true },
 
-  // 10kV 支线 - 通过 offsetX 调左右
-  { id: 'link_grid', points: [[250, 240], [250, 280]], offsetX: 0 },
-  { id: 'link_pv', points: [[600, 240], [600, 280]], offsetX: 0 },
-  { id: 'link_wind', points: [[950, 240], [950, 280]], offsetX: 0 },
-  { id: 'link_diesel', points: [[1300, 240], [1300, 280]], offsetX: 0 },
+  // 10kV 支线
+  { id: 'link_grid', points: [[250, 240]], offsetX: 0, offsetY: 0, len: 40 },
+  { id: 'link_pv', points: [[600, 240]], offsetX: 0, offsetY: 0, len: 40 },
+  { id: 'link_wind', points: [[950, 240]], offsetX: 0, offsetY: 0, len: 40 },
+  { id: 'link_diesel', points: [[1300, 240]], offsetX: 0, offsetY: 0, len: 40 },
 
   // 主变支线
-  { id: 'link_trans_in', points: [[400, 280], [400, 310]], offsetX: 0 },
-  { id: 'link_trans_out', points: [[400, 510], [400, 540]], offsetX: 0 },
+  { id: 'link_trans_in', points: [[400, 280]], offsetX: 0, offsetY: 0, len: 65 },
+  { id: 'link_trans_out', points: [[400, 510]], offsetX: 0, offsetY: -30, len: 60 },
 
-  // 380V 支线
-  { id: 'link_storage', points: [[150, 540], [150, 564]], offsetX: 4 },
-  { id: 'link_charger', points: [[350, 540], [350, 564]], offsetX: 0 },
-  { id: 'link_heatpump', points: [[550, 540], [550, 564]], offsetX: 0 },
-  { id: 'link_oxygen', points: [[750, 540], [750, 564]], offsetX: 0 },
-  { id: 'link_waterpump', points: [[950, 540], [950, 564]], offsetX: 4 },
-  { id: 'link_fodder', points: [[1150, 540], [1150, 564]], offsetX: 5 },
-  { id: 'link_office', points: [[1350, 540], [1350, 564]], offsetX: 0 },
+  // 380V 负载支线
+  { id: 'link_storage', points: [[150, 540]], offsetX: 4, offsetY: 0, len: 40 },
+  { id: 'link_charger', points: [[350, 540]], offsetX: 0, offsetY: 0, len: 40 },
+  { id: 'link_heatpump', points: [[550, 540]], offsetX: 0, offsetY: 0, len: 40 },
+  { id: 'link_oxygen', points: [[750, 540]], offsetX: 0, offsetY: 0, len: 25 },
+  { id: 'link_waterpump', points: [[950, 540]], offsetX: 4, offsetY: 0, len: 52 },
+  { id: 'link_fodder', points: [[1150, 540]], offsetX: 4.2, offsetY: 0, len: 35 },
+  { id: 'link_office', points: [[1350, 540]], offsetX: 0, offsetY: 0, len: 48 },
 ];
 
 const getStatusColor = (status) => {
@@ -186,24 +189,39 @@ const renderCanvas = () => {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
-  // 绘制连线
   ctx.save();
-  ctx.strokeStyle = 'rgba(34, 211, 238, 0.4)'; 
+  ctx.strokeStyle = 'rgba(34, 211, 238, 0.25)'; 
   ctx.shadowColor = '#22D3EE';
   ctx.shadowBlur = 2;
   
   lines.forEach(line => {
     ctx.beginPath();
-    // 母线用母线宽度，支线用普通宽度
     ctx.lineWidth = line.isBus ? BUS_LINE_WIDTH : LINE_WIDTH;
     
-    const ox = line.offsetX || 0; // 支线偏移量
+    const ox = line.offsetX || 0; 
+    const oy = line.offsetY || 0;
     const pts = line.points;
     
-    // 应用偏移量进行绘制
-    ctx.moveTo(pts[0][0] + ox, pts[0][1]);
-    for(let i=1; i<pts.length; i++) {
-      ctx.lineTo(pts[i][0] + ox, pts[i][1]);
+    // 绘制起点
+    const startX = pts[0][0] + ox;
+    const startY = pts[0][1] + oy;
+    ctx.moveTo(startX, startY);
+
+    if (line.isBus) {
+      // 母线绘制
+      for(let i=1; i<pts.length; i++) {
+        ctx.lineTo(pts[i][0] + ox, pts[i][1] + oy);
+      }
+    } else {
+      // 支线绘制：如果有 len 则基于起点向下延伸
+      if (line.len !== undefined) {
+        ctx.lineTo(startX, startY + line.len);
+      } else {
+        // 兼容原有的多点连线
+        for(let i=1; i<pts.length; i++) {
+          ctx.lineTo(pts[i][0] + ox, pts[i][1] + oy);
+        }
+      }
     }
     ctx.stroke();
   });
@@ -220,16 +238,15 @@ const renderCanvas = () => {
       ctx.save();
       const gradient = ctx.createLinearGradient(beam.x - BEAM_LENGTH, 0, beam.x, 0);
       gradient.addColorStop(0, 'rgba(58, 178, 255, 0)');
-      gradient.addColorStop(0.7, 'rgba(58, 178, 255, 0.6)');
-      gradient.addColorStop(1, 'rgba(255, 255, 255, 0.9)');
+      gradient.addColorStop(0.6, 'rgba(58, 178, 255, 0.6)');
+      gradient.addColorStop(1, 'rgba(150, 225, 255, 0.8)');
       ctx.beginPath();
       ctx.moveTo(drawStartX, beam.y);
       ctx.lineTo(drawEndX, beam.y);
       ctx.strokeStyle = gradient;
-      // 光束宽度也随母线宽度稍作加粗
-      ctx.lineWidth = (BUS_LINE_WIDTH) + 2;
+      ctx.lineWidth = 3;
       ctx.lineCap = 'round';
-      ctx.shadowColor = '#3AB2FF';
+      ctx.shadowColor = 'gba(58, 178, 255, 0.5)';
       ctx.shadowBlur = 10;
       ctx.stroke();
       ctx.restore();
@@ -238,7 +255,6 @@ const renderCanvas = () => {
   animationFrameId = requestAnimationFrame(renderCanvas);
 }
 
-// 尺寸自适应逻辑保持不变
 let resizeObserver = null;
 const handleResize = () => {
   if (!containerRef.value) return;
