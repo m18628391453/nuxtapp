@@ -13,6 +13,8 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: '综合能碳管理平台',  // 全局默认标题
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }  // favicon 放在 public 目录
       ],
