@@ -14,7 +14,6 @@
         <div class="absolute inset-0 border-2 border-[#32AFFF] rounded opacity-0 hover:opacity-30 transition-opacity duration-300 pointer-events-none"></div>
       </div>
     </div>
-
     <div class="bg-[#FFFFFF0A] border border-[#FFFFFF1A] rounded-[4px] p-4 flex flex-col gap-4 shrink-0">
       <div class="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center">
         <div class="flex items-center gap-2">
@@ -51,7 +50,6 @@
           <a-button class="!bg-transparent !border-[#FFFFFF33] !text-[#FFFFFF99] hover:!text-white hover:!border-[#fefefe30] w-[64px] min-w-[64px]">重置</a-button>
         </div>
       </div>
-
       <div class="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center">
         <div class="flex items-center gap-2">
           <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">告警名称:</span>
@@ -77,7 +75,6 @@
         </div>
       </div>
     </div>
-
     <div class="flex-1 bg-[#FFFFFF0A] border border-[#FFFFFF0D] rounded-[4px] flex flex-col min-h-0 overflow-hidden">
       
       <div class="flex justify-between items-center px-6 py-2 border-b border-[#FFFFFF14] shrink-0">
@@ -93,14 +90,13 @@
           <Settings :size="18" stroke-width="2" />
         </button>
       </div>
-
       <div class="flex-1 overflow-hidden flex flex-col p-4 pb-0 custom-table-container">
         <a-table
           :columns="columns"
           :data-source="tableData"
           :pagination="paginationConfig"
           :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-          :scroll="{ y: 'calc(100vh - 490px)' }"
+          :scroll="{ y: 'calc(100vh - 460px)' }"
           class="custom-dark-table"
           row-key="id"
         >
@@ -118,7 +114,6 @@
             <template v-else-if="column.key === 'deviceName'">
               <span class="text-[#32AFFF] text-[14px] cursor-pointer hover:underline">{{ text }}</span>
             </template>
-
             <template v-else>
               <span class="text-[#FFFFFFCC] text-[14px]">{{ text }}</span>
             </template>
@@ -128,14 +123,11 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import dayjs from 'dayjs';
 import { Settings } from 'lucide-vue-next';
-
 definePageMeta({ layout: 'layout' })
-
 const activeCard = ref(0);
 const autoRefresh = ref(false);
 const selectedRowKeys = ref([4]); // 模拟设计稿选中第4行
@@ -146,9 +138,7 @@ const summaryCards = ref([
   { title: '通讯告警(台)', value: '60', icon: 'offline.png' },
   { title: '其他告警(台)', value: '4000', icon: 'alarm.png' }
 ]);
-
 const onSelectChange = (keys) => { selectedRowKeys.value = keys; };
-
 // ---- 表格配置 ----
 const columns = [
   { title: '序号', key: 'index', width: 80, align: 'center' },
@@ -161,7 +151,6 @@ const columns = [
   { title: '告警时长(h)', dataIndex: 'duration', align: 'center' },
   { title: '恢复时间', dataIndex: 'recoverTime', align: 'center', width: 180 }
 ];
-
 const tableData = ref(Array.from({ length: 12 }, (_, i) => ({
   id: i + 1,
   deviceType: i < 8 ? '光伏设备' : (i < 10 ? '升压站设备' : '储能设备'),
@@ -173,7 +162,6 @@ const tableData = ref(Array.from({ length: 12 }, (_, i) => ({
   duration: '5.49',
   recoverTime: '2023-06-29 16:22:06'
 })));
-
 const paginationConfig = ref({
   total: 200,
   current: 1,
@@ -184,10 +172,8 @@ const paginationConfig = ref({
   size: 'small'
 });
 </script>
-
 <style scoped>
 @import url(../../assets/css/antd.css);
-
 /* 1. 基础输入组件调优 - 增加透明度与极细边框 */
 :deep(.custom-dark-input),
 :deep(.custom-dark-select .ant-select-selector),
@@ -197,40 +183,44 @@ const paginationConfig = ref({
   color: #fff !important;
   height: 32px;
 }
-
-/* 2. 表格主体高还原样式 */
+/* 2. 表格主体高还原样式 - 完全匹配设计稿 */
 .custom-table-container :deep(.ant-table) {
   background: transparent !important;
   font-size: 14px;
 }
-
-/* 去掉表头背景，设置极细分割线 */
+/* 表头样式 - 高度39px 淡色分割线 */
 :deep(.ant-table-thead > tr > th) {
+  height: 39px !important;
+  line-height: 39px !important;
+  padding: 0 16px !important;
   background: transparent !important;
   color: rgba(255, 255, 255, 0.4) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid #FFFFFF1F !important;
+  border-top: none !important;
   font-weight: 400;
-  padding: 14px 16px !important;
 }
-
-/* 单元格分割线细化与颜色调整 */
+/* 表格行样式 - 高度34px 淡色分割线 关键修复：干掉AntD默认的白色border-top */
 :deep(.ant-table-tbody > tr > td) {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-  padding: 14px 16px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 16px !important;
+  border-top: transparent !important; /* 强制覆盖AntD默认的#f0f0f0上边框 */
+  border-bottom: 1px solid #FFFFFF1F !important;
   background: transparent !important;
 }
-
-/* 悬浮行：更轻微的反馈 */
+/* 隔行斑马纹 - 偶数行淡色背景 */
+:deep(.ant-table-tbody > tr:nth-child(even) > td) {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+/* 悬浮行：轻微反馈 */
 :deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
   background: rgba(255, 255, 255, 0.04) !important;
 }
-
-/* 选中行：还原设计稿中的浅蓝色半透明覆盖 */
+/* 选中行：设计稿蓝色半透明覆盖 */
 :deep(.ant-table-tbody > tr.ant-table-row-selected > td) {
-  background: rgba(50, 175, 255, 0.12) !important;
-  border-bottom-color: rgba(50, 175, 255, 0.2) !important;
+  background: rgba(50, 175, 255, 0.2) !important;
+  border-bottom-color: rgba(50, 175, 255, 0.3) !important;
 }
-
 /* 3. Checkbox 定制 (解决对比度问题) */
 :deep(.custom-dark-checkbox .ant-checkbox-inner),
 :deep(.ant-table-selection-column .ant-checkbox-inner) {
@@ -243,41 +233,66 @@ const paginationConfig = ref({
   background-color: #32AFFF !important;
   border-color: #32AFFF !important;
 }
-
-/* 4. 分页器 (Pagination) 高还原定制 */
+/* 4. 分页器 - 完全匹配设计稿样式 */
 :deep(.ant-pagination) {
-  margin-top: 20px !important;
-  color: rgba(255, 255, 255, 0.6) !important;
+  margin: 16px 0 0 0 !important;
+  padding: 0 16px 16px 16px !important;
+  color: rgba(255, 255, 255, 0.5) !important;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  background: transparent !important;
 }
-
 :deep(.ant-pagination-total-text) {
   color: rgba(255, 255, 255, 0.5) !important;
-  margin-right: 12px;
+  margin-right: 16px;
 }
-
-:deep(.ant-pagination-item), :deep(.ant-pagination-prev), :deep(.ant-pagination-next) {
-  background: rgba(255, 255, 255, 0.05) !important;
+:deep(.ant-pagination-item), 
+:deep(.ant-pagination-prev), 
+:deep(.ant-pagination-next) {
+  background: transparent !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 2px !important;
   min-width: 28px;
   height: 28px;
   line-height: 26px;
+  margin: 0 2px !important;
 }
-
+:deep(.ant-pagination-item:hover),
+:deep(.ant-pagination-prev:hover),
+:deep(.ant-pagination-next:hover) {
+  border-color: rgba(50, 175, 255, 0.5) !important;
+  color: #32AFFF !important;
+}
 :deep(.ant-pagination-item-active) {
   background: #32AFFF !important;
   border-color: #32AFFF !important;
 }
-
-:deep(.ant-pagination-item-active a) { color: #fff !important; }
-
+:deep(.ant-pagination-item-active a) { 
+  color: #fff !important; 
+}
+:deep(.ant-pagination-item-active:hover) {
+  border-color: #32AFFF !important;
+}
 :deep(.ant-pagination-options-quick-jumper), 
 :deep(.ant-pagination-options-size-changer) {
   color: rgba(255, 255, 255, 0.5) !important;
+  margin-left: 8px;
 }
-
+:deep(.ant-pagination-options-quick-jumper input) {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  height: 28px !important;
+  border-radius: 2px !important;
+}
+:deep(.ant-pagination-options-size-changer .ant-select-selector) {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  height: 28px !important;
+  border-radius: 2px !important;
+}
 .metric-value {
   font-family: 'DIN Alternate', 'Source Han Sans CN';
   font-size: 24px;
