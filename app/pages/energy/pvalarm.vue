@@ -1,6 +1,5 @@
 <template>
   <div class="w-full h-full min-h-screen bg-transparent flex flex-col p-4 font-sans text-white gap-4 box-border">
-    <!-- 只修改了这部分顶部指标栏 -->
     <div class="grid grid-cols-5 gap-2 h-[72px] shrink-0">
       <div v-for="(card, index) in summaryCards" :key="index"
         @click="activeCard = index"
@@ -12,15 +11,11 @@
           <span class="text-[12px] text-[#FFFFFF99]">{{ card.title }}</span>
           <span class="text-[22px] metric-value">{{ card.value }}</span>
         </div>
-        <!-- 卡片发光效果 -->
-        <div
-          class="absolute inset-0 border-2 border-[#32AFFF] rounded opacity-0 hover:opacity-30 transition-opacity duration-300 pointer-events-none">
-        </div>
+        <div class="absolute inset-0 border-2 border-[#32AFFF] rounded opacity-0 hover:opacity-30 transition-opacity duration-300 pointer-events-none"></div>
       </div>
     </div>
-    <!-- 下面的筛选栏、表格、分页都保持原样不动 -->
+
     <div class="bg-[#FFFFFF0A] border border-[#FFFFFF1A] rounded-[4px] p-4 flex flex-col gap-4 shrink-0">
-      <!-- 第一行筛选 - 调整列宽比例，按钮自动宽度 -->
       <div class="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center">
         <div class="flex items-center gap-2">
           <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">设备名称:</span>
@@ -38,6 +33,7 @@
         <div class="flex items-center gap-2">
           <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">发生时间:</span>
           <a-date-picker v-model:value="searchDate" class="custom-dark-datepicker w-full"
+            placeholder="请选择日期"
             dropdownClassName="custom-dark-datepicker-dropdown"
             :getPopupContainer="(triggerNode) => triggerNode.parentNode" />
         </div>
@@ -50,20 +46,18 @@
             <a-select-option value="major">重要</a-select-option>
           </a-select>
         </div>
-        <div class="flex gap-2">
+        <div class="flex justify-end gap-2 min-w-[180px]">
           <a-button type="primary" class="!bg-[#32AFFF] !border-[#32AFFF] hover:!opacity-80 w-[64px] min-w-[64px]">查询</a-button>
-          <a-button
-            class="!bg-transparent !border-[#FFFFFF33] !text-[#FFFFFF99] hover:!text-white hover:!border-[#fefefe30] w-[64px] min-w-[64px]">重置</a-button>
+          <a-button class="!bg-transparent !border-[#FFFFFF33] !text-[#FFFFFF99] hover:!text-white hover:!border-[#fefefe30] w-[64px] min-w-[64px]">重置</a-button>
         </div>
       </div>
-      <!-- 第二行筛选 - 调整列宽比例，只占前两列 -->
+
       <div class="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-center">
         <div class="flex items-center gap-2">
           <span class="text-[14px] text-[#FFFFFF99] whitespace-nowrap">告警名称:</span>
           <a-select v-model:value="alarmName" class="custom-dark-select w-full"
             :getPopupContainer="(triggerNode) => triggerNode.parentNode">
             <a-select-option value="all">全部告警</a-select-option>
-            <!-- 你可以在这里添加具体的告警名称选项 -->
           </a-select>
         </div>
         <div class="flex items-center gap-2">
@@ -77,14 +71,13 @@
         </div>
         <div class="flex items-center gap-2"></div>
         <div class="flex items-center gap-2"></div>
-        <div class="flex gap-2 opacity-0">
-          <a-button class="opacity-0 w-[64px] min-w-[64px]" >&nbsp;</a-button>
-          <a-button class="opacity-0 w-[64px] min-w-[64px]">&nbsp;</a-button>
+        <div class="flex justify-end gap-2 min-w-[180px] opacity-0 pointer-events-none">
+          <div class="w-[64px]"></div>
+          <div class="w-[64px]"></div>
         </div>
-        <!-- 剩余空间留空，保持布局对齐 -->
-        <div></div>
       </div>
     </div>
+
     <div class="flex-1 bg-[#FFFFFF0A] border border-[#FFFFFF1A] rounded-[4px] flex flex-col min-h-0">
       <div class="flex border-b border-[#FFFFFF1A] shrink-0">
         <button v-for="tab in tabs" :key="tab.key" @click="currentTab = tab.key"
@@ -144,13 +137,14 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref } from 'vue';
 import dayjs from 'dayjs';
+
 definePageMeta({ layout: 'layout' })
-// 顶部卡片选中状态
+
 const activeCard = ref(0);
-// 顶部卡片数据（修改为使用public/image下的图片）
 const summaryCards = ref([
   { title: '停机告警(台)', value: '200', icon: 'switch.png' },
   { title: '安全告警(台)', value: '620', icon: 'warnning.png' },
@@ -158,12 +152,10 @@ const summaryCards = ref([
   { title: '通讯告警(台)', value: '60', icon: 'offline.png' },
   { title: '其他告警(台)', value: '4000', icon: 'alarm.png' }
 ]);
-// 下面的所有数据和逻辑都保持原样不动
-const searchDate = ref(null); // 从数组改为单个日期值，兼容单个日期选择器
+
+const searchDate = ref(null);
 const filterLevel = ref('all');
 const filterType = ref('all');
-const searchKey = ref('');
-// 新增筛选条件（完全兼容原有逻辑）
 const deviceName = ref('');
 const alarmName = ref('all');
 const recoveryStatus = ref('all');
@@ -185,13 +177,63 @@ const tableData = ref([
   { id: 'AL-20260411-007', deviceName: '8#汇流箱', levelText: '提示', levelColor: '#32AFFF', type: '开关状态', content: '支路空开已断开', time: '2026-04-11 05:45:12', status: 'resolved', statusText: '已处理' }
 ]);
 </script>
+
 <style scoped>
 @import url(../../assets/css/antd.css);
+
+/* 核心优化：统一边框颜色为微透蓝，降低白色突兀感 */
+:deep(.custom-dark-input),
+:deep(.custom-dark-select .ant-select-selector),
+:deep(.ant-picker.custom-dark-datepicker) { /* 这里的选择器专门强化了 DatePicker */
+  background-color: transparent !important;
+  border: 1px solid rgba(50, 175, 255, 0.25) !important; /* 统一使用微透蓝边框 */
+  color: #ffffff !important;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+/* 统一悬浮效果 */
+:deep(.custom-dark-input:hover),
+:deep(.custom-dark-select:hover .ant-select-selector),
+:deep(.ant-picker.custom-dark-datepicker:hover) {
+  border-color: rgba(50, 175, 255, 0.6) !important;
+}
+
+/* 统一焦点效果 */
+:deep(.custom-dark-input:focus),
+:deep(.ant-select-focused .ant-select-selector),
+:deep(.ant-picker-focused) {
+  border-color: #32AFFF !important;
+  box-shadow: 0 0 4px rgba(50, 175, 255, 0.2) !important;
+}
+
+:deep(.ant-select-arrow), :deep(.ant-picker-suffix) {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+:deep(.ant-input::placeholder),
+:deep(.ant-select-selection-placeholder),
+:deep(.ant-picker-input input::placeholder) {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+:deep(.ant-picker-input > input) {
+  color: #fff !important;
+}
+
 .metric-value {
   font-family: Source Han Sans CN;
   font-weight: 400;
   font-size: 22px;
   color: #FFFFFF;
   line-height: 30px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
 }
 </style>
