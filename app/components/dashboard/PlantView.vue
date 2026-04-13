@@ -16,8 +16,8 @@
         <div class="flex items-center gap-3">
           <span>状态说明:</span>
           <span v-for="s in ['running', 'stopped', 'standby', 'offline']" :key="s" 
-                class="px-2 py-0 rounded-full text-[9px] text-white/90"
-                :style="{ backgroundColor: getStatusColor(s, 0.15), color: getStatusColor(s, 1), border: `1px solid ${getStatusColor(s, 0.35)}` }">
+                class="px-1 py-0 rounded text-[9px] text-white/90"
+                :style="{ backgroundColor: getStatusColor(s, 0.15), color: getStatusColor(s, 1), border: `1px solid ${getStatusColor(s, 0.35) }` }">
             {{ getStatusText(s) }}
           </span>
         </div>
@@ -68,8 +68,8 @@
                     }">
             <div class="flex justify-between items-center mb-1.5 border-b border-[#22D3EE]/20 pb-1">
               <span class="text-white text-[13px] font-bold tracking-wider">{{ node.name }}</span>
-              <span class="text-[10px] px-1.5 py-0.5 rounded text-white font-medium shadow-[0_0_8px_rgba(0,0,0,0.3)]" 
-                    :style="{ backgroundColor: getStatusColor(node.status, 0.6), border: `1px solid ${getStatusColor(node.status, 0.8)}` }">
+              <span class="px-1 py-0 rounded text-[9px] text-white/90 shadow-[0_0_8px_rgba(0,0,0,0.3)]" 
+                    :style="{ backgroundColor: getStatusColor(s, 0.15), color: getStatusColor(s, 1), border: `1px solid ${getStatusColor(s, 0.35) }` }">
                 {{ getStatusText(node.status) }}
               </span>
             </div>
