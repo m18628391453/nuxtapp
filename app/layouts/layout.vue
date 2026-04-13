@@ -1,43 +1,27 @@
 <template>
-  <div v-if="isClientReady" class="relative min-h-screen text-white font-sans" 
-      :style=" layoutMode === 'fullscreen' ? { 
-          backgroundImage: `url('/image/background.png')`, 
-          backgroundSize: 'auto',  
-          backgroundPosition: 'center -120px',
-          backgroundRepeat: 'repeat-y',
-          opacity: 0.99 
-      } : null"
-  >
-      <div class="relative z-10 flex flex-col min-h-screen" >
-          <Header @settings="showSettings = true" />
-          
-          <div class="flex flex-1 overflow-hidden">
-              <Sidebar v-if="layoutMode === 'sidebar'" />
-              
-              <main 
-                  class="flex-1 h-[calc(100vh-50px)] overflow-hidden transition-all duration-300"
-                  :key="refreshKey"
-                  :class="layoutMode === 'sidebar' && !sidebarCollapsed ? 'ml-[210px]' : 'ml-0'"
-                  :style=" layoutMode !== 'fullscreen' ? { 
-                      backgroundImage: `url('/image/background.png')`, 
-                      backgroundSize: '100%',  
-                      backgroundPosition: 'center -100px',
-                      backgroundRepeat: 'repeat',
-                      opacity: 0.99 
-                  } : { 
-                      backgroundImage: `url('/image/background.png')`, 
-                      backgroundSize: '100%',  
-                      backgroundPosition: 'center -200px',
-                      backgroundRepeat: 'repeat',
-                      opacity: 0.99 
-                  }"
-              >
-                  <MenuTabs />
-                  <slot />
-              </main>
-          </div>
+  <div v-if="isClientReady" class="relative min-h-screen text-white font-sans">
+    <!-- 内容层（保持 z-10 在背景之上） -->
+    <div class="relative z-10 flex flex-col min-h-screen">
+      <Header @settings="showSettings = true" />
+      
+      <div class="flex flex-1 overflow-hidden">
+        <Sidebar v-if="layoutMode === 'sidebar'" />
+        
+        <!-- 核心修改：给 main 加 relative，去掉内联 style，加动态 fullscreen class -->
+        <main 
+          class="flex-1 h-[calc(100vh-50px)] overflow-hidden transition-all duration-300 relative"
+          :key="refreshKey"
+          :class="[
+            layoutMode === 'sidebar' && !sidebarCollapsed ? 'ml-[210px]' : 'ml-0',
+            layoutMode === 'fullscreen' ? 'fullscreen' : 'sidebar'
+          ]"
+        >
+          <MenuTabs />
+          <slot />
+        </main>
       </div>
-      <SettingSidebar v-model:visible="showSettings" />
+    </div>
+    <SettingSidebar v-model:visible="showSettings" />
   </div>
   <div v-else class="min-h-screen bg-[#0A162C]"></div>
 </template>
@@ -49,6 +33,9 @@ import Header from '../components/Header.vue'
 import Sidebar from '../components/Sidebar.vue'
 import SettingSidebar from '../components/SettingSidebar.vue'
 import MenuTabs from '../components/MenuTabs.vue'
+
+// 注意：你代码里用到了 getSessionCache，但没引入，这里保持原样
+// 如果报错请补充：import { getSessionCache } from '~/utils/xxx'
 
 const showSettings = ref(false)
 const isClientReady = ref(false)
@@ -64,7 +51,7 @@ const forceRefreshPage = () => {
   refreshKey.value += 1
 }
 
-// ========== 核心修改：仅更新能源管理的子菜单，其他顶级菜单保持原样 ==========
+// 菜单配置保持原样
 const menuList = ref([
   { 
     name: '首页', route: '/', icon: 'Home', index: 0,
@@ -143,3 +130,28 @@ provide('layoutActions', {
   forceRefreshPage
 })
 </script>
+
+<style>
+/* 给 main 标签添加伪元素背景层 */
+main::before {
+  content: '';
+  position: absolute;
+  inset: 0; 
+  z-index: -1;
+  pointer-events: none; 
+  background-image: url('/image/background.png');
+  background-size: 100%;
+  background-repeat: repeat;
+  opacity: 0.45;
+}
+
+/* 非全屏模式 (Sidebar 模式)：背景位置 -100px */
+main:not(.fullscreen)::before {
+  background-position: center -75px;
+}
+
+/* 全屏模式：背景位置 -150px */
+main.fullscreen::before {
+  background-position: center -175px;
+}
+</style>
