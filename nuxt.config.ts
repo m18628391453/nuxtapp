@@ -32,7 +32,16 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: [
         'vue-echarts',
-        'echarts', // 确保包含完整 echarts
+        'echarts',
+        'dayjs',
+        'dayjs/plugin/weekday',
+        'dayjs/plugin/localeData',
+        'dayjs/plugin/weekOfYear',
+        'dayjs/plugin/weekYear',
+        'dayjs/plugin/quarterOfYear',
+        'dayjs/plugin/advancedFormat',
+        'dayjs/plugin/customParseFormat',
+        'lucide-vue-next',
       ]
     }
   },
