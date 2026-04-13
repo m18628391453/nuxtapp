@@ -78,61 +78,52 @@
       </div>
     </div>
 
-    <div class="flex-1 bg-[#FFFFFF0A] border border-[#FFFFFF1A] rounded-[4px] flex flex-col min-h-0">
-      <div class="flex border-b border-[#FFFFFF1A] shrink-0">
-        <button v-for="tab in tabs" :key="tab.key" @click="currentTab = tab.key"
-          :class="['px-6 py-3 text-[14px] transition-all relative', currentTab === tab.key ? 'text-[#32AFFF] font-medium' : 'text-[#FFFFFF99] hover:text-white']">
-          {{ tab.label }}
-          <div v-if="currentTab === tab.key" class="absolute bottom-0 left-0 w-full h-[2px] bg-[#32AFFF]"></div>
+    <div class="flex-1 bg-[#FFFFFF0A] border border-[#FFFFFF0D] rounded-[4px] flex flex-col min-h-0 overflow-hidden">
+      
+      <div class="flex justify-between items-center px-6 py-2 border-b border-[#FFFFFF14] shrink-0">
+        <div class="flex items-center gap-8">
+          <span class="text-[14px] font-normal text-white tracking-wide">告警列表</span>
+          <div class="flex items-center gap-2 cursor-pointer select-none">
+             <a-checkbox v-model:checked="autoRefresh" class="custom-dark-checkbox">
+               <span class="text-[#FFFFFFC0] text-[14px] ml-1">自动刷新</span>
+             </a-checkbox>
+          </div>
+        </div>
+        <button class="text-[#FFFFFF80] hover:text-[#32AFFF] transition-all duration-300 cursor-pointer">
+          <Settings :size="18" stroke-width="2" />
         </button>
       </div>
-      <div class="flex-1 overflow-auto p-4 custom-scrollbar">
-        <table class="w-full border-collapse">
-          <thead>
-            <tr class="text-left text-[#FFFFFF66] text-[13px] border-b border-[#FFFFFF1A]">
-              <th class="pb-3 pl-2 font-normal">告警ID</th>
-              <th class="pb-3 font-normal">设备名称</th>
-              <th class="pb-3 font-normal">告警级别</th>
-              <th class="pb-3 font-normal">告警类型</th>
-              <th class="pb-3 font-normal">告警内容</th>
-              <th class="pb-3 font-normal">发生时间</th>
-              <th class="pb-3 font-normal">状态</th>
-              <th class="pb-3 pr-2 text-right font-normal">操作</th>
-            </tr>
-          </thead>
-          <tbody class="text-[13px]">
-            <tr v-for="(item, index) in tableData" :key="index"
-              class="border-b border-[#FFFFFF05] hover:bg-[#FFFFFF05] transition-colors group">
-              <td class="py-4 pl-2 text-[#FFFFFF99]">{{ item.id }}</td>
-              <td class="py-4 text-[#E5E7EB]">{{ item.deviceName }}</td>
-              <td class="py-4">
-                <span class="px-2 py-0.5 rounded-[2px] text-[11px]"
-                  :style="{ backgroundColor: item.levelColor + '20', color: item.levelColor, border: '1px solid ' + item.levelColor + '40' }">
-                  {{ item.levelText }}
-                </span>
-              </td>
-              <td class="py-4 text-[#FFFFFF99]">{{ item.type }}</td>
-              <td class="py-4 text-[#E5E7EB]">{{ item.content }}</td>
-              <td class="py-4 text-[#FFFFFF99]">{{ item.time }}</td>
-              <td class="py-4">
-                <div class="flex items-center gap-1.5">
-                  <span class="w-1.5 h-1.5 rounded-full"
-                    :class="item.status === 'unhandled' ? 'bg-[#FF4D4F]' : 'bg-[#00FA9A]'"></span>
-                  <span :class="item.status === 'unhandled' ? 'text-[#FF4D4F]' : 'text-[#00FA9A]'">{{ item.statusText
-                    }}</span>
-                </div>
-              </td>
-              <td class="py-4 pr-2 text-right">
-                <button class="text-[#32AFFF] hover:underline">详情</button>
-                <button class="ml-3 text-[#FFFFFF66] hover:text-white">处理</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="p-4 border-t border-[#FFFFFF1A] flex justify-between items-center shrink-0">
-        <span class="text-[12px] text-[#FFFFFF66]">共 {{ totalCount }} 条记录</span>
-        <a-pagination size="small" :total="totalCount" :show-size-changer="false" class="custom-dark-pagination" />
+
+      <div class="flex-1 overflow-hidden flex flex-col p-4 pb-0 custom-table-container">
+        <a-table
+          :columns="columns"
+          :data-source="tableData"
+          :pagination="paginationConfig"
+          :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+          :scroll="{ y: 'calc(100vh - 490px)' }"
+          class="custom-dark-table"
+          row-key="id"
+        >
+          <template #bodyCell="{ column, text, record, index }">
+            <template v-if="column.key === 'index'">
+              <span class="text-[#FFFFFF60] text-[14px]">{{ index + 1 }}</span>
+            </template>
+            
+            <template v-else-if="column.key === 'alarmLevel'">
+              <span :class="['text-[14px]', text === '重要' ? 'text-[#FF4D4F]' : 'text-[#32AFFF]']">
+                {{ text }}
+              </span>
+            </template>
+            
+            <template v-else-if="column.key === 'deviceName'">
+              <span class="text-[#32AFFF] text-[14px] cursor-pointer hover:underline">{{ text }}</span>
+            </template>
+
+            <template v-else>
+              <span class="text-[#FFFFFFCC] text-[14px]">{{ text }}</span>
+            </template>
+          </template>
+        </a-table>
       </div>
     </div>
   </div>
@@ -141,10 +132,13 @@
 <script setup>
 import { ref } from 'vue';
 import dayjs from 'dayjs';
+import { Settings } from 'lucide-vue-next';
 
 definePageMeta({ layout: 'layout' })
 
 const activeCard = ref(0);
+const autoRefresh = ref(false);
+const selectedRowKeys = ref([4]); // 模拟设计稿选中第4行
 const summaryCards = ref([
   { title: '停机告警(台)', value: '200', icon: 'switch.png' },
   { title: '安全告警(台)', value: '620', icon: 'warnning.png' },
@@ -153,87 +147,139 @@ const summaryCards = ref([
   { title: '其他告警(台)', value: '4000', icon: 'alarm.png' }
 ]);
 
-const searchDate = ref(null);
-const filterLevel = ref('all');
-const filterType = ref('all');
-const deviceName = ref('');
-const alarmName = ref('all');
-const recoveryStatus = ref('all');
+const onSelectChange = (keys) => { selectedRowKeys.value = keys; };
 
-const currentTab = ref('all');
-const tabs = [
-  { label: '全部告警', key: 'all' },
-  { label: '待处理', key: 'pending' },
-  { label: '已处理', key: 'resolved' }
+// ---- 表格配置 ----
+const columns = [
+  { title: '序号', key: 'index', width: 80, align: 'center' },
+  { title: '设备类型', dataIndex: 'deviceType', align: 'center' },
+  { title: '设备名称', dataIndex: 'deviceName', key: 'deviceName', align: 'center' },
+  { title: '告警名称', dataIndex: 'alarmName', align: 'center' },
+  { title: '告警等级', dataIndex: 'alarmLevel', key: 'alarmLevel', align: 'center' },
+  { title: '告警类型', dataIndex: 'alarmType', align: 'center' },
+  { title: '发生时间', dataIndex: 'occurTime', align: 'center', width: 180 },
+  { title: '告警时长(h)', dataIndex: 'duration', align: 'center' },
+  { title: '恢复时间', dataIndex: 'recoverTime', align: 'center', width: 180 }
 ];
-const totalCount = ref(1524);
-const tableData = ref([
-  { id: 'AL-20260411-001', deviceName: '1#逆变器', levelText: '严重', levelColor: '#FF4D4F', type: '设备故障', content: 'IGBT模块超温报警', time: '2026-04-11 09:12:05', status: 'unhandled', statusText: '待处理' },
-  { id: 'AL-20260411-002', deviceName: '5#汇流箱', levelText: '重要', levelColor: '#FAAD14', type: '通讯异常', content: 'RS485通讯链路中断', time: '2026-04-11 08:45:22', status: 'unhandled', statusText: '待处理' },
-  { id: 'AL-20260411-003', deviceName: '环境检测仪', levelText: '提示', levelColor: '#32AFFF', type: '数据越限', content: '环境风速传感器数值偏离正常范围', time: '2026-04-11 08:30:11', status: 'resolved', statusText: '已处理' },
-  { id: 'AL-20260411-004', deviceName: '3#变压器', levelText: '严重', levelColor: '#FF4D4F', type: '电气保护', content: '变压器瓦斯保护跳闸', time: '2026-04-11 07:55:00', status: 'unhandled', statusText: '待处理' },
-  { id: 'AL-20260411-005', deviceName: '2#逆变器', levelText: '次要', levelColor: '#FADB14', type: '性能下降', content: '直流侧输入功率异常偏低', time: '2026-04-11 07:20:15', status: 'resolved', statusText: '已处理' },
-  { id: 'AL-20260411-006', deviceName: '15#逆变器', levelText: '重要', levelColor: '#FAAD14', type: '参数设置', content: '系统时间未同步', time: '2026-04-11 06:10:05', status: 'unhandled', statusText: '待处理' },
-  { id: 'AL-20260411-007', deviceName: '8#汇流箱', levelText: '提示', levelColor: '#32AFFF', type: '开关状态', content: '支路空开已断开', time: '2026-04-11 05:45:12', status: 'resolved', statusText: '已处理' }
-]);
+
+const tableData = ref(Array.from({ length: 12 }, (_, i) => ({
+  id: i + 1,
+  deviceType: i < 8 ? '光伏设备' : (i < 10 ? '升压站设备' : '储能设备'),
+  deviceName: 'N1-1',
+  alarmName: i < 6 ? '绝缘阻抗低' : (i < 9 ? '残余电流异常' : '外部风扇异常'),
+  alarmLevel: i < 7 ? '一般' : '重要',
+  alarmType: i < 7 ? '电量告警' : '安全告警',
+  occurTime: '2023-06-28 10:44:06',
+  duration: '5.49',
+  recoverTime: '2023-06-29 16:22:06'
+})));
+
+const paginationConfig = ref({
+  total: 200,
+  current: 1,
+  pageSize: 10,
+  showSizeChanger: true,
+  showQuickJumper: true,
+  showTotal: (total) => `共${total}条数据`,
+  size: 'small'
+});
 </script>
 
 <style scoped>
 @import url(../../assets/css/antd.css);
 
-/* 核心优化：统一边框颜色为微透蓝，降低白色突兀感 */
+/* 1. 基础输入组件调优 - 增加透明度与极细边框 */
 :deep(.custom-dark-input),
 :deep(.custom-dark-select .ant-select-selector),
-:deep(.ant-picker.custom-dark-datepicker) { /* 这里的选择器专门强化了 DatePicker */
+:deep(.ant-picker.custom-dark-datepicker) {
   background-color: transparent !important;
-  border: 1px solid rgba(50, 175, 255, 0.25) !important; /* 统一使用微透蓝边框 */
-  color: #ffffff !important;
-  border-radius: 4px;
-  transition: all 0.3s;
-}
-
-/* 统一悬浮效果 */
-:deep(.custom-dark-input:hover),
-:deep(.custom-dark-select:hover .ant-select-selector),
-:deep(.ant-picker.custom-dark-datepicker:hover) {
-  border-color: rgba(50, 175, 255, 0.6) !important;
-}
-
-/* 统一焦点效果 */
-:deep(.custom-dark-input:focus),
-:deep(.ant-select-focused .ant-select-selector),
-:deep(.ant-picker-focused) {
-  border-color: #32AFFF !important;
-  box-shadow: 0 0 4px rgba(50, 175, 255, 0.2) !important;
-}
-
-:deep(.ant-select-arrow), :deep(.ant-picker-suffix) {
-  color: rgba(255, 255, 255, 0.45) !important;
-}
-
-:deep(.ant-input::placeholder),
-:deep(.ant-select-selection-placeholder),
-:deep(.ant-picker-input input::placeholder) {
-  color: rgba(255, 255, 255, 0.35) !important;
-}
-
-:deep(.ant-picker-input > input) {
+  border: 1px solid rgba(50, 175, 255, 0.2) !important;
   color: #fff !important;
+  height: 32px;
+}
+
+/* 2. 表格主体高还原样式 */
+.custom-table-container :deep(.ant-table) {
+  background: transparent !important;
+  font-size: 14px;
+}
+
+/* 去掉表头背景，设置极细分割线 */
+:deep(.ant-table-thead > tr > th) {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  font-weight: 400;
+  padding: 14px 16px !important;
+}
+
+/* 单元格分割线细化与颜色调整 */
+:deep(.ant-table-tbody > tr > td) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding: 14px 16px !important;
+  background: transparent !important;
+}
+
+/* 悬浮行：更轻微的反馈 */
+:deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* 选中行：还原设计稿中的浅蓝色半透明覆盖 */
+:deep(.ant-table-tbody > tr.ant-table-row-selected > td) {
+  background: rgba(50, 175, 255, 0.12) !important;
+  border-bottom-color: rgba(50, 175, 255, 0.2) !important;
+}
+
+/* 3. Checkbox 定制 (解决对比度问题) */
+:deep(.custom-dark-checkbox .ant-checkbox-inner),
+:deep(.ant-table-selection-column .ant-checkbox-inner) {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  width: 16px;
+  height: 16px;
+}
+:deep(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: #32AFFF !important;
+  border-color: #32AFFF !important;
+}
+
+/* 4. 分页器 (Pagination) 高还原定制 */
+:deep(.ant-pagination) {
+  margin-top: 20px !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+:deep(.ant-pagination-total-text) {
+  color: rgba(255, 255, 255, 0.5) !important;
+  margin-right: 12px;
+}
+
+:deep(.ant-pagination-item), :deep(.ant-pagination-prev), :deep(.ant-pagination-next) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  min-width: 28px;
+  height: 28px;
+  line-height: 26px;
+}
+
+:deep(.ant-pagination-item-active) {
+  background: #32AFFF !important;
+  border-color: #32AFFF !important;
+}
+
+:deep(.ant-pagination-item-active a) { color: #fff !important; }
+
+:deep(.ant-pagination-options-quick-jumper), 
+:deep(.ant-pagination-options-size-changer) {
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 .metric-value {
-  font-family: Source Han Sans CN;
-  font-weight: 400;
-  font-size: 22px;
-  color: #FFFFFF;
-  line-height: 30px;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
+  font-family: 'DIN Alternate', 'Source Han Sans CN';
+  font-size: 24px;
 }
 </style>
