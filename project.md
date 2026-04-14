@@ -112,7 +112,7 @@ mkdir -p pages components layouts composables utils server/api server/routes pub
 
 基础目录结构：
 ```
-my-nuxt4-app/
+app/
 ├── pages/
 │   └── index.vue
 ├── components/

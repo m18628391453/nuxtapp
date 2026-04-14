@@ -79,9 +79,9 @@ const menuList = ref([
   },
   { name: '储能管理', route: '/storage', icon: 'Battery', index: 2,
     subMenu: [
-      { name: '储能总览', route: '/storage/overview', icon: 'GalleryThumbnails', index: 0 },
-      { name: '储能单元', route: '/storage/unit', icon: 'Boxes', index: 0 },
-      { name: 'BMS监视', route: '/storage/monitor', icon: 'ChartNoAxesCombined', index: 0 },
+      { name: '储能总览', route: '/storage/stoverview', icon: 'GalleryThumbnails', index: 0 },
+      { name: '储能单元', route: '/storage/stunit', icon: 'Boxes', index: 0 },
+      { name: 'BMS监视', route: '/storage/stmonitor', icon: 'ChartNoAxesCombined', index: 0 },
     ]
   },
   { name: '负荷管理', route: '/load', icon: 'Activity', index: 3, subMenu: [] },
