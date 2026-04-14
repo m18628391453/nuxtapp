@@ -7,7 +7,12 @@
         <StationIntro />
       </div>
       <div class="flex-[4.5] min-h-0 -mt-4">
-        <PeakValleyChart />
+        <PeakValleyPie title="尖峰平谷占比" center-title="总用电量(kWh)" unit="kWh" :pie-size="240" :inner-radius-ratio="0.4"
+          :max-thickness="0.6" :pie-data="[
+            { name: '对虾车间', value: 4544, color: '#54D1FF', gradientStart: '#33A8FFC0' },
+            { name: '鲈鱼车间', value: 3321, color: '#5DE999', gradientStart: '#3DD17AC0' },
+            { name: '水藻车间', value: 3113, color: '#76E8F0', gradientStart: '#55D0E0C0' },
+          ]"/>
       </div>
       <div class="flex-[4.5] min-h-0">
         <StorageRunData />
@@ -36,16 +41,16 @@
     <div class="flex flex-col h-full shrink-0 gap-4"
       :class="layoutMode === 'sidebar' ? 'min-w-[365px] max-w-[365px] max-h-[99%]' : 'min-w-[375px] max-w-[375px] max-h-[100%]'">
       <div class="flex-[4] min-h-0">
-        <LineBarChart title="发电量统计" :buttons="['时', '日', '月']" :x-axis-data="['8:00', '10:00', '12:00', '14:00']"
+        <LineBarChart title="发电量统计" :buttons="['日', '月', '年']" :x-axis-data="['8:00', '10:00', '12:00', '14:00']"
           :bar-data="[190, 270, 190, 270]"
           :line-x-axis-data="['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']"
           :line-data="[250, 180, 200, 160, 220, 280, 210, 190]" :y-axis-max="350" :y-axis-interval="50" />
       </div>
       <div class="flex-[4] min-h-0">
-        <ChargeDischargeTable />
+        <ChargeTable title="充放电分析" :buttons="['日', '月', '年']" />
       </div>
       <div class="flex-[4] min-h-0">
-        <ProgressivePie title="逆变器运行状态" center-title="总台数" unit="台" layout="row" 
+        <ProgressivePie title="设备运行状态" center-title="总台数" unit="台" layout="row" 
           :pie-size="200"
           :inner-radius-ratio="0.4" 
           :max-thickness="0.6"
@@ -63,18 +68,14 @@
 
 <script setup>
 import { inject } from 'vue'
-
-// 导入原有的组件
 import TopMetrics from '@/components/common/TopMetrics.vue'
 import StationIntro from '@/components/energy/StationIntro.vue'
 import LineBarChart from '@/components/chart/LineBarChart.vue'
 import DateLineChart from '@/components/chart/DateLineChart.vue'
 import ProgressivePie from '@/components/chart/ProgressivePie.vue'
-
-// 导入奶奶新写的三个组件
-import PeakValleyChart from '@/components/chart/PeakValleyChart.vue'
+import PeakValleyPie from '@/components/chart/PeakValleyPie.vue'
 import StorageRunData from '@/components/energy/StorageRunData.vue'
-import ChargeDischargeTable from '@/components/chart/ChargeDischargeTable.vue'
+import ChargeTable from '@/components/chart/ChargeTable.vue'
 
 definePageMeta({
   layout: 'layout'
