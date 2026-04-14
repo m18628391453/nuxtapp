@@ -3,7 +3,7 @@
       <div class="flex items-center justify-between mb-2 shrink-0 relative py-1">
         <div class="absolute left-[-16px] top-[-4px] bottom-[-4px] w-1/2 bg-gradient-to-r from-[#173A6B]/60 to-transparent pointer-events-none"></div>
         <div class="absolute left-[-16px] top-[-4px] bottom-[-4px] w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
-        <h3 class="text-[14px] font-bold text-white ml-1.5 leading-none z-10">能源供需平衡分析</h3>
+        <h3 class="text-[14px] font-bold text-white ml-1.5 leading-none z-10">{{ title }}</h3>
         <div class="flex rounded-md p-0.5 relative z-10">
           <button v-for="btn in ['今日', '昨日', '本月', '今年']" :key="btn" class="px-2 py-0.5 text-[10px] rounded transition-all" :class="btn === '今日' ? 'bg-cyan-600/30 text-[#32AFFF] border border-cyan-500/50 cursor-pointer' : 'text-[#FFFFFFCC] hover:text-gray-300 cursor-pointer'">{{ btn }}</button>
         </div>
@@ -31,6 +31,14 @@
   <script setup>
   import VueECharts from 'vue-echarts';
   import * as echarts from 'echarts';
+
+  // 组件入参定义 父级可传入动态数据
+const props = defineProps({
+  title: {
+    type: String,
+    required: true
+  },
+});
   
   const xAxisData = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
   const pvData = [1400, 900, 1200, 800, 1500, 950, 1250, 850, 550, 650, 1050, 1550];

@@ -7,7 +7,7 @@
       </div>
       <div class="absolute left-[-16px] top-[-4px] bottom-[-4px] w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]">
       </div>
-      <h3 class="text-[14px] font-bold text-white ml-1.5 leading-none z-10">功率和辐射曲线</h3>
+      <h3 class="text-[14px] font-bold text-white ml-1.5 leading-none z-10">{{ title }}</h3>
       <div class="flex rounded-md p-0.5 relative z-10 mr-3">
         <!-- 科技风日期选择器 完全适配大屏深色背景 -->
         <input type="date" :value="currentDate" @change="handleDateChange" class="date-picker" />
@@ -27,6 +27,11 @@ import { computed } from 'vue';
 
 // 组件入参定义 父级可传入动态数据
 const props = defineProps({
+  // 图表标题
+  title: {
+    type: String,
+    required: true
+  },
   // x轴时间刻度
   xAxisData: {
     type: Array,

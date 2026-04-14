@@ -7,7 +7,7 @@
         <StationIntro />
       </div>
       <div class="flex-[4.5] min-h-0 -mt-4">
-        <PeakValleyPie title="尖峰平谷占比" center-title="总用电量(kWh)" unit="kWh" :pie-size="240" :inner-radius-ratio="0.4"
+        <RingPie title="尖峰平谷占比" center-title="总用电量(kWh)" unit="kWh" :pie-size="240" :inner-radius-ratio="0.4"
           :max-thickness="0.6" :pie-data="[
             { name: '对虾车间', value: 4544, color: '#54D1FF', gradientStart: '#33A8FFC0' },
             { name: '鲈鱼车间', value: 3321, color: '#5DE999', gradientStart: '#3DD17AC0' },
@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="flex-[1.5] min-h-0" :class="layoutMode === 'sidebar' ? '-mt-3 mb-3' : ''">
-        <DateLineChart />
+        <DateLineChart title="充放电曲线" />
       </div>
     </div>
 
@@ -73,7 +73,7 @@ import StationIntro from '@/components/energy/StationIntro.vue'
 import LineBarChart from '@/components/chart/LineBarChart.vue'
 import DateLineChart from '@/components/chart/DateLineChart.vue'
 import ProgressivePie from '@/components/chart/ProgressivePie.vue'
-import PeakValleyPie from '@/components/chart/PeakValleyPie.vue'
+import RingPie from '@/components/chart/RingPie.vue'
 import StorageRunData from '@/components/energy/StorageRunData.vue'
 import ChargeTable from '@/components/chart/ChargeTable.vue'
 

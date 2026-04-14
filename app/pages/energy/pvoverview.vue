@@ -89,7 +89,7 @@
       </div>
       <!-- 中间主图区域结束 以下内容完全保留未改动 -->
       <div class="flex-[1.5] min-h-0" :class="layoutMode === 'sidebar' ? '-mt-3 mb-3' : ''">
-        <DateLineChart />
+        <DateLineChart title="功率和辐射曲线" />
       </div>
     </div>
     <div class="flex flex-col h-full shrink-0 gap-4"

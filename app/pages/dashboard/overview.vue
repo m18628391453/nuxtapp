@@ -34,7 +34,7 @@
       />
       <!-- 能源供需平衡分析 -->
       <div class="flex-[1.5] min-h-0" :class="layoutMode === 'sidebar' ? '-mt-3 mb-3' : ''">
-        <BalanceChart />
+        <BalanceChart title="能源供需平衡分析" />
       </div>
     </div>
 
