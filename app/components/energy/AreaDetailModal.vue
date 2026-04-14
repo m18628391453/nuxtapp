@@ -283,5 +283,5 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@import url(../../assets/css/antd.css);
+@import url(@/assets/css/antd.css);
 </style>

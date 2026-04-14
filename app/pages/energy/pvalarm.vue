@@ -173,7 +173,7 @@ const paginationConfig = ref({
 });
 </script>
 <style scoped>
-@import url(../../assets/css/antd.css);
+@import url(@/assets/css/antd.css);
 /* 1. 基础输入组件调优 - 增加透明度与极细边框 */
 :deep(.custom-dark-input),
 :deep(.custom-dark-select .ant-select-selector),
