@@ -1,6 +1,11 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
+  pages: true,
+  devServer: {
+    port: 4022,
+    host: '0.0.0.0'
+  },
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
   modules: [
@@ -44,6 +49,7 @@ export default defineNuxtConfig({
         'dayjs/plugin/advancedFormat',
         'dayjs/plugin/customParseFormat',
         'lucide-vue-next',
+        'dayjs/esm/locale/zh-cn',
       ]
     }
   },

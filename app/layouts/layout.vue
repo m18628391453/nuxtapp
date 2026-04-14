@@ -34,14 +34,11 @@ import Sidebar from '../components/Sidebar.vue'
 import SettingSidebar from '../components/SettingSidebar.vue'
 import MenuTabs from '../components/MenuTabs.vue'
 
-// 注意：你代码里用到了 getSessionCache，但没引入，这里保持原样
-// 如果报错请补充：import { getSessionCache } from '~/utils/xxx'
-
 const showSettings = ref(false)
 const isClientReady = ref(false)
 
 // 核心状态，完全保留原有逻辑
-const layoutMode = ref('fullscreen')
+const layoutMode = ref('sidebar')
 const sidebarCollapsed = ref(false)
 const theme = ref('dark')
 const activeMenu = ref(null)
@@ -98,7 +95,7 @@ const menuList = ref([
 
 // 挂载逻辑完全保留
 onMounted(() => {
-  layoutMode.value = getCache(CacheKey.LAYOUT_MODE, 'fullscreen')
+  layoutMode.value = getCache(CacheKey.LAYOUT_MODE, 'sidebar')
   sidebarCollapsed.value = getCache(CacheKey.SIDEBAR_COLLAPSED, false)
   theme.value = getCache(CacheKey.THEME, 'dark')
   activeMenu.value = getSessionCache(CacheKey.ACTIVE_MENU, menuList.value[0])

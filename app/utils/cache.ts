@@ -17,6 +17,8 @@ export const CacheKey = {
     try {
       if (item && ((item.startsWith("{") && item.endsWith("}")) || (item.startsWith(`"`) && item.endsWith(`"`)) || (item === 'true' || item === 'false'))) {
         return item ? JSON.parse(item) : item as T;
+      } else if (typeof item === 'undefined' || item === null) {
+        return defaultValue;
       }
       return item as T;
     } catch (e) {
