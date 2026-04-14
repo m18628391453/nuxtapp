@@ -128,13 +128,13 @@ const nodes = ref([
   // 中层电变系统
   { id: 'transformer', name: '主变设备', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'transformer.png', level: 2, x: 400, y: 410, offX: 0, offY: -10, tOffX: 10, tOffY: 10, scale: 1.0 },
   // 下层应用设备
-  { id: 'storage', name: '储能系统', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'storage.png', level: 3, x: 150, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
-  { id: 'charger', name: '充电桩', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'charger.png', level: 3, x: 350, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
-  { id: 'heatpump', name: '热泵系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'pump.png', level: 3, x: 550, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
-  { id: 'oxygen', name: '增氧设备', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'oxygener.png', level: 3, x: 750, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
-  { id: 'waterpump', name: '循环水泵', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'waterpump.png', level: 3, x: 950, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
-  { id: 'fodder', name: '投料系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'fodder.png', level: 3, x: 1150, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
-  { id: 'office', name: '办公用电', type: 'interruptible', status: 'running', voltage: '3800', power: '1,000', icon: 'officepower.png', level: 3, x: 1350, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 15, scale: 0.9 },
+  { id: 'storage', name: '储能系统', type: 'key', status: 'running', voltage: '3800', power: '1,000', icon: 'storage.png', level: 3, x: 150, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 10, scale: 0.9 },
+  { id: 'charger', name: '充电桩', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'charger.png', level: 3, x: 350, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 10, scale: 0.9 },
+  { id: 'heatpump', name: '热泵系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'pump.png', level: 3, x: 550, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 10, scale: 0.9 },
+  { id: 'oxygen', name: '增氧设备', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'oxygener.png', level: 3, x: 750, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 10, scale: 0.9 },
+  { id: 'waterpump', name: '循环水泵', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'waterpump.png', level: 3, x: 950, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 10, scale: 0.9 },
+  { id: 'fodder', name: '投料系统', type: 'adjustable', status: 'running', voltage: '3800', power: '1,000', icon: 'fodder.png', level: 3, x: 1150, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 0, scale: 1.05 },
+  { id: 'office', name: '办公用电', type: 'interruptible', status: 'running', voltage: '3800', power: '1,000', icon: 'officepower.png', level: 3, x: 1350, y: 640, offX: 0, offY: -5, tOffX: 0, tOffY: 10, scale: 0.9 },
 ])
 
 const lines = [
