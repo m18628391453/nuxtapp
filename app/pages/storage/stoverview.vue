@@ -31,7 +31,6 @@
           filter: 'brightness(1.0) drop-shadow(0 0 35px rgba(50, 175, 255, 0.5))',
         }"
       >
-        <!-- 中心径向荧光叠加层（最关键！模拟科技屏发光） -->
         <div 
           class="absolute w-full h-full pointer-events-none"
           style="
@@ -41,7 +40,6 @@
           "
         ></div>
 
-        <!-- 原来的脉冲圆环，改成和主题一致的#32AFFF -->
         <div class="absolute w-full h-full pointer-events-none" style="z-index: 2;">
           <div
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full animate-pulse"
@@ -49,7 +47,42 @@
           >
           </div>
         </div>
-      </div>
+
+        <div class="absolute top-[8%] z-20 text-center min-w-[160px]" :class="layoutMode === 'sidebar' ? 'left-[10%]': 'left-[14%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">负荷用电</h4>
+          <div class="flex flex-col gap-1.5 text-[14px] text-left">
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">充电功率(MW)</span><span class="text-[#32AFFF] font-medium">960</span></p>
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">日充电量(万kWh)</span><span class="text-[#32AFFF] font-medium">960</span></p>
+          </div>
+        </div>
+
+        <div class="absolute top-[8%] z-20 text-center min-w-[160px]" :class="layoutMode === 'sidebar' ? 'right-[8%]': 'right-[12%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">市电</h4>
+          <div class="flex flex-col gap-1.5 text-[14px] text-left">
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">充电功率(MW)</span><span class="text-[#32AFFF] font-medium">960</span></p>
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">日充电量(万kWh)</span><span class="text-[#32AFFF] font-medium">960</span></p>
+          </div>
+        </div>
+
+        <div class="absolute bottom-[10%] z-20 text-center min-w-[160px]" :class="layoutMode === 'sidebar' ? 'left-[10%]': 'left-[14%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">储能系统</h4>
+          <div class="flex flex-col gap-1.5 text-[14px] text-left">
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">PCS台数(台)</span><span class="text-[#32AFFF] font-medium">99</span></p>
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">充电台数(台)</span><span class="text-[#32AFFF] font-medium">11</span></p>
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">放电台数(台)</span><span class="text-[#32AFFF] font-medium">22</span></p>
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">最大SOC(%)</span><span class="text-[#32AFFF] font-medium">12</span></p>
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">最小SOC(%)</span><span class="text-[#32AFFF] font-medium">8.52</span></p>
+          </div>
+        </div>
+
+        <div class="absolute bottom-[10%] z-20 text-center min-w-[160px]" :class="layoutMode === 'sidebar' ? 'right-[8%]': 'right-[12%]'">
+          <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">光伏</h4>
+          <div class="flex flex-col gap-1.5 text-[14px] text-left">
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">充电功率(MW)</span><span class="text-[#32AFFF] font-medium">960</span></p>
+            <p class="flex justify-between items-center gap-4"><span class="text-gray-300">日充电量(万kWh)</span><span class="text-[#32AFFF] font-medium">960</span></p>
+          </div>
+        </div>
+        </div>
       <div class="flex-[1.5] min-h-0" :class="layoutMode === 'sidebar' ? '-mt-3 mb-3' : ''">
         <DateLineChart title="充放电曲线" />
       </div>
