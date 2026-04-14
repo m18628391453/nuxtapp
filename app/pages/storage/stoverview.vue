@@ -21,15 +21,32 @@
 
     <div class="flex-1 flex flex-col gap-4 h-full min-w-[600px]">
       <TopMetrics :metrics-data="pvMetrics" />
-      <div class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg overflow-hidden z-10" :style="{
-        backgroundImage: `url('/image/stmain.png')`,
-        backgroundSize: layoutMode === 'sidebar' ? '70%' : '62%',
-        backgroundPosition: layoutMode === 'sidebar' ? 'center 10px' : 'center -5px',
-        backgroundRepeat: 'no-repeat'
-      }">
-        <div class="absolute w-full h-full pointer-events-none">
+      <div 
+        class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg overflow-hidden z-10"
+        :style="{
+          backgroundImage: `url('/image/stmain.png')`,
+          backgroundSize: layoutMode === 'sidebar' ? '72%' : '65%',
+          backgroundPosition: layoutMode === 'sidebar' ? 'center 60px' : 'center -5px',
+          backgroundRepeat: 'no-repeat',
+          filter: 'brightness(1.0) drop-shadow(0 0 35px rgba(50, 175, 255, 0.5))',
+        }"
+      >
+        <!-- 中心径向荧光叠加层（最关键！模拟科技屏发光） -->
+        <div 
+          class="absolute w-full h-full pointer-events-none"
+          style="
+            background: radial-gradient(circle at center, rgba(50, 175, 255, 0.2) 0%, rgba(50, 175, 255, 0.08) 40%, transparent 75%);
+            mix-blend-mode: screen;
+            z-index: 1;
+          "
+        ></div>
+
+        <!-- 原来的脉冲圆环，改成和主题一致的#32AFFF -->
+        <div class="absolute w-full h-full pointer-events-none" style="z-index: 2;">
           <div
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-cyan-500/10 rounded-full animate-pulse">
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full animate-pulse"
+            style="border: 1px solid rgba(50, 175, 255, 0.12);"
+          >
           </div>
         </div>
       </div>
