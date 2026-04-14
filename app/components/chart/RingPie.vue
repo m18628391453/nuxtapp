@@ -1,49 +1,66 @@
 <template>
-  <div class="bg-[#0A162C]/10 rounded-lg flex flex-col h-full w-full relative overflow-hidden" :style="customPadding">
-    <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-3 -mr-4 shrink-0">
-      <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
-      <h3 class="text-[14px] font-bold text-white ml-1 leading-none">
+  <div class="bg-transparent flex flex-col h-full w-full relative overflow-hidden text-white" :style="customPadding">
+    <div class="w-full bg-gradient-to-r from-[#005292] to-transparent flex items-center py-2 px-3 relative shrink-0 mb-4">
+      <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-[#00A2FF] shadow-[0_0_8px_#00A2FF]"></div>
+      <h3 class="text-[16px] font-medium tracking-wide">
         {{ title }}
       </h3>
+      <div class="ml-auto flex items-center gap-3 scale-90 origin-right">
+        <div class="flex border border-[#00A2FF]/50 rounded overflow-hidden">
+          <span class="bg-[#00A2FF] px-2 py-0.5 text-[12px] cursor-pointer">充电</span>
+          <span class="px-2 py-0.5 text-[12px] cursor-pointer">放电</span>
+        </div>
+        <div class="border border-white/20 px-2 py-0.5 rounded text-[12px] flex items-center gap-1 cursor-pointer">
+          当月 <span class="text-[10px] opacity-50">▼</span>
+        </div>
+      </div>
     </div>
 
-    <div class="flex items-center gap-4 flex-1 min-h-0 pt-2 -mt-5">
+    <div class="flex items-center flex-1 min-h-0">
       <div 
         ref="chartContainer" 
-        class="flex items-center justify-center shrink-0"
-        :class="layout === 'row' ?  '-ml-5' : '-ml-4'" 
-        :style="{ width: `${pieSize}px`, height: `${pieSize}px`, marginLeft: `${layout === 'row' ? '-25': '-25'}px` }"
+        class="relative flex items-center justify-center shrink-0"
+        :style="{ width: `${pieSize}px`, height: `${pieSize}px` }"
       >
         <canvas 
           ref="canvasRef" 
-          :width="pieSize" 
-          :height="pieSize" 
+          :width="pieSize * 2" 
+          :height="pieSize * 2" 
           class="block"
           :style="{ width: `${pieSize}px`, height: `${pieSize}px` }"
         ></canvas>
         
-        <!-- 自定义tooltip -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <div class="text-[24px] font-bold font-mono tracking-tighter leading-none">
+            {{ totalValue.toLocaleString() }}
+          </div>
+          <div class="text-[12px] text-gray-400 mt-1">
+            总量({{ unit }})
+          </div>
+        </div>
+
         <div v-if="tooltipVisible" 
-             class="fixed z-50 bg-[rgba(5,13,29,0.9)] border border-[#1A2A4A] rounded-md px-3 py-1.5 text-white text-xs shadow-lg pointer-events-none"
-             :style="{ left: tooltipX + 'px', top: tooltipY + 'px', transform: 'translate(10px, -30px)' }">
-          <div>{{ tooltipName }}: {{ tooltipValue.toLocaleString() }} {{ unit }}</div>
-          <div>占比: {{ tooltipPercent.toFixed(1) }}%</div>
+             class="fixed z-50 bg-[#050D1D] border border-[#00A2FF]/50 rounded px-3 py-2 text-white text-xs shadow-2xl pointer-events-none"
+             :style="{ left: tooltipX + 'px', top: tooltipY + 'px', transform: 'translate(15px, -50%)' }">
+          <div class="border-b border-white/10 pb-1 mb-1 font-bold">{{ tooltipName }}</div>
+          <div>数值: {{ tooltipValue.toLocaleString() }} {{ unit }}</div>
+          <div>占比: {{ tooltipPercent.toFixed(2) }}%</div>
         </div>
       </div>
 
-      <div class="flex-1 flex flex-col gap-3 justify-center pr-2 overflow-y-auto -ml-4">
-        <div v-for="(item, idx) in pieData" :key="idx" 
-             :class="layout === 'row' ? 'flex items-center justify-between -pl-2' : 'flex flex-col gap-0.5 -pl-4'">
-          
-          <div class="flex items-center gap-2">
-            <div class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ backgroundColor: item.color, boxShadow: `0 0 6px ${item.color}80` }"></div>
-            <span class="text-gray-300 font-medium text-[12px] truncate">{{ item.name }}</span>
+      <div class="flex-1 flex flex-col gap-4 justify-center pl-0 overflow-y-auto">
+        <div v-for="(item, idx) in pieData" :key="idx" class="flex items-start gap-3">
+          <div class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0" :style="{ backgroundColor: item.color, boxShadow: `0 0 8px ${item.color}` }"></div>
+          <div class="flex flex-col gap-0.5">
+            <div class="flex items-center gap-2">
+              <span class="text-gray-300 text-[13px]">{{ item.name }}</span>
+              <span class="text-gray-400 text-[13px]">{{ ((item.value / (totalValue || 1)) * 100).toFixed(2) }}%</span>
+            </div>
+            <div class="text-[15px] font-bold font-mono tracking-wide">
+              {{ (item.value || 0).toLocaleString() }}
+              <span class="text-[11px] font-normal text-gray-500 ml-1">{{ unit }}</span>
+            </div>
           </div>
-
-          <span class="flex items-baseline text-white font-bold text-[14px] font-mono" :class="layout === 'row' ? 'ml-2' : 'ml-5'">
-            {{ (item.value || 0).toLocaleString() }}
-            <span class="text-gray-300 text-[10px] font-normal ml-1">{{ unit }}</span>
-          </span>
         </div>
       </div>
     </div>
@@ -51,25 +68,28 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 
 const props = defineProps({
-  title: { type: String, default: '' },
-  centerTitle: { type: String, default: '' },
-  unit: { type: String, default: '' },
-  layout: { type: String, default: 'column' },
-  pieSize: { type: Number, default: 175 },
-  innerRadiusRatio: { type: Number, default: 0.45 },
-  minThickness: { type: Number, default: 0.3 },
-  maxThickness: { type: Number, default: 0.35 },
+  title: { type: String, default: '尖峰平台占比' },
+  unit: { type: String, default: '万kW' },
+  pieSize: { type: Number, default: 75 },
+  // 新增：直接设置内径半径 (px)
+  innerRadius: { type: Number, default: 50 }, 
+  // 新增：直接设置环的厚度 (px)
+  ringThickness: { type: Number, default: 20 },
   pieData: {
     type: Array,
-    default: () => []
+    default: () => [
+      { name: '峰', value: 2658.5, color: '#00A2FF' },
+      { name: '尖', value: 1358.5, color: '#00FFA2' },
+      { name: '谷', value: 3723.5, color: '#D2E43B' },
+      { name: '平', value: 1658.6, color: '#FFB822' }
+    ]
   },
-  customPadding: { type: Object, default: () => ({ padding: '0.5rem 1rem 1rem 1.2rem' }) }
+  customPadding: { type: Object, default: () => ({ padding: '10px' }) }
 });
 
-const chartContainer = ref(null);
 const canvasRef = ref(null);
 const tooltipVisible = ref(false);
 const tooltipX = ref(0);
@@ -78,313 +98,149 @@ const tooltipName = ref('');
 const tooltipValue = ref(0);
 const tooltipPercent = ref(0);
 
-let resizeObserver = null;
-let currentHoverSector = null;
 let sectors = [];
 
-// 计算总量
 const totalValue = computed(() => {
   return props.pieData.reduce((sum, item) => sum + (item.value || 0), 0);
 });
 
-/**
- * 为每个数据项分配厚度排名（基于原始顺序的稳定排名）
- * 相同数值的数据也按原始顺序分配不同的厚度（依次递增）
- */
-const getThicknessRankMap = () => {
-  const indexed = props.pieData.map((item, idx) => ({ 
-    idx, 
-    value: item.value || 0,
-    originalOrder: idx
-  }));
-  
-  // 排序：先按数值升序，相同数值按原始索引升序
-  indexed.sort((a, b) => {
-    if (a.value !== b.value) return a.value - b.value;
-    return a.originalOrder - b.originalOrder;
-  });
-  
-  const rankMap = new Map();
-  indexed.forEach((item, rank) => {
-    rankMap.set(item.idx, rank);
-  });
-  
-  return rankMap;
-};
-
-/**
- * 根据排名计算外半径比例
- * 内半径固定 = innerRadiusRatio
- * 外半径 = innerRadiusRatio + 厚度比例
- */
-const getOuterRadiusRatio = (idx, totalCount, rank) => {
-  const MIN_THICKNESS = Math.max(0.02, Math.min(0.15, props.minThickness));
-  const MAX_THICKNESS = Math.max(0.05, Math.min(0.25, props.maxThickness));
-  const INNER_RADIUS_RATIO = Math.max(0.3, Math.min(0.8, props.innerRadiusRatio));
-  
-  if (totalCount === 1) {
-    const midThickness = (MIN_THICKNESS + MAX_THICKNESS) / 2;
-    return INNER_RADIUS_RATIO + midThickness;
-  }
-  
-  const t = rank / (totalCount - 1);
-  const thickness = MIN_THICKNESS + t * (MAX_THICKNESS - MIN_THICKNESS);
-  
-  return INNER_RADIUS_RATIO + thickness;
-};
-
-/**
- * 创建沿扇形角度方向的渐变
- */
-const createAngularGradient = (ctx, centerX, centerY, innerRadius, outerRadius, startRad, endRad, colorStart, colorEnd) => {
-  // 计算渐变线的起点和终点（沿扇形中间半径的圆弧切线方向）
-  const midRadius = (innerRadius + outerRadius) / 2;
-  
-  // 渐变起点：扇形起始边中点
-  const startX = centerX + Math.cos(startRad) * midRadius;
-  const startY = centerY + Math.sin(startRad) * midRadius;
-  
-  // 渐变终点：扇形结束边中点
-  const endX = centerX + Math.cos(endRad) * midRadius;
-  const endY = centerY + Math.sin(endRad) * midRadius;
-  
-  const gradient = ctx.createLinearGradient(startX, startY, endX, endY);
-  gradient.addColorStop(0, colorStart);
-  gradient.addColorStop(1, colorEnd);
-  
-  return gradient;
-};
-
-// 绘制图表
+// 核心渲染逻辑
 const drawChart = () => {
   const canvas = canvasRef.value;
   if (!canvas) return;
-  
-  const width = props.pieSize;
-  const height = props.pieSize;
-  if (width <= 0 || height <= 0) return;
-  
-  // canvas 尺寸已经通过属性设置好了，这里只需要获取
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, width, height);
+  const dpr = window.devicePixelRatio || 1;
   
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const radius = Math.min(width, height) / 2;
+  // 重置并根据DPR缩放，保证清晰度
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.scale(dpr, dpr);
+
+  const centerX = props.pieSize / 2;
+  const centerY = props.pieSize / 2;
   
-  // 使用可配置的内径比例
-  const INNER_RADIUS_RATIO = Math.max(0.3, Math.min(0.8, props.innerRadiusRatio));
-  const innerRadius = radius * INNER_RADIUS_RATIO;
-  
-  // 获取厚度排名
-  const rankMap = getThicknessRankMap();
-  const totalCount = props.pieData.length;
-  
-  // 准备角度数据 (基于原始value比例，起始角度90度)
-  const startAngleDeg = 90;
-  let currentAngleDeg = startAngleDeg;
-  const angles = [];
-  
-  for (let i = 0; i < props.pieData.length; i++) {
-    const item = props.pieData[i];
-    const value = item.value || 0;
-    const angleDeg = totalValue.value > 0 ? (value / totalValue.value) * 360 : 360 / props.pieData.length;
-    angles.push({
-      startDeg: currentAngleDeg,
-      endDeg: currentAngleDeg + angleDeg,
-      value: value,
-      idx: i,
-    });
-    currentAngleDeg += angleDeg;
-  }
-  
-  // 存储扇区信息用于tooltip
+  // 直接使用 props 传入的像素值
+  const iRadius = props.innerRadius;
+  const oRadius = iRadius + props.ringThickness;
+
+  // 1. 绘制内部刻度点圈（跟随内径自动偏移）
+  drawInnerScale(ctx, centerX, centerY, iRadius - 12);
+
+  // 2. 绘制扇区
+  let currentAngle = -Math.PI / 2; 
   sectors = [];
-  
-  // 绘制每个扇形
-  for (let i = 0; i < angles.length; i++) {
-    const angle = angles[i];
-    const item = props.pieData[angle.idx];
-    const rank = rankMap.get(angle.idx);
-    const outerRadiusRatio = getOuterRadiusRatio(angle.idx, totalCount, rank);
-    const outerRadius = radius * outerRadiusRatio;
+
+  props.pieData.forEach((item) => {
+    const sliceAngle = (item.value / (totalValue.value || 1)) * Math.PI * 2;
     
-    const startRad = (angle.startDeg * Math.PI) / 180;
-    const endRad = (angle.endDeg * Math.PI) / 180;
-    
-    // 保存当前扇区信息（用于tooltip的坐标需要相对于canvas）
     sectors.push({
-      idx: angle.idx,
-      name: item.name,
-      value: item.value,
-      startRad,
-      endRad,
-      innerRadius,
-      outerRadius,
-      centerX,
-      centerY,
-      color: item.color,
-      rank: rank,
+      ...item,
+      startAngle: currentAngle,
+      endAngle: currentAngle + sliceAngle,
+      innerRadius: iRadius,
+      outerRadius: oRadius
     });
-    
-    // 绘制扇形路径
+
+    // 绘图
     ctx.beginPath();
-    ctx.arc(centerX, centerY, innerRadius, startRad, endRad);
-    ctx.arc(centerX, centerY, outerRadius, endRad, startRad, true);
+    ctx.arc(centerX, centerY, oRadius, currentAngle, currentAngle + sliceAngle);
+    ctx.arc(centerX, centerY, iRadius, currentAngle + sliceAngle, currentAngle, true);
     ctx.closePath();
-    
-    // 使用沿角度方向的渐变（从扇形起始边到结束边）
-    const gradientStartColor = item.gradientStart || (item.color + 'C0');
-    const gradientEndColor = item.color;
-    
-    const grad = createAngularGradient(
-      ctx, centerX, centerY, 
-      innerRadius, outerRadius, 
-      startRad, endRad, 
-      gradientStartColor, gradientEndColor
-    );
-    
-    ctx.fillStyle = grad;
-    ctx.fill();
-    
-    // 添加阴影光晕效果（先保存状态，避免阴影影响边框）
+
+    ctx.fillStyle = item.color;
+    // 增加光晕
     ctx.save();
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = 8;
     ctx.shadowColor = `${item.color}80`;
     ctx.fill();
     ctx.restore();
-    
-    // 绘制边框
-    ctx.strokeStyle = '#0A162C';
-    ctx.lineWidth = 1.2;
+
+    // 扇区间的缝隙
+    ctx.strokeStyle = '#051020';
+    ctx.lineWidth = 2;
     ctx.stroke();
-  }
-  
-  // 绘制中心圆 (覆盖中间区域，制造环形效果)
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, innerRadius - 1, 0, Math.PI * 2);
-  ctx.fillStyle = '#051020';
-  ctx.fill();
-  ctx.shadowBlur = 0;
-  
-  // 绘制中心文字
-  const fontSize1 = Math.max(15, Math.floor(radius * 0.11));
-  const fontSize2 = Math.max(9, Math.floor(radius * 0.06));
-  
-  ctx.font = `bold ${fontSize1}px monospace`;
-  ctx.fillStyle = '#FFFFFF';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(totalValue.value.toLocaleString(), centerX, centerY - 5);
-  
-  ctx.font = `${fontSize2}px sans-serif`;
-  ctx.fillStyle = '#9CA3AF';
-  ctx.fillText(props.centerTitle, centerX, centerY + 10);
+
+    currentAngle += sliceAngle;
+  });
 };
 
-// 鼠标移动检测tooltip
-const handleCanvasMouseMove = (e) => {
+// 绘制内侧的装饰刻度
+const drawInnerScale = (ctx, cx, cy, radius) => {
+  ctx.save();
+  const count = 80; // 刻度密一点更好看
+  for (let i = 0; i < count; i++) {
+    const angle = (i * (360 / count) * Math.PI) / 180;
+    const x = cx + Math.cos(angle) * radius;
+    const y = cy + Math.sin(angle) * radius;
+    
+    ctx.beginPath();
+    ctx.arc(x, y, 0.8, 0, Math.PI * 2);
+    // 每隔5个点做一个亮蓝色主刻度
+    if (i % 5 === 0) {
+      ctx.fillStyle = 'rgba(0, 162, 255, 0.9)';
+      ctx.shadowBlur = 2;
+      ctx.shadowColor = 'rgba(0, 162, 255, 0.8)';
+    } else {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.shadowBlur = 0;
+    }
+    ctx.fill();
+  }
+  ctx.restore();
+};
+
+const handleMouseMove = (e) => {
   const canvas = canvasRef.value;
   if (!canvas) return;
-  
   const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  const mouseX = (e.clientX - rect.left) * scaleX;
-  const mouseY = (e.clientY - rect.top) * scaleY;
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
   
-  let hitSector = null;
-  for (const sector of sectors) {
-    const dx = mouseX - sector.centerX;
-    const dy = mouseY - sector.centerY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    if (distance < sector.innerRadius || distance > sector.outerRadius) continue;
-    
-    let angle = Math.atan2(dy, dx);
-    if (angle < 0) angle += Math.PI * 2;
-    let start = sector.startRad;
-    let end = sector.endRad;
-    if (start > end) end += Math.PI * 2;
-    let testAngle = angle;
-    if (testAngle < start) testAngle += Math.PI * 2;
-    if (testAngle >= start && testAngle <= end) {
-      hitSector = sector;
-      break;
-    }
-  }
+  const dx = x - (props.pieSize / 2);
+  const dy = y - (props.pieSize / 2);
+  const dist = Math.sqrt(dx * dx + dy * dy);
   
-  if (hitSector) {
-    const percent = (hitSector.value / totalValue.value) * 100;
-    tooltipName.value = hitSector.name;
-    tooltipValue.value = hitSector.value;
-    tooltipPercent.value = percent;
+  let angle = Math.atan2(dy, dx);
+  if (angle < -Math.PI / 2) angle += Math.PI * 2;
+
+  const hit = sectors.find(s => 
+    dist >= s.innerRadius && dist <= s.outerRadius &&
+    angle >= s.startAngle && angle <= s.endAngle
+  );
+
+  if (hit) {
+    tooltipVisible.value = true;
+    tooltipName.value = hit.name;
+    tooltipValue.value = hit.value;
+    tooltipPercent.value = (hit.value / totalValue.value) * 100;
     tooltipX.value = e.clientX;
     tooltipY.value = e.clientY;
-    tooltipVisible.value = true;
-    currentHoverSector = hitSector;
     canvas.style.cursor = 'pointer';
   } else {
     tooltipVisible.value = false;
     canvas.style.cursor = 'default';
-    currentHoverSector = null;
   }
-};
-
-const handleCanvasMouseLeave = () => {
-  tooltipVisible.value = false;
-  if (canvasRef.value) canvasRef.value.style.cursor = 'default';
-};
-
-// 监听数据变化重绘
-const handleResize = () => {
-  nextTick(() => {
-    drawChart();
-  });
 };
 
 onMounted(() => {
-  nextTick(() => {
-    drawChart();
-    window.addEventListener('resize', handleResize);
-    const canvas = canvasRef.value;
-    if (canvas) {
-      canvas.addEventListener('mousemove', handleCanvasMouseMove);
-      canvas.addEventListener('mouseleave', handleCanvasMouseLeave);
-    }
-  });
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize);
-  const canvas = canvasRef.value;
-  if (canvas) {
-    canvas.removeEventListener('mousemove', handleCanvasMouseMove);
-    canvas.removeEventListener('mouseleave', handleCanvasMouseLeave);
+  nextTick(drawChart);
+  window.addEventListener('resize', drawChart);
+  if (canvasRef.value) {
+    canvasRef.value.addEventListener('mousemove', handleMouseMove);
+    canvasRef.value.addEventListener('mouseleave', () => { tooltipVisible.value = false; });
   }
 });
 
-watch(() => props.pieData, () => {
-  drawChart();
-}, { deep: true });
-
-watch(() => props.pieSize, () => {
-  // pieSize 变化时，需要等待 DOM 更新后再重绘
-  nextTick(() => {
-    drawChart();
-  });
+onUnmounted(() => {
+  window.removeEventListener('resize', drawChart);
 });
 
-watch(() => props.innerRadiusRatio, () => {
-  drawChart();
-});
-watch(() => props.minThickness, () => {
-  drawChart();
-});
-watch(() => props.maxThickness, () => {
-  drawChart();
-});
-
-watch(totalValue, () => {
-  drawChart();
-});
+// 监听控制参数的变化，实时重绘
+watch([() => props.pieData, () => props.innerRadius, () => props.ringThickness], drawChart, { deep: true });
 </script>
+
+<style scoped>
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+</style>
