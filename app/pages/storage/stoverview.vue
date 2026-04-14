@@ -25,7 +25,7 @@
         class="flex-[2.5] min-h-0 relative flex items-center justify-center rounded-lg overflow-hidden z-10"
         :style="{
           backgroundImage: `url('/image/stmain.png')`,
-          backgroundSize: layoutMode === 'sidebar' ? '72%' : '65%',
+          backgroundSize: layoutMode === 'sidebar' ? '68%' : '62%',
           backgroundPosition: layoutMode === 'sidebar' ? 'center 60px' : 'center -5px',
           backgroundRepeat: 'no-repeat',
           filter: 'brightness(1.0) drop-shadow(0 0 35px rgba(50, 175, 255, 0.5))',
@@ -48,25 +48,25 @@
           </div>
         </div>
 
-        <div class="absolute top-[8%] z-20 text-center min-w-[160px]" :class="layoutMode === 'sidebar' ? 'left-[10%]': 'left-[14%]'">
+        <div class="absolute top-[8%] z-20 text-center min-w-[120px] max-w-[140px]" :class="layoutMode === 'sidebar' ? 'left-[8%]': 'left-[14%]'">
           <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">负荷用电</h4>
-          <div class="flex flex-col gap-1.5 text-[14px] text-left">
+          <div class="flex flex-col gap-1.5 text-[12px] text-left">
             <p class="flex justify-between items-center gap-4"><span class="text-gray-300">充电功率(MW)</span><span class="text-[#32AFFF] font-medium">960</span></p>
             <p class="flex justify-between items-center gap-4"><span class="text-gray-300">日充电量(万kWh)</span><span class="text-[#32AFFF] font-medium">960</span></p>
           </div>
         </div>
 
-        <div class="absolute top-[8%] z-20 text-center min-w-[160px]" :class="layoutMode === 'sidebar' ? 'right-[8%]': 'right-[12%]'">
+        <div class="absolute top-[8%] z-20 text-center min-w-[120px] max-w-[140px]" :class="layoutMode === 'sidebar' ? 'right-[8%]': 'right-[14%]'">
           <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">市电</h4>
-          <div class="flex flex-col gap-1.5 text-[14px] text-left">
+          <div class="flex flex-col gap-1.5 text-[12px] text-left">
             <p class="flex justify-between items-center gap-4"><span class="text-gray-300">充电功率(MW)</span><span class="text-[#32AFFF] font-medium">960</span></p>
             <p class="flex justify-between items-center gap-4"><span class="text-gray-300">日充电量(万kWh)</span><span class="text-[#32AFFF] font-medium">960</span></p>
           </div>
         </div>
 
-        <div class="absolute bottom-[10%] z-20 text-center min-w-[160px]" :class="layoutMode === 'sidebar' ? 'left-[10%]': 'left-[14%]'">
+        <div class="absolute bottom-[10%] z-20 text-center min-w-[120px] max-w-[140px]" :class="layoutMode === 'sidebar' ? 'left-[6%]': 'left-[10%]'">
           <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">储能系统</h4>
-          <div class="flex flex-col gap-1.5 text-[14px] text-left">
+          <div class="flex flex-col gap-1.5 text-[12px] text-left">
             <p class="flex justify-between items-center gap-4"><span class="text-gray-300">PCS台数(台)</span><span class="text-[#32AFFF] font-medium">99</span></p>
             <p class="flex justify-between items-center gap-4"><span class="text-gray-300">充电台数(台)</span><span class="text-[#32AFFF] font-medium">11</span></p>
             <p class="flex justify-between items-center gap-4"><span class="text-gray-300">放电台数(台)</span><span class="text-[#32AFFF] font-medium">22</span></p>
@@ -75,9 +75,9 @@
           </div>
         </div>
 
-        <div class="absolute bottom-[10%] z-20 text-center min-w-[160px]" :class="layoutMode === 'sidebar' ? 'right-[8%]': 'right-[12%]'">
+        <div class="absolute bottom-[12%] z-20 text-center min-w-[120px] max-w-[140px]" :class="layoutMode === 'sidebar' ? 'right-[8%]': 'right-[16%]'">
           <h4 class="text-[16.75px] font-normal text-white mb-3 py-1.5 bg-gradient-to-r from-transparent via-[#32AFFF]/30 to-transparent">光伏</h4>
-          <div class="flex flex-col gap-1.5 text-[14px] text-left">
+          <div class="flex flex-col gap-1.5 text-[12px] text-left">
             <p class="flex justify-between items-center gap-4"><span class="text-gray-300">充电功率(MW)</span><span class="text-[#32AFFF] font-medium">960</span></p>
             <p class="flex justify-between items-center gap-4"><span class="text-gray-300">日充电量(万kWh)</span><span class="text-[#32AFFF] font-medium">960</span></p>
           </div>
