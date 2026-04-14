@@ -8,10 +8,10 @@
       <div class="flex gap-6 text-[11px] text-[#9CA3AF] relative z-10">
         <div class="flex items-center gap-4">
           <span>类型说明:</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#059669]/60 border border-[#059669]/80 rounded-[1px]"></span> 清洁能源</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#4B5563]/60 border border-[#4B5563]/80 rounded-[1px]"></span> 关键负荷</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#6366F1]/60 border border-[#6366F1]/80 rounded-[1px]"></span> 可调负荷</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#DC2626]/60 border border-[#DC2626]/80 rounded-[1px]"></span> 可断负荷</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#1ADF8C]/10 border border-[#1ADF8C]/40 rounded-[1px]"></span> 清洁能源</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#E4B243]/10 border border-[#E4B243]/40 rounded-[1px]"></span> 关键负荷</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#9552C2]/10 border border-[#9552C2]/40 rounded-[1px]"></span> 可调负荷</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-2 bg-[#FB5252]/10 border border-[#FB5252]/40 rounded-[1px]"></span> 可断负荷</span>
         </div>
         <div class="flex items-center gap-3">
           <span>状态说明:</span>
@@ -162,10 +162,10 @@ const lines = [
 /** 增强：支持设置透明度的颜色方法 */
 const getStatusColor = (status, opacity = 1) => {
   const map = { 
-    'running': `rgba(16, 185, 129, ${opacity})`, 
-    'stopped': `rgba(245, 158, 11, ${opacity})`, 
-    'standby': `rgba(59, 130, 246, ${opacity})`, 
-    'offline': `rgba(107, 114, 128, ${opacity})` 
+    'running': `rgba(26, 223, 140, ${opacity})`, 
+    'stopped': `rgba(228, 178, 67, ${opacity})`, 
+    'standby': `rgba(50, 175, 240, ${opacity})`, 
+    'offline': `rgba(136, 136, 136, ${opacity})` 
   }
   return map[status] || `rgba(16, 185, 129, ${opacity})`
 }
