@@ -57,7 +57,7 @@ const menuList = ref([
     name: '首页', route: '/', icon: 'Home', index: 0,
     subMenu: [
       { name: '综合看板', route: '/dashboard/overview', icon: 'TvMinimal', index: 0 },
-      { name: '能量看板', route: '/dashboard/energy', icon: 'TvMinimal', index: 1 }
+      { name: '能量看板', route: '/dashboard/energy', icon: 'Atom', index: 1 }
     ]
   },
   { 
@@ -82,7 +82,9 @@ const menuList = ref([
   },
   { name: '储能管理', route: '/storage', icon: 'Battery', index: 2,
     subMenu: [
-      { name: '储能监测', route: '/storage/monitor', icon: 'Monitor', index: 0 },
+      { name: '储能总览', route: '/storage/overview', icon: 'GalleryThumbnails', index: 0 },
+      { name: '储能单元', route: '/storage/unit', icon: 'Boxes', index: 0 },
+      { name: 'BMS监视', route: '/storage/monitor', icon: 'ChartNoAxesCombined', index: 0 },
     ]
   },
   { name: '负荷管理', route: '/load', icon: 'Activity', index: 3, subMenu: [] },
