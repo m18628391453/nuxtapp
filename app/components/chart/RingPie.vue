@@ -3,8 +3,8 @@
     <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-3 -mr-4 -pt-5">
       <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
       <h3 class="text-[14px] font-bold text-white ml-1 leading-none">{{ title }}</h3>
-      <div class="absolute right-1 top-[20%] w-[50%] flex">
-        <div class="flex bg-transparent border border-[#00A2FF]/10 rounded-sm ">
+      <div class="absolute right-1 top-[20%] w-[50%] flex ">
+        <div class="flex bg-transparent border border-[#00A2FF]/10 rounded">
           <button 
             v-for="btn in buttons" 
             :key="btn" 
@@ -15,8 +15,15 @@
             {{ btn }}
           </button>
         </div>
-        <div class="bg-transparent border border-[#00A2FF]/60 px-2 ml-1 rounded text-[12px] text-white/80 flex items-center gap-2 cursor-pointer hover:border-white/30">
-          当月
+        <div class="ml-1 flex items-center">
+          <a-date-picker 
+            v-model:value="selectedMonth" 
+            picker="month" 
+            format="YYYY-MM"
+            valueFormat="YYYY-MM"
+            class="custom-month-picker"
+            :allowClear="false"
+          />
         </div>
       </div>
     </div>
@@ -84,6 +91,9 @@ const props = defineProps({
 });
 
 const activeBtn = ref(props.buttons[0]);
+// 新增月份选择器的绑定值
+const selectedMonth = ref(null);
+
 const canvasRef = ref(null);
 const tooltipVisible = ref(false);
 const tooltipX = ref(0);
@@ -158,27 +168,37 @@ const drawChart = () => {
   });
 };
 
-// 绘制内侧的装饰刻度
+// 绘制内侧的装饰短刻度线（优化后）
 const drawInnerScale = (ctx, cx, cy, radius) => {
   ctx.save();
-  const count = 80; // 刻度密一点更好看
+  const count = 80; // 刻度数量
+  const tickLength = 3; // 短细刻度线的长度，可以根据视觉需求微调
+  
   for (let i = 0; i < count; i++) {
     const angle = (i * (360 / count) * Math.PI) / 180;
-    const x = cx + Math.cos(angle) * radius;
-    const y = cy + Math.sin(angle) * radius;
+    
+    // 计算刻度线起点和终点
+    const x1 = cx + Math.cos(angle) * (radius - tickLength / 2);
+    const y1 = cy + Math.sin(angle) * (radius - tickLength / 2);
+    const x2 = cx + Math.cos(angle) * (radius + tickLength / 2);
+    const y2 = cy + Math.sin(angle) * (radius + tickLength / 2);
     
     ctx.beginPath();
-    ctx.arc(x, y, 0.8, 0, Math.PI * 2);
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    
     // 每隔5个点做一个亮蓝色主刻度
     if (i % 5 === 0) {
-      ctx.fillStyle = 'rgba(0, 162, 255, 0.9)';
+      ctx.strokeStyle = 'rgba(0, 162, 255, 0.9)';
+      ctx.lineWidth = 1.5;
       ctx.shadowBlur = 2;
       ctx.shadowColor = 'rgba(0, 162, 255, 0.8)';
     } else {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 1;
       ctx.shadowBlur = 0;
     }
-    ctx.fill();
+    ctx.stroke();
   }
   ctx.restore();
 };
@@ -236,5 +256,42 @@ watch([() => props.pieData, () => props.innerRadius, () => props.ringThickness],
 <style scoped>
 .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* 覆盖 Ant Design Vue DatePicker 的默认样式，贴合设计稿 */
+:deep(.custom-month-picker) {
+  background-color: transparent !important;
+  border: 1px solid rgba(0, 162, 255, 0.6) !important;
+  border-radius: 4px !important;
+  height: 22px !important; /* 调整高度以匹配左侧按钮 */
+  width: 90px !important;
+  padding: 0 6px !important;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+:deep(.custom-month-picker:hover) {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+:deep(.custom-month-picker .ant-picker-input > input) {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 12px !important;
+  text-align: center;
+  cursor: pointer;
+}
+
+:deep(.custom-month-picker .ant-picker-input > input::placeholder) {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+:deep(.custom-month-picker .ant-picker-suffix) {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 10px;
+}
+
+:deep(.custom-month-picker .ant-picker-clear) {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 </style>
