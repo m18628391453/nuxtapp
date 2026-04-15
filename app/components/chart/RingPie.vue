@@ -1,64 +1,58 @@
 <template>
-  <div class="bg-transparent flex flex-col h-full w-full relative overflow-hidden text-white" :style="customPadding">
-    <div class="w-full bg-gradient-to-r from-[#005292] to-transparent flex items-center py-2 px-3 relative shrink-0 mb-4">
-      <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-[#00A2FF] shadow-[0_0_8px_#00A2FF]"></div>
-      <h3 class="text-[16px] font-medium tracking-wide">
-        {{ title }}
-      </h3>
-      <div class="ml-auto flex items-center gap-3 scale-90 origin-right">
-        <div class="flex border border-[#00A2FF]/50 rounded overflow-hidden">
-          <span class="bg-[#00A2FF] px-2 py-0.5 text-[12px] cursor-pointer">充电</span>
-          <span class="px-2 py-0.5 text-[12px] cursor-pointer">放电</span>
+  <div class="bg-[#0A162C]/10 rounded-lg flex flex-col h-full w-full relative overflow-hidden" style="padding: 0.5rem 0rem 0rem 1.25rem;" >
+    <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-3 -mr-4 -pt-5">
+      <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
+      <h3 class="text-[14px] font-bold text-white ml-1 leading-none">{{ title }}</h3>
+      <div class="absolute right-1 top-[20%] w-[50%] flex">
+        <div class="flex bg-transparent border border-[#00A2FF]/10 rounded-sm ">
+          <button 
+            v-for="btn in buttons" 
+            :key="btn" 
+            @click="activeBtn = btn"
+            class="px-2 py-0.5 text-[10px] rounded transition-all" 
+            :class="btn === activeBtn ? 'bg-cyan-600/30 text-[#32AFFF] border border-cyan-500/50 cursor-pointer' : 'text-[#FFFFFFCC] hover:text-gray-300 cursor-pointer'"
+          >
+            {{ btn }}
+          </button>
         </div>
-        <div class="border border-white/20 px-2 py-0.5 rounded text-[12px] flex items-center gap-1 cursor-pointer">
-          当月 <span class="text-[10px] opacity-50">▼</span>
+        <div class="bg-transparent border border-[#00A2FF]/60 px-2 ml-1 rounded text-[12px] text-white/80 flex items-center gap-2 cursor-pointer hover:border-white/30">
+          当月
         </div>
       </div>
     </div>
 
-    <div class="flex items-center flex-1 min-h-0">
-      <div 
-        ref="chartContainer" 
-        class="relative flex items-center justify-center shrink-0"
-        :style="{ width: `${pieSize}px`, height: `${pieSize}px` }"
-      >
+    <div class="flex flex-1 items-center min-h-0">
+      <div class="w-[50%] flex-shrink-0 relative flex items-center justify-center -mt-2">
         <canvas 
           ref="canvasRef" 
           :width="pieSize * 2" 
           :height="pieSize * 2" 
-          class="block"
           :style="{ width: `${pieSize}px`, height: `${pieSize}px` }"
         ></canvas>
         
         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div class="text-[24px] font-bold font-mono tracking-tighter leading-none">
-            {{ totalValue.toLocaleString() }}
+          <div class="text-[18px] font-bold font-mono tracking-tighter text-white leading-none">
+            {{ totalValue.toLocaleString(undefined, { minimumFractionDigits: 0 }) }}
           </div>
-          <div class="text-[12px] text-gray-400 mt-1">
+          <div class="text-[10px] text-gray-400 mt-1">
             总量({{ unit }})
           </div>
         </div>
-
-        <div v-if="tooltipVisible" 
-             class="fixed z-50 bg-[#050D1D] border border-[#00A2FF]/50 rounded px-3 py-2 text-white text-xs shadow-2xl pointer-events-none"
-             :style="{ left: tooltipX + 'px', top: tooltipY + 'px', transform: 'translate(15px, -50%)' }">
-          <div class="border-b border-white/10 pb-1 mb-1 font-bold">{{ tooltipName }}</div>
-          <div>数值: {{ tooltipValue.toLocaleString() }} {{ unit }}</div>
-          <div>占比: {{ tooltipPercent.toFixed(2) }}%</div>
-        </div>
       </div>
 
-      <div class="flex-1 flex flex-col gap-4 justify-center pl-0 overflow-y-auto">
-        <div v-for="(item, idx) in pieData" :key="idx" class="flex items-start gap-3">
-          <div class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0" :style="{ backgroundColor: item.color, boxShadow: `0 0 8px ${item.color}` }"></div>
-          <div class="flex flex-col gap-0.5">
-            <div class="flex items-center gap-2">
-              <span class="text-gray-300 text-[13px]">{{ item.name }}</span>
-              <span class="text-gray-400 text-[13px]">{{ ((item.value / (totalValue || 1)) * 100).toFixed(2) }}%</span>
+      <div class="flex-1 flex flex-col gap-5 pl-4 justify-center">
+        <div v-for="(item, idx) in pieData" :key="idx" class="flex items-start gap-2">
+          <div class="w-2.5 h-2.5 rounded-full mt-1 shrink-0" 
+               :style="{ backgroundColor: item.color, boxShadow: `0 0 10px ${item.color}` }">
+          </div>
+          <div class="flex flex-col min-w-0 gap-1">
+            <div class="flex items-center gap-2 whitespace-nowrap">
+              <span class="text-gray-400 text-[12px]">{{ item.name }}</span>
+              <span class="text-white font-medium text-[12px]">{{ ((item.value / (totalValue || 1)) * 100).toFixed(2) }}%</span>
             </div>
-            <div class="text-[15px] font-bold font-mono tracking-wide">
-              {{ (item.value || 0).toLocaleString() }}
-              <span class="text-[11px] font-normal text-gray-500 ml-1">{{ unit }}</span>
+            <div class="text-[14px] font-bold font-mono text-white leading-tight">
+              {{ item.value.toLocaleString() }}
+              <span class="text-[12px] font-normal text-gray-500 ml-0">kWh</span>
             </div>
           </div>
         </div>
@@ -73,10 +67,9 @@ import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 const props = defineProps({
   title: { type: String, default: '尖峰平台占比' },
   unit: { type: String, default: '万kW' },
+  buttons: { type: Array, default: () => ['充电', '放电'] },
   pieSize: { type: Number, default: 75 },
-  // 新增：直接设置内径半径 (px)
-  innerRadius: { type: Number, default: 50 }, 
-  // 新增：直接设置环的厚度 (px)
+  innerRadius: { type: Number, default: 55 }, 
   ringThickness: { type: Number, default: 20 },
   pieData: {
     type: Array,
@@ -90,6 +83,7 @@ const props = defineProps({
   customPadding: { type: Object, default: () => ({ padding: '10px' }) }
 });
 
+const activeBtn = ref(props.buttons[0]);
 const canvasRef = ref(null);
 const tooltipVisible = ref(false);
 const tooltipX = ref(0);
@@ -124,7 +118,7 @@ const drawChart = () => {
   const oRadius = iRadius + props.ringThickness;
 
   // 1. 绘制内部刻度点圈（跟随内径自动偏移）
-  drawInnerScale(ctx, centerX, centerY, iRadius - 12);
+  drawInnerScale(ctx, centerX, centerY, iRadius - 8);
 
   // 2. 绘制扇区
   let currentAngle = -Math.PI / 2; 
