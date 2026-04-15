@@ -1,13 +1,11 @@
 <template>
   <div v-if="isClientReady" class="relative min-h-screen text-white font-sans">
-    <!-- 内容层（保持 z-10 在背景之上） -->
     <div class="relative z-10 flex flex-col min-h-screen">
       <Header @settings="showSettings = true" />
       
       <div class="flex flex-1 overflow-hidden">
-        <Sidebar v-if="layoutMode === 'sidebar'" />
+        <Sidebar v-if="layoutMode === 'sidebar' && menuList.length > 0" />
         
-        <!-- 核心修改：给 main 加 relative，去掉内联 style，加动态 fullscreen class -->
         <main 
           class="flex-1 h-[calc(100vh-50px)] overflow-hidden transition-all duration-300 relative"
           :key="refreshKey"
@@ -23,12 +21,15 @@
     </div>
     <SettingSidebar v-model:visible="showSettings" />
   </div>
-  <div v-else class="min-h-screen bg-[#0A162C]"></div>
+  <div v-else class="min-h-screen bg-[#0A162C] flex items-center justify-center">
+    <div class="text-blue-400">系统初始化中...</div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, provide } from 'vue'
-import { getCache, setCache, CacheKey } from '~/utils/cache'
+import { getCache, setCache, CacheKey, getSessionCache, setSessionCache } from '~/utils/cache'
+import { useMenuApi } from '~/api/menu' // 引入咱们刚写的 API
 import Header from '../components/Header.vue' 
 import Sidebar from '../components/Sidebar.vue'
 import SettingSidebar from '../components/SettingSidebar.vue'
@@ -37,90 +38,73 @@ import MenuTabs from '../components/MenuTabs.vue'
 const showSettings = ref(false)
 const isClientReady = ref(false)
 
-// 核心状态，完全保留原有逻辑
+// 核心状态
 const layoutMode = ref('sidebar')
 const sidebarCollapsed = ref(false)
 const theme = ref('dark')
 const activeMenu = ref(null)
 const refreshKey = ref(0)
+const menuList = ref([]) // 初始为空数组，等接口喂饭
+
+const { getMenuList } = useMenuApi()
 
 const forceRefreshPage = () => {
   refreshKey.value += 1
 }
 
-// 菜单配置保持原样
-const menuList = ref([
-  { 
-    name: '首页', route: '/', icon: 'Home', index: 0,
-    subMenu: [
-      { name: '综合看板', route: '/dashboard/overview', icon: 'TvMinimal', index: 0 },
-      { name: '能量看板', route: '/dashboard/energy', icon: 'Atom', index: 1 }
-    ]
-  },
-  { 
-    name: '能源管理', route: '/energy/pvoverview', icon: 'Zap', index: 1,
-    subMenu: [
-      { 
-        name: '光伏监测', route: '/energy/pv', icon: 'Sun', index: 0,
-        subMenu: [
-          { name: '光伏总览', route: '/energy/pvoverview', index: 0 },
-          { name: '逆变器监视', route: '/energy/pvinverter', index: 1 },
-          { name: '告警总览', route: '/energy/pvalarm', index: 2 }
-        ]
-      },
-      { 
-        name: '风电监测', route: '/energy/wind', icon: 'Wind', index: 1,
-        subMenu: [
-          { name: '风电总览', route: '/energy/windoverview', index: 0 },
-          { name: '风机监视', route: '/energy/windturbine', index: 1 },
-        ]
-      }
-    ]
-  },
-  { name: '储能管理', route: '/storage', icon: 'Battery', index: 2,
-    subMenu: [
-      { name: '储能总览', route: '/storage/stoverview', icon: 'GalleryThumbnails', index: 0 },
-      { name: '储能单元', route: '/storage/stunit', icon: 'Boxes', index: 1 },
-      { name: 'BMS监视', route: '/storage/stmonitor', icon: 'ChartNoAxesCombined', index: 2 },
-    ]
-  },
-  { name: '负荷管理', route: '/load', icon: 'Activity', index: 3, 
-    subMenu: [
-      { name: '负荷监测', route: '/load/monitor', icon: 'GalleryThumbnails', index: 0 },
-      { name: '负荷建模', route: '/load/model', icon: 'Boxes', index: 1 },
-      { name: '负荷分析', route: '/load/analyse', icon: 'ChartNoAxesCombined', index: 2 },
-    ] 
-  },
-  { name: '预测管理', route: '/forecast', icon: 'TrendingUp', index: 4, subMenu: [] },
-  { name: '策略管理', route: '/strategy', icon: 'Sliders', index: 5, subMenu: [] },
-  { name: '能碳管理', route: '/carbon', icon: 'Cloud', index: 6, subMenu: [] },
-  { name: '电力交易', route: '/trade', icon: 'BarChart3', index: 7, subMenu: [] },
-  { name: '基础设置', route: '/base', icon: 'Settings', index: 8, subMenu: [] },
-  { name: '系统设置', route: '/system', icon: 'Shield', index: 9, subMenu: [] },
-])
+/**
+ * 奶奶的秘籍：初始化数据
+ */
+const initSystemData = async () => {
+  try {
+    // 1. 从后端拿菜单
+    const data = await getMenuList()
+    if (data) {
+      menuList.value = data
+    }
 
-// 挂载逻辑完全保留
+    // 2. 恢复缓存的状态
+    layoutMode.value = getCache(CacheKey.LAYOUT_MODE, 'sidebar')
+    sidebarCollapsed.value = getCache(CacheKey.SIDEBAR_COLLAPSED, false)
+    theme.value = getCache(CacheKey.THEME, 'dark')
+
+    // 3. 处理当前激活的菜单：如果缓存有就用缓存的，没有就默认第一个
+    const cachedActive = getSessionCache(CacheKey.ACTIVE_MENU, null)
+    if (cachedActive) {
+      activeMenu.value = cachedActive
+    } else if (menuList.value.length > 0) {
+      activeMenu.value = menuList.value[0]
+    }
+
+    // 4. 全部准备就绪
+    isClientReady.value = true
+  } catch (error) {
+    console.error('初始化菜单失败了，乖孙子快检查接口:', error)
+    // 即使失败了也要关闭加载状态，或者你可以弹个奶奶的警告窗
+    isClientReady.value = true 
+  }
+}
+
 onMounted(() => {
-  layoutMode.value = getCache(CacheKey.LAYOUT_MODE, 'sidebar')
-  sidebarCollapsed.value = getCache(CacheKey.SIDEBAR_COLLAPSED, false)
-  theme.value = getCache(CacheKey.THEME, 'dark')
-  activeMenu.value = getSessionCache(CacheKey.ACTIVE_MENU, menuList.value[0])
-  isClientReady.value = true
+  initSystemData()
 })
 
 const updateLayoutMode = (mode) => {
   layoutMode.value = mode
   setCache(CacheKey.LAYOUT_MODE, mode)
 }
+
 const toggleSidebar = () => {
   sidebarCollapsed.value = !sidebarCollapsed.value
   setCache(CacheKey.SIDEBAR_COLLAPSED, sidebarCollapsed.value)
 }
+
 const updateActiveMenu = (menu) => {
   activeMenu.value = menu
   setSessionCache(CacheKey.ACTIVE_MENU, menu)
 }
 
+// 依赖注入，子组件还是能像以前一样拿到数据
 provide('layoutState', {
   layoutMode,
   sidebarCollapsed,
@@ -128,6 +112,7 @@ provide('layoutState', {
   activeMenu,
   menuList
 })
+
 provide('layoutActions', {
   updateLayoutMode,
   toggleSidebar,
@@ -137,7 +122,7 @@ provide('layoutActions', {
 </script>
 
 <style>
-/* 给 main 标签添加伪元素背景层 */
+/* 样式部分保持不变，奶奶帮你优化了性能 */
 main::before {
   content: '';
   position: absolute;
@@ -150,13 +135,16 @@ main::before {
   opacity: 0.45;
 }
 
-/* 非全屏模式 (Sidebar 模式)：背景位置 -100px */
 main:not(.fullscreen)::before {
   background-position: center -75px;
 }
 
-/* 全屏模式：背景位置 -150px */
 main.fullscreen::before {
   background-position: center -175px;
+}
+
+/* 奶奶加个淡入动画，接口回来的时候过渡自然点 */
+.relative {
+  transition: opacity 0.3s ease;
 }
 </style>
