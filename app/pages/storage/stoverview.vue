@@ -15,7 +15,7 @@
             { name: '平', value: 1658, color: '#FFB822', gradientStart: '#FFB822C0' },
           ]"/>
       </div>
-      <div class="flex-[5] min-h-0 -mt-4">
+      <div class="flex-[5] min-h-0 -mt-5">
         <StorageRunData />
       </div>
     </div>
@@ -97,7 +97,7 @@
           :line-x-axis-data="['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']"
           :line-data="[250, 180, 200, 160, 220, 280, 210, 190]" :y-axis-max="350" :y-axis-interval="50" />
       </div>
-      <div class="flex-[4] min-h-0">
+      <div class="flex-[4] min-h-0 z-10000">
         <ChargeTable title="充放电分析" :buttons="['日', '月', '年']" />
       </div>
       <div class="flex-[4] min-h-0">
