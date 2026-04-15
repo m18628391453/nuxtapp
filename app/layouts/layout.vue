@@ -80,11 +80,17 @@ const menuList = ref([
   { name: '储能管理', route: '/storage', icon: 'Battery', index: 2,
     subMenu: [
       { name: '储能总览', route: '/storage/stoverview', icon: 'GalleryThumbnails', index: 0 },
-      { name: '储能单元', route: '/storage/stunit', icon: 'Boxes', index: 0 },
-      { name: 'BMS监视', route: '/storage/stmonitor', icon: 'ChartNoAxesCombined', index: 0 },
+      { name: '储能单元', route: '/storage/stunit', icon: 'Boxes', index: 1 },
+      { name: 'BMS监视', route: '/storage/stmonitor', icon: 'ChartNoAxesCombined', index: 2 },
     ]
   },
-  { name: '负荷管理', route: '/load', icon: 'Activity', index: 3, subMenu: [] },
+  { name: '负荷管理', route: '/load', icon: 'Activity', index: 3, 
+    subMenu: [
+      { name: '负荷监测', route: '/load/monitor', icon: 'GalleryThumbnails', index: 0 },
+      { name: '负荷建模', route: '/load/model', icon: 'Boxes', index: 1 },
+      { name: '负荷分析', route: '/load/analyse', icon: 'ChartNoAxesCombined', index: 2 },
+    ] 
+  },
   { name: '预测管理', route: '/forecast', icon: 'TrendingUp', index: 4, subMenu: [] },
   { name: '策略管理', route: '/strategy', icon: 'Sliders', index: 5, subMenu: [] },
   { name: '能碳管理', route: '/carbon', icon: 'Cloud', index: 6, subMenu: [] },
