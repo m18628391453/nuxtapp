@@ -15,7 +15,7 @@
             { name: '平', value: 1658, color: '#FFB822', gradientStart: '#FFB822C0' },
           ]"/>
       </div>
-      <div class="flex-[5] min-h-0">
+      <div class="flex-[5] min-h-0 -mt-4">
         <StorageRunData />
       </div>
     </div>
