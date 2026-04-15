@@ -14,6 +14,9 @@ importers:
       echarts:
         specifier: ^6.0.0
         version: 6.0.0
+      h3-proxy:
+        specifier: ^1.13.0
+        version: 1.13.0(h3@1.15.10)
       lucide-vue-next:
         specifier: ^1.0.0
         version: 1.0.0(vue@3.5.31(typescript@6.0.2))
@@ -2225,6 +2228,12 @@ packages:
   gzip-size@7.0.0:
     resolution: {integrity: sha512-O1Ld7Dr+nqPnmGpdhzLmMTQ4vAsD+rHwMm1NLUmoUFFymBOMKxCCrtDxqdBRYXdeEPEi3SyoR4TizJLQrnKBNA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
+  h3-proxy@1.13.0:
+    resolution: {integrity: sha512-STi6jEroxRE9V6j1U6lHsygiTnEx11aFyA6r/TXzQ8/umEB5ckW+kOS+Oue6QXnPOoR2RGJTSmsA+q+S0y60kA==}
+    engines: {node: '>=18.x'}
+    peerDependencies:
+      h3: ^1.6.0
 
   h3@1.15.10:
     resolution: {integrity: sha512-YzJeWSkDZxAhvmp8dexjRK5hxziRO7I9m0N53WhvYL5NiWfkUkzssVzY9jvGu0HBoLFW6+duYmNSn6MaZBCCtg==}
@@ -6276,6 +6285,13 @@ snapshots:
   gzip-size@7.0.0:
     dependencies:
       duplexer: 0.1.2
+
+  h3-proxy@1.13.0(h3@1.15.10):
+    dependencies:
+      consola: 3.4.2
+      h3: 1.15.10
+      is-glob: 4.0.3
+      micromatch: 4.0.8
 
   h3@1.15.10:
     dependencies:

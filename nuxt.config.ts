@@ -28,6 +28,12 @@ export default defineNuxtConfig({
       ]
     }
   },
+  runtimeConfig: {
+    apiSecret: '',
+    public: {
+      baseURL: 'http://localhost:4022/api'
+    }
+  },
   vite: {
     css: {
       preprocessorOptions: {
