@@ -6,8 +6,8 @@ export default defineNuxtConfig({
     port: 4022,
     host: '0.0.0.0'
   },
+  devtools: { enabled: false }, 
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: false },
   modules: [
     '@nuxtjs/tailwindcss',
     '@ant-design-vue/nuxt'
@@ -50,6 +50,9 @@ export default defineNuxtConfig({
         'dayjs/plugin/customParseFormat',
         'lucide-vue-next',
         'dayjs/esm/locale/zh-cn',
+        'axios',
+        'vue-router',
+        'ant-design-vue/es',
       ]
     }
   },

@@ -175,14 +175,7 @@ const paginationConfig = ref({
 <style scoped>
 @import url(@/assets/css/antd.css);
 /* 1. 基础输入组件调优 - 增加透明度与极细边框 */
-:deep(.custom-dark-input),
-:deep(.custom-dark-select .ant-select-selector),
-:deep(.ant-picker.custom-dark-datepicker) {
-  background-color: transparent !important;
-  border: 1px solid rgba(50, 175, 255, 0.2) !important;
-  color: #fff !important;
-  height: 32px;
-}
+
 /* 2. 表格主体高还原样式 - 完全匹配设计稿 */
 .custom-table-container :deep(.ant-table) {
   background: transparent !important;

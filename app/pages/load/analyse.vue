@@ -67,8 +67,6 @@ import RingPie from '@/components/chart/RingPie.vue'
 import TopMetrics from '@/components/common/TopMetrics.vue'
 import BalanceChart from '@/components/chart/BalanceChart.vue'
 import LineChart from '@/components/chart/LineChart.vue'
-import LineBarChart from '@/components/chart/LineBarChart.vue'
-import OperationMode from '@/components/dashboard/OperationMode.vue'
 import FactoryView from '@/components/dashboard/FactoryView.vue'
 import * as echarts from 'echarts'; // 记得导入echarts，因为数据里用了LinearGradient
 
