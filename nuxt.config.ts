@@ -2,6 +2,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   pages: true,
+  srcDir: 'app/',
   devServer: {
     port: 4022,
     host: '0.0.0.0'

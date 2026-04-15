@@ -38,16 +38,14 @@ export default defineEventHandler(async (event) => {
           }
         ]
       },
-      { 
-        name: '储能管理', route: '/storage', icon: 'Battery', index: 2,
+      { name: '储能管理', route: '/storage', icon: 'Battery', index: 2,
         subMenu: [
           { name: '储能总览', route: '/storage/stoverview', icon: 'GalleryThumbnails', index: 0 },
           { name: '储能单元', route: '/storage/stunit', icon: 'Boxes', index: 1 },
           { name: 'BMS监视', route: '/storage/stmonitor', icon: 'ChartNoAxesCombined', index: 2 },
         ]
       },
-      { 
-        name: '负荷管理', route: '/load', icon: 'Activity', index: 3, 
+      { name: '负荷管理', route: '/load', icon: 'Activity', index: 3, 
         subMenu: [
           { name: '负荷监测', route: '/load/monitor', icon: 'GalleryThumbnails', index: 0 },
           { name: '负荷建模', route: '/load/model', icon: 'Boxes', index: 1 },

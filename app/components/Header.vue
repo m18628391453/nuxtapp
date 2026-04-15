@@ -35,7 +35,7 @@
             <div v-if="layoutMode === 'fullscreen'" class="absolute bottom-3 -left-10 right-0 h-[1px] bg-gradient-to-r from-blue-500/15 via-blue-500/15 to-blue-500/10 z-0" />
             
             <nav v-if="layoutMode === 'fullscreen'" class="flex items-center h-full space-x-1 z-10 -mt-3">
-                <div v-for="(item, idx) in menuList" :key="item.route"
+                <div v-for="(item, idx) in menuList?.filter(Boolean) || []" :key="item.route || idx"
                     class="relative flex items-center h-4/5 m-auto cursor-pointer" @click="handleMenuClick(item, idx)">
                     <a href="javascript:void(0)"
                         class="px-4 text-[15px] font-medium italic z-10 relative cursor-pointer font-['PingFang_SC','Microsoft_YaHei_UI',sans-serif] transition-colors duration-200 flex items-center gap-2"
@@ -48,11 +48,11 @@
             </nav>
 
             <nav v-else class="flex items-center h-full space-x-2 z-10">
-                <div v-for="(item, idx) in menuList" :key="item.route"
+                <div v-for="(item, idx) in menuList?.filter(Boolean) || []" :key="item.route || idx"
                     class="flex items-center h-[34px] px-3 cursor-pointer transition-all duration-300 rounded-md"
                     :class="activeIndex === idx ? 'bg-[#32AFFF] text-white shadow-sm' : 'text-gray-300 hover:text-white hover:bg-white/10'"
                     @click="handleMenuClick(item, idx)">
-                    <component :is="menuIconMap[item.icon]" class="w-[18px] h-[18px] mr-1.5 shrink-0" />
+                    <component :is="menuIconMap[item.icon] || 'span'" class="w-[18px] h-[18px] mr-1.5 shrink-0" />
                     <span class="text-[14px] font-medium tracking-wide">{{ item.name }}</span>
                 </div>
             </nav>
@@ -112,7 +112,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, inject } from 'vue'
-import { UserRound, Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, BarChart3, Settings, Shield, TvMinimal, Monitor } from 'lucide-vue-next'
+import { 
+  UserRound, Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, 
+  BarChart3, Settings, Shield, TvMinimal, Atom, Sun, Wind, GalleryThumbnails,
+  Boxes, ChartNoAxesCombined, Monitor 
+} from 'lucide-vue-next'
 import MSearchModal from './MSearchModal.vue'
 import type { MenuItem, SubMenuItem } from '~/types/index';
 
@@ -122,7 +126,7 @@ const layoutActions = inject('layoutActions') as any
 const { layoutMode, menuList, activeMenu, sidebarCollapsed } = layoutState
 const { updateActiveMenu, toggleSidebar } = layoutActions
 
-// 保持原有映射表
+// 所有菜单用到的图标映射
 const menuIconMap: Record<string, any> = {
   Home,
   Zap,
@@ -133,7 +137,15 @@ const menuIconMap: Record<string, any> = {
   Cloud,
   BarChart3,
   Settings,
-  Shield
+  Shield,
+  TvMinimal, 
+  Atom,    
+  Sun,     
+  Wind,    
+  GalleryThumbnails,
+  Boxes,    
+  ChartNoAxesCombined,
+  Monitor
 }
 
 // 定义抛出的事件，奶奶加了一个 toggle-sidebar 用来适配边侧栏控制
@@ -144,36 +156,41 @@ const emit = defineEmits<{
   (e: 'toggle-sidebar'): void
 }>()
 
-const activeIndex = ref(
-  menuList.value.findIndex((item: SubMenuItem) => item.route === activeMenu.value.route) || 0
-)
-
+const activeIndex = ref(0)
 watch(activeMenu, (newVal) => {
-  activeIndex.value = menuList.value.findIndex((item: SubMenuItem) => item.route === newVal.route) || 0
+  if (!newVal || !menuList.value || menuList.value.length === 0) {
+    activeIndex.value = 0
+    return
+  }
+  const findIndex = menuList.value.findIndex((item: SubMenuItem) => item?.route === newVal?.route)
+  activeIndex.value = findIndex >= 0 ? findIndex : 0
 }, { immediate: true })
 
 const isFullscreen = ref(false)
 const showSearchModal = ref(false)
 
+// 核心修复：menuSearchList 加空值保护
 const menuSearchList = computed(() => {
+  if (!Array.isArray(menuList.value)) return []
   return menuList.value.map((item: SubMenuItem) => ({
     name: item.name,
     index: item.index,
     route: item.route
-  }))
+  })).filter(Boolean) // 过滤空项
 })
 
+// 核心修复：handleMenuClick 加空值保护
 const handleMenuClick = (item: MenuItem, index: number) => {
-    if (activeIndex.value === index) return
-    activeIndex.value = index
-    updateActiveMenu(item) 
-    // 注意：这里只更新activeMenu，不跳转路由
-    // 让Sidebar更新内容，但不自动跳转
-    emit('menu-change', {
-        name: item.name,
-        index: index,
-        route: item.route
-    })
+  if (!item || activeIndex.value === index) return
+  activeIndex.value = index
+  updateActiveMenu(item) 
+  // 注意：这里只更新activeMenu，不跳转路由
+  // 让Sidebar更新内容，但不自动跳转
+  emit('menu-change', {
+      name: item.name,
+      index: index,
+      route: item.route
+  })
 }
 
 // 新增：处理侧边栏切换
@@ -187,9 +204,11 @@ const handleSearch = () => {
     showSearchModal.value = true
 }
 
+// 核心修复：handleSearchMenuSelect 加空值保护
 const handleSearchMenuSelect = (menuItem: SubMenuItem) => {
+  if (!menuItem || !menuList.value || menuList.value.length === 0) return
   activeIndex.value = menuItem.index
-  const targetMenu = menuList.value.find((item: SubMenuItem) => item.route === menuItem.route)
+  const targetMenu = menuList.value.find((item: SubMenuItem) => item?.route === menuItem?.route)
   if (targetMenu) {
     updateActiveMenu(targetMenu)
     emit('menu-change', menuItem)

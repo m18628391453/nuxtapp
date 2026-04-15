@@ -30,8 +30,6 @@ export function useRequest() {
         const token = useCookie('auth_token')
         if (token.value) {
           options.headers = options.headers || {}
-          // 这里根据你后端要求改，比如 Bearer xxx 或者直接 xxx
-          options.headers.Authorization = `Bearer ${token.value}`
         }
       },
 
