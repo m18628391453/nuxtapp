@@ -3,13 +3,13 @@
     :class="layoutMode === 'sidebar' ? '-mt-2 py-3' : 'p-4'">
     <div class="flex flex-col h-full max-h-[100%] shrink-0 gap-4"
       :class="layoutMode === 'sidebar' ? 'min-w-[360px] max-w-[360px]' : 'min-w-[370px] max-w-[370px]'">
-      <div class="flex-[4.25] min-h-0">
+      <div class="flex-[5] min-h-0">
         <StationIntro />
       </div>
-      <div class="flex-[5] min-h-0 -mt-4">
+      <div class="flex-[5] min-h-0 -mt-10">
         <GridPointData />
       </div>
-      <div class="flex-[4.25] min-h-0">
+      <div class="flex-[4.25] min-h-0 -mt-4">
         <SocialContribution />
       </div>
     </div>
