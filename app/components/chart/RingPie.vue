@@ -29,7 +29,7 @@
     </div>
 
     <div class="flex flex-1 items-center min-h-0">
-      <div class="w-[50%] flex-shrink-0 relative flex items-center justify-center -mt-2">
+      <div class="w-[55%] flex-shrink-0 relative flex items-center justify-center -mt-2">
         <canvas 
           ref="canvasRef" 
           :width="pieSize * 2" 
@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <div class="flex-1 flex flex-col gap-5 pl-4 justify-center">
+      <div class="flex-1 flex flex-col gap-2.5 pl-4 justify-center">
         <div v-for="(item, idx) in pieData" :key="idx" class="flex items-start gap-2">
           <div class="w-2.5 h-2.5 rounded-full mt-1 shrink-0" 
                :style="{ backgroundColor: item.color, boxShadow: `0 0 10px ${item.color}` }">
@@ -57,9 +57,9 @@
               <span class="text-gray-400 text-[12px]">{{ item.name }}</span>
               <span class="text-white font-medium text-[12px]">{{ ((item.value / (totalValue || 1)) * 100).toFixed(2) }}%</span>
             </div>
-            <div class="text-[14px] font-bold font-mono text-white leading-tight">
+            <div class="text-[13px] font-bold font-mono text-white leading-tight">
               {{ item.value.toLocaleString() }}
-              <span class="text-[12px] font-normal text-gray-500 ml-0">kWh</span>
+              <span class="text-[11px] font-normal text-gray-500 ml-0">kWh</span>
             </div>
           </div>
         </div>
@@ -70,6 +70,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
+import dayjs from 'dayjs';
 
 const props = defineProps({
   title: { type: String, default: '尖峰平台占比' },
@@ -78,22 +79,12 @@ const props = defineProps({
   pieSize: { type: Number, default: 75 },
   innerRadius: { type: Number, default: 55 }, 
   ringThickness: { type: Number, default: 20 },
-  pieData: {
-    type: Array,
-    default: () => [
-      { name: '峰', value: 2658.5, color: '#00A2FF' },
-      { name: '尖', value: 1358.5, color: '#00FFA2' },
-      { name: '谷', value: 3723.5, color: '#D2E43B' },
-      { name: '平', value: 1658.6, color: '#FFB822' }
-    ]
-  },
+  pieData: { type: Array, default: () => [] },
   customPadding: { type: Object, default: () => ({ padding: '10px' }) }
 });
 
 const activeBtn = ref(props.buttons[0]);
-// 新增月份选择器的绑定值
-const selectedMonth = ref(null);
-
+const selectedMonth = ref(dayjs(new Date()));
 const canvasRef = ref(null);
 const tooltipVisible = ref(false);
 const tooltipX = ref(0);
@@ -254,44 +245,9 @@ watch([() => props.pieData, () => props.innerRadius, () => props.ringThickness],
 </script>
 
 <style scoped>
+@import url('../../assets/css/antd.css');
+
 .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-/* 覆盖 Ant Design Vue DatePicker 的默认样式，贴合设计稿 */
-:deep(.custom-month-picker) {
-  background-color: transparent !important;
-  border: 1px solid rgba(0, 162, 255, 0.6) !important;
-  border-radius: 4px !important;
-  height: 22px !important; /* 调整高度以匹配左侧按钮 */
-  width: 90px !important;
-  padding: 0 6px !important;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-:deep(.custom-month-picker:hover) {
-  border-color: rgba(255, 255, 255, 0.3) !important;
-}
-
-:deep(.custom-month-picker .ant-picker-input > input) {
-  color: rgba(255, 255, 255, 0.8) !important;
-  font-size: 12px !important;
-  text-align: center;
-  cursor: pointer;
-}
-
-:deep(.custom-month-picker .ant-picker-input > input::placeholder) {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-:deep(.custom-month-picker .ant-picker-suffix) {
-  color: rgba(255, 255, 255, 0.8) !important;
-  font-size: 10px;
-}
-
-:deep(.custom-month-picker .ant-picker-clear) {
-  background: transparent !important;
-  color: rgba(255, 255, 255, 0.8) !important;
 }
 </style>

@@ -107,3 +107,40 @@
 :deep(.custom-dark-datepicker .ant-picker-clear:hover) {
     color: #FFFFFF !important;
 }
+
+
+:deep(.custom-month-picker) {
+    background-color: transparent !important;
+    border: 1px solid rgba(0, 162, 255, 0.6) !important;
+    border-radius: 4px !important;
+    height: 22px !important; /* 调整高度以匹配左侧按钮 */
+    width: 90px !important;
+    padding: 0 6px !important;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  :deep(.custom-month-picker:hover) {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+  
+  :deep(.custom-month-picker .ant-picker-input > input) {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 12px !important;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  :deep(.custom-month-picker .ant-picker-input > input::placeholder) {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  :deep(.custom-month-picker .ant-picker-suffix) {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 10px;
+  }
+  
+  :deep(.custom-month-picker .ant-picker-clear) {
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+  }

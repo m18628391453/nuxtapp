@@ -9,9 +9,10 @@
       <div class="flex-[4.5] min-h-0 -mt-4">
         <RingPie title="尖峰平谷占比" center-title="总用电量(kWh)" unit="kWh" :pie-size="240" :inner-radius-ratio="0.4"
           :max-thickness="0.6" :pie-data="[
-            { name: '对虾车间', value: 4544, color: '#54D1FF', gradientStart: '#33A8FFC0' },
-            { name: '鲈鱼车间', value: 3321, color: '#5DE999', gradientStart: '#3DD17AC0' },
-            { name: '水藻车间', value: 3113, color: '#76E8F0', gradientStart: '#55D0E0C0' },
+            { name: '峰', value: 2658, color: '#00A2FF', gradientStart: '#00A2FFC0' },
+            { name: '尖', value: 1358, color: '#00FFA2', gradientStart: '#00FFA2C0' },
+            { name: '谷', value: 3723, color: '#D2E43B', gradientStart: '#D2E43BC0' },
+            { name: '平', value: 1658, color: '#FFB822', gradientStart: '#FFB822C0' },
           ]"/>
       </div>
       <div class="flex-[4.5] min-h-0">
