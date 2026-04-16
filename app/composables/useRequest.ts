@@ -11,7 +11,7 @@ interface ApiResponse<T = any> {
 export function useRequest() {
   const config = useRuntimeConfig()
 
-  // --- 1. 基础请求函数 ---
+  // --- 基础请求函数 ---
   const request = async <T>(
     url: string,
     options: UseFetchOptions<ApiResponse<T>> = {}
@@ -69,7 +69,7 @@ export function useRequest() {
     }
   }
 
-  // --- 2. 封装具体的请求方法 ---
+  // --- 封装具体的请求方法 ---
   return {
     // GET 请求（参数放 url 后面）
     get: <T>(url: string, params?: Record<string, any>, options?: UseFetchOptions<ApiResponse<T>>) => {

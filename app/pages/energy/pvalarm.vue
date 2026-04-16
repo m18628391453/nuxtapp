@@ -90,14 +90,14 @@
           <Settings :size="18" stroke-width="2" />
         </button>
       </div>
-      <div class="flex-1 overflow-hidden flex flex-col p-4 pb-0 custom-table-container">
+      <div class="flex-1 overflow-hidden flex flex-col p-2 pb-0 custom-table-container">
         <a-table
           :columns="columns"
           :data-source="tableData"
           :pagination="paginationConfig"
           :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
           :scroll="{ y: 'calc(100vh - 460px)' }"
-          class="custom-dark-table"
+          class="custom-dark-table border border-[#FFFFFF1F]"
           row-key="id"
         >
           <template #bodyCell="{ column, text, record, index }">
@@ -174,142 +174,6 @@ const paginationConfig = ref({
 </script>
 <style scoped>
 @import url(@/assets/css/antd.css);
-/* 1. 基础输入组件调优 - 增加透明度与极细边框 */
-
-/* 2. 表格主体高还原样式 - 完全匹配设计稿 */
-.custom-table-container :deep(.ant-table) {
-  background: transparent !important;
-  font-size: 14px;
-}
-/* 表头样式 - 高度39px 淡色分割线 修复：列之间添加淡色竖线 去掉多余间距 */
-:deep(.ant-table-thead > tr > th) {
-  height: 39px !important;
-  line-height: 39px !important;
-  padding: 0 16px !important;
-  background: transparent !important;
-  color: rgba(255, 255, 255, 0.4) !important;
-  border-bottom: 1px solid #FFFFFF1F !important;
-  border-right: 1px solid #FFFFFF1F !important; /* 列之间淡色竖线 */
-  border-top: none !important;
-  font-weight: 400;
-}
-/* 去掉表头最后一列的右边框 */
-:deep(.ant-table-thead > tr > th:last-child) {
-  border-right: none !important;
-}
-/* 表格行样式 - 高度34px 淡色分割线 关键修复：干掉AntD默认的白色border-top 去掉表头与第一行间距 */
-:deep(.ant-table-tbody > tr > td) {
-  height: 34px !important;
-  line-height: 34px !important;
-  padding: 0 16px !important;
-  border-top: none !important; /* 彻底去掉上边框 消除表头与第一行空白 */
-  border-bottom: 1px solid #FFFFFF1F !important;
-  border-right: 1px solid #FFFFFF1F !important; /* 列之间淡色竖线 */
-  background: transparent !important;
-}
-/* 去掉表格行最后一列的右边框 */
-:deep(.ant-table-tbody > tr > td:last-child) {
-  border-right: none !important;
-}
-/* 隔行斑马纹 - 偶数行淡色背景 */
-:deep(.ant-table-tbody > tr:nth-child(even) > td) {
-  background: rgba(255, 255, 255, 0.02) !important;
-}
-/* 悬浮行：轻微反馈 */
-:deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
-  background: rgba(255, 255, 255, 0.04) !important;
-}
-/* 选中行：设计稿蓝色半透明覆盖 */
-:deep(.ant-table-tbody > tr.ant-table-row-selected > td) {
-  background: rgba(50, 175, 255, 0.2) !important;
-  border-bottom-color: rgba(50, 175, 255, 0.3) !important;
-}
-/* 3. Checkbox 定制 (解决对比度问题) */
-:deep(.custom-dark-checkbox .ant-checkbox-inner),
-:deep(.ant-table-selection-column .ant-checkbox-inner) {
-  background-color: transparent;
-  border-color: rgba(255, 255, 255, 0.3);
-  width: 16px;
-  height: 16px;
-}
-:deep(.ant-checkbox-checked .ant-checkbox-inner) {
-  background-color: #32AFFF !important;
-  border-color: #32AFFF !important;
-}
-/* 4. 分页器 - 完全匹配设计稿样式 修复：字体颜色统一为白色系 未选中加透明度 */
-:deep(.ant-pagination) {
-  margin: 16px 0 0 0 !important;
-  padding: 0 16px 16px 16px !important;
-  color: #fefefe99 !important; /* 未选中状态白色加透明度 */
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  background: transparent !important;
-}
-:deep(.ant-pagination-total-text) {
-  color: #fefefe99 !important; /* 总数文字白色加透明度 */
-  margin-right: 16px;
-}
-:deep(.ant-pagination-item), 
-:deep(.ant-pagination-prev), 
-:deep(.ant-pagination-next) {
-  background: transparent !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 2px !important;
-  min-width: 28px;
-  height: 28px;
-  line-height: 26px;
-  margin: 0 2px !important;
-}
-/* 分页数字颜色 - 未选中白色加透明度 */
-:deep(.ant-pagination-item a) {
-  color: #fefefe99 !important;
-}
-/* 分页数字颜色 - 选中纯白色 */
-:deep(.ant-pagination-item-active a) { 
-  color: #fff !important; 
-}
-/* 分页上一页/下一页按钮颜色 */
-:deep(.ant-pagination-prev button),
-:deep(.ant-pagination-next button) {
-  color: #fefefe99 !important;
-}
-:deep(.ant-pagination-item:hover),
-:deep(.ant-pagination-prev:hover),
-:deep(.ant-pagination-next:hover) {
-  border-color: rgba(50, 175, 255, 0.5) !important;
-}
-:deep(.ant-pagination-item:hover a),
-:deep(.ant-pagination-prev:hover button),
-:deep(.ant-pagination-next:hover button) {
-  color: #32AFFF !important;
-}
-:deep(.ant-pagination-item-active) {
-  background: #32AFFF !important;
-  border-color: #32AFFF !important;
-}
-:deep(.ant-pagination-item-active:hover) {
-  border-color: #32AFFF !important;
-}
-:deep(.ant-pagination-options-quick-jumper), 
-:deep(.ant-pagination-options-size-changer) {
-  color: #fefefe99 !important; /* 跳转文字白色加透明度 */
-  margin-left: 8px;
-}
-:deep(.ant-pagination-options-quick-jumper input) {
-  background: transparent !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: #fff !important; /* 输入框文字纯白色 */
-  height: 28px !important;
-  border-radius: 2px !important;
-}
-:deep(.ant-pagination-options-size-changer .ant-select-selector) {
-  background: transparent !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: #fefefe99 !important; /* 选择器文字白色加透明度 */
-  height: 28px !important;
-  border-radius: 2px !important;
-}
 .metric-value {
   font-family: 'DIN Alternate', 'Source Han Sans CN';
   font-size: 24px;
