@@ -90,14 +90,15 @@
           <Settings :size="18" stroke-width="2" />
         </button>
       </div>
+      <!-- 关键：表格容器必须是flex布局，并且overflow:hidden -->
       <div class="flex-1 overflow-hidden flex flex-col p-2 pb-0 custom-table-container">
         <a-table
           :columns="columns"
           :data-source="tableData"
           :pagination="paginationConfig"
           :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-          :scroll="{ y: 'calc(100vh - 460px)' }"
-          class="custom-dark-table border border-[#FFFFFF1F]"
+          :scroll="{ y: 'max-content' }"
+          class="custom-dark-table border border-[#FFFFFF1F] flex-1"
           row-key="id"
         >
           <template #bodyCell="{ column, text, record, index }">
@@ -125,7 +126,6 @@
 </template>
 <script setup>
 import { ref } from 'vue';
-import dayjs from 'dayjs';
 import { Settings } from 'lucide-vue-next';
 definePageMeta({ layout: 'layout' })
 const activeCard = ref(0);
@@ -151,7 +151,7 @@ const columns = [
   { title: '告警时长(h)', dataIndex: 'duration', align: 'center' },
   { title: '恢复时间', dataIndex: 'recoverTime', align: 'center', width: 180 }
 ];
-const tableData = ref(Array.from({ length: 12 }, (_, i) => ({
+const tableData = ref(Array.from({ length: 5 }, (_, i) => ({
   id: i + 1,
   deviceType: i < 8 ? '光伏设备' : (i < 10 ? '升压站设备' : '储能设备'),
   deviceName: 'N1-1',
@@ -165,17 +165,27 @@ const tableData = ref(Array.from({ length: 12 }, (_, i) => ({
 const paginationConfig = ref({
   total: 200,
   current: 1,
-  pageSize: 10,
+  pageSize: 20,
   showSizeChanger: true,
   showQuickJumper: true,
   showTotal: (total) => `共${total}条数据`,
   size: 'small'
 });
+// 筛选变量（保留原有定义，不影响功能）
+const deviceName = ref('');
+const filterType = ref('all');
+const searchDate = ref(null);
+const filterLevel = ref('all');
+const alarmName = ref('all');
+const recoveryStatus = ref('all');
 </script>
 <style scoped>
 @import url(@/assets/css/antd.css);
 .metric-value {
   font-family: 'DIN Alternate', 'Source Han Sans CN';
   font-size: 24px;
+}
+:deep(.ant-table.ant-table-fixed-header) {
+  height: calc(100% - 120px);
 }
 </style>
