@@ -1,66 +1,88 @@
 <template>
-    <div class="bg-[#0A162C]/10 rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden">
-      <!-- 顶部标题栏（带左侧蓝线+渐变背景） -->
-      <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-1 -mr-4 mb-4">
-        <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
-        <h3 class="text-[14px] font-bold text-white ml-1 leading-none">{{ title }}</h3>
-      </div>
-  
-      <!-- 中间告警指标栏（横向三列+中间深两侧浅渐变背景） -->
+    <!-- 整体卡片渐变背景（设计稿最外层的深蓝色渐变） -->
+    <div 
+      class="rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden"
+      style="background: linear-gradient(180deg, rgba(10, 22, 44, 0.8) 0%, rgba(13, 27, 53, 0.6) 100%); backdrop-filter: blur(10px);"
+    >
+      <!-- 顶部标题栏（带左侧蓝线+渐变背景+发光） -->
       <div 
-        class="flex justify-around items-center py-3 px-4 rounded-lg mb-4"
-        style="background: linear-gradient(90deg, transparent 0%, #0D1B35 50%, transparent 100%)"
+        class="w-full flex items-center py-3.5 px-4 relative -ml-1 -mr-4 mb-4"
+        style="background: linear-gradient(90deg, rgba(15, 52, 96, 0.9) 0%, transparent 100%);"
       >
-        <div class="flex flex-col items-center">
-          <span class="text-gray-400 text-sm mb-1">告警总计</span>
-          <span class="text-cyan-400 font-bold text-2xl">{{ alertData.total }}</span>
+        <div 
+          class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400"
+          style="box-shadow: 0 0 12px rgba(34, 211, 238, 0.3);"
+        ></div>
+        <h3 class="text-[16px] font-bold text-white ml-1 leading-none">{{ title }}</h3>
+      </div>
+  
+      <!-- 中间告警指标栏（文字数字同行+中间深两侧浅渐变背景） -->
+      <div 
+        class="flex justify-around items-center py-4 px-4 rounded-lg mb-4"
+        style="background: linear-gradient(90deg, transparent 0%, rgba(13, 27, 53, 1) 50%, transparent 100%); backdrop-filter: blur(10px);"
+      >
+        <div class="flex items-center gap-2">
+          <span class="text-gray-300 text-[14px]">告警总计</span>
+          <span class="text-cyan-400 font-bold text-[14px]">{{ alertData.total }}</span>
         </div>
-        <div class="flex flex-col items-center">
-          <span class="text-gray-400 text-sm mb-1">已处理</span>
-          <span class="text-emerald-400 font-bold text-2xl">{{ alertData.handled }}</span>
+        <div class="flex items-center gap-2">
+          <span class="text-gray-300 text-[14px]">已处理</span>
+          <span class="text-emerald-400 font-bold text-[14px]">{{ alertData.handled }}</span>
         </div>
-        <div class="flex flex-col items-center">
-          <span class="text-gray-400 text-sm mb-1">待处理</span>
-          <span class="text-yellow-400 font-bold text-2xl">{{ alertData.pending }}</span>
+        <div class="flex items-center gap-2">
+          <span class="text-gray-300 text-[14px]">待处理</span>
+          <span class="text-yellow-400 font-bold text-[14px]">{{ alertData.pending }}</span>
         </div>
       </div>
   
-      <!-- 底部总览区域（左右分栏+渐变分割线） -->
+      <!-- 底部总览区域（左右分栏+各自渐变背景） -->
       <div class="flex gap-4 flex-1">
-        <!-- 左侧设备总览 -->
-        <div class="flex-1 bg-[#0D1B35]/50 rounded-lg p-3 flex flex-col">
-          <h4 class="text-gray-300 text-xs font-medium mb-2">{{ deviceOverview.title }}</h4>
-          <!-- 标题下渐变分割线（中间蓝两边透明） -->
+        <!-- 左侧设备总览（深色渐变背景） -->
+        <div 
+          class="flex-1 rounded-lg p-4 flex flex-col"
+          style="background: linear-gradient(180deg, rgba(13, 27, 53, 0.8) 0%, rgba(10, 22, 44, 1) 100%);"
+        >
+          <h4 class="text-white text-sm font-medium mb-2">{{ deviceOverview.title }}</h4>
+          <!-- 标题下渐变分割线（中间亮两边透明） -->
           <div 
-            class="h-[1px] w-full mb-3"
-            style="background: linear-gradient(90deg, transparent 0%, #3B82F6 50%, transparent 100%)"
+            class="h-[1px] w-[60%] mb-4"
+            style="background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.8) 50%, transparent 100%);"
           ></div>
-          <div class="space-y-2 flex-1 flex flex-col justify-around">
-            <div v-for="(item, index) in deviceOverview.items" :key="index" class="flex justify-between text-xs">
-              <span class="text-gray-400 flex items-center">
-                <span class="w-2 h-2 bg-cyan-400 rotate-45 mr-2"></span>
+          <div class="space-y-3 flex-1 flex flex-col justify-around">
+            <div v-for="(item, index) in deviceOverview.items" :key="index" class="flex justify-between text-sm">
+              <span class="text-gray-300 flex items-center">
+                <span 
+                  class="w-2.5 h-2.5 bg-cyan-400 rotate-45 mr-2"
+                  style="box-shadow: 0 0 6px rgba(34, 211, 238, 0.5);"
+                ></span>
                 {{ item.label }}
               </span>
-              <span class="text-white font-medium">{{ item.value }}</span>
+              <span class="text-cyan-400 font-medium text-xl">{{ item.value }}</span>
             </div>
           </div>
         </div>
   
-        <!-- 右侧区域总览 -->
-        <div class="flex-1 bg-[#0D1B35]/50 rounded-lg p-3 flex flex-col">
-          <h4 class="text-gray-300 text-xs font-medium mb-2">{{ areaOverview.title }}</h4>
-          <!-- 标题下渐变分割线（和左侧一致） -->
+        <!-- 右侧区域总览（稍浅渐变背景） -->
+        <div 
+          class="flex-1 rounded-lg p-4 flex flex-col"
+          style="background: linear-gradient(180deg, rgba(13, 27, 53, 0.6) 0%, rgba(10, 22, 44, 1) 100%);"
+        >
+          <h4 class="text-white text-sm font-medium mb-2">{{ areaOverview.title }}</h4>
+          <!-- 标题下渐变分割线（和左侧完全一致） -->
           <div 
-            class="h-[1px] w-full mb-3"
-            style="background: linear-gradient(90deg, transparent 0%, #3B82F6 50%, transparent 100%)"
+            class="h-[1px] w-full mb-4"
+            style="background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.8) 50%, transparent 100%);"
           ></div>
-          <div class="space-y-2 flex-1 flex flex-col justify-around">
-            <div v-for="(item, index) in areaOverview.items" :key="index" class="flex justify-between text-xs">
-              <span class="text-gray-400 flex items-center">
-                <span class="w-2 h-2 bg-cyan-400 rotate-45 mr-2"></span>
+          <div class="space-y-3 flex-1 flex flex-col justify-around">
+            <div v-for="(item, index) in areaOverview.items" :key="index" class="flex justify-between text-sm">
+              <span class="text-gray-300 flex items-center">
+                <span 
+                  class="w-2.5 h-2.5 bg-cyan-400 rotate-45 mr-2"
+                  style="box-shadow: 0 0 6px rgba(34, 211, 238, 0.5);"
+                ></span>
                 {{ item.label }}
               </span>
-              <span class="text-white font-medium">{{ item.value }}</span>
+              <span class="text-cyan-400 font-medium text-xl">{{ item.value }}</span>
             </div>
           </div>
         </div>
@@ -69,7 +91,7 @@
   </template>
   
   <script setup>
-  // 完全可配置的props，默认值和设计稿完全一致
+  // 完全可配置，默认值和设计稿100%匹配
   const props = defineProps({
     title: {
       type: String,
@@ -109,7 +131,6 @@
   </script>
   
   <style scoped>
-  /* 确保菱形图标和设计稿完全一致 */
   .rotate-45 {
     transform: rotate(45deg);
   }
