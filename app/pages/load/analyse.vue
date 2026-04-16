@@ -125,62 +125,7 @@
             </div>
             <!-- 负荷预测（设计稿：统计信息） -->
             <div class="flex-[5] -mt-1">
-                <div class="bg-[#0A162C]/10 rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden">
-                    <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-1 -mr-4 mb-2">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
-                        <h3 class="text-[14px] font-bold text-white ml-1 leading-none">统计信息</h3>
-                    </div>
-                    <div class="flex-1 flex flex-col gap-4">
-                        <div class="flex justify-between items-center px-2">
-                            <span class="text-gray-400 text-sm">告警总计</span>
-                            <span class="text-cyan-400 font-bold text-lg">126</span>
-                        </div>
-                        <div class="flex justify-between items-center px-2">
-                            <span class="text-gray-400 text-sm">已处理</span>
-                            <span class="text-emerald-400 font-bold text-lg">100</span>
-                        </div>
-                        <div class="flex justify-between items-center px-2">
-                            <span class="text-gray-400 text-sm">待处理</span>
-                            <span class="text-yellow-400 font-bold text-lg">26</span>
-                        </div>
-                        <div class="flex gap-4 mt-2">
-                            <div class="flex-1 bg-[#0D1B35]/50 rounded-lg p-3">
-                                <h4 class="text-gray-300 text-xs font-medium mb-2">设备总览</h4>
-                                <div class="space-y-1.5">
-                                    <div class="flex justify-between text-xs">
-                                        <span class="text-gray-400">◆ 设备总计(个)</span>
-                                        <span class="text-white">50</span>
-                                    </div>
-                                    <div class="flex justify-between text-xs">
-                                        <span class="text-gray-400">◆ 运行设备(个)</span>
-                                        <span class="text-white">38</span>
-                                    </div>
-                                    <div class="flex justify-between text-xs">
-                                        <span class="text-gray-400">◆ 总功率占比(%)</span>
-                                        <span class="text-white">80</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex-1 bg-[#0D1B35]/50 rounded-lg p-3">
-                                <h4 class="text-gray-300 text-xs font-medium mb-2">区域总览</h4>
-                                <div class="space-y-1.5">
-                                    <div class="flex justify-between text-xs">
-                                        <span class="text-gray-400">◆ 区域总计(个)</span>
-                                        <span class="text-white">30</span>
-                                    </div>
-                                    <div class="flex justify-between text-xs">
-                                        <span class="text-gray-400">◆ 运行区域(个)</span>
-                                        <span class="text-white">21</span>
-                                    </div>
-                                    <div class="flex justify-between text-xs">
-                                        <span class="text-gray-400">◆ 总功率占比(%)</span>
-                                        <span class="text-white">86</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <StatisticsInfo />
             </div>
         </div>
     </div>
@@ -193,6 +138,7 @@ import LineBarChart from '@/components/chart/LineBarChart.vue'
 import HorizBarChart from '~/components/chart/HorizBarChart.vue'
 import DateLineChart from '@/components/chart/DateLineChart.vue'
 import FactoryView from '@/components/dashboard/FactoryView.vue'
+import StatisticsInfo from '@/components/load/StatisticsInfo.vue'
 import * as echarts from 'echarts';
 
 definePageMeta({
