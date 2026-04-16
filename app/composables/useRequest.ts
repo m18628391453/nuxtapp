@@ -21,6 +21,7 @@ export function useRequest() {
       baseURL: config.public.baseURL as string, // 从配置里拿基础地址
       headers: {
         'Content-Type': 'application/json',
+        'version': '9.9.9',
         ...options.headers // 允许覆盖默认头
       },
 

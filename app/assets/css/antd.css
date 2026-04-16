@@ -15,7 +15,6 @@
   right: 0px !important;
 }
 
-/* 日期选择器输入框样式修复 */
 :deep(.custom-dark-datepicker.ant-picker) {
   background-color: transparent !important;
   border: 1px solid #1C3E73 !important;
@@ -30,7 +29,6 @@
   color: #FFFFFF99 !important;
 }
 
-/* 统一 Select 选择器样式 */
 :deep(.custom-dark-select .ant-select-selector) {
   background-color: transparent !important;
   border: 1px solid #1C3E73 !important;
@@ -45,7 +43,6 @@
   color: #FFFFFF99 !important;
 }
 
-/* 全局弹窗样式修复：解决白屏关键点 */
 :global(.custom-dark-datepicker-dropdown),
 :global(.ant-picker-dropdown) {
   background-color: #032748 !important;
@@ -82,7 +79,6 @@
   background: #032748 !important;
 }
 
-/* 修复 Select 下拉框的白色背景和字体颜色 */
 :global(.ant-select-dropdown) {
   background-color: #032748 !important;
   border: 1px solid #1C3E73 !important;
@@ -107,13 +103,11 @@
   color: #FFFFFF !important;
 }
 
-
 :deep(.custom-month-picker) {
   background-color: transparent !important;
   border: 1px solid rgba(0, 162, 255, 0.6) !important;
   border-radius: 4px !important;
   height: 22px !important;
-  /* 调整高度以匹配左侧按钮 */
   width: 90px !important;
   padding: 0 6px !important;
   cursor: pointer;
@@ -154,7 +148,6 @@
   height: 32px;
 }
 
-
 :deep(.ant-table-measure-row) {
   height: 0 !important;
   line-height: 0 !important;
@@ -175,7 +168,6 @@
   background-color: transparent !important;
 }
 
-
 .custom-table-container :deep(.ant-table) {
   background: transparent !important;
   font-size: 14px;
@@ -189,7 +181,6 @@
   color: rgba(255, 255, 255, 0.4) !important;
   border-bottom: 1px solid #FFFFFF1F !important;
   border-right: 1px solid #FFFFFF1F !important;
-  /* 列之间淡色竖线 */
   border-top: none !important;
   font-weight: 400;
 }
@@ -205,7 +196,6 @@
   border-top: none !important;
   border-bottom: 1px solid #FFFFFF1F !important;
   border-right: 1px solid #FFFFFF1F !important;
-  /* 列之间淡色竖线 */
   background: transparent !important;
 }
 
@@ -266,7 +256,8 @@
   margin: 0 2px !important;
 }
 
-:deep(.ant-pagination-item a) {
+:deep(.ant-pagination-item a), 
+:deep(.ant-pagination-item-ellipsis) {
   color: #fefefe99 !important;
 }
 
@@ -359,7 +350,7 @@
   flex: 1 !important;
   display: flex !important;
   flex-direction: column !important;
-  height: 0 !important; /* 关键：让flex自动计算高度，而不是被内容撑开 */
+  height: 0 !important;
 }
 
 :deep(.custom-dark-table .ant-spin-container) {
@@ -379,28 +370,30 @@
   overflow-y: auto !important;
 }
 
-/* 表头和分页栏固定高度，不参与伸缩 */
 :deep(.custom-dark-table .ant-table-header) {
   flex-shrink: 0 !important;
 }
 
 :deep(.custom-dark-table .ant-pagination) {
   flex-shrink: 0 !important;
-  margin: 12px 0 !important; /* 保持原有分页间距 */
+  margin: 12px 0 !important;
 }
 
 :deep(.custom-dark-table .ant-table-body::-webkit-scrollbar) {
   width: 6px;
   height: 6px;
 }
+
 :deep(.custom-dark-table .ant-table-body::-webkit-scrollbar-thumb) {
   background-color: #fefefe3F;
   border-radius: 3px;
   transition: background-color 0.2s;
 }
+
 :deep(.custom-dark-table .ant-table-body::-webkit-scrollbar-thumb:hover) {
   background-color: #fefefe5F;
 }
+
 :deep(.custom-dark-table .ant-table-body::-webkit-scrollbar-track) {
   background-color: transparent;
 }
@@ -409,6 +402,8 @@
   scrollbar-color: #fefefe3F transparent !important;
 }
 
-:deep(.ant-spin-container), :deep(.ant-spin-nested-loading), :deep(.ant-table-container) {
+:deep(.ant-spin-container), 
+:deep(.ant-spin-nested-loading), 
+:deep(.ant-table-container) {
   height: 100%;
 } 
