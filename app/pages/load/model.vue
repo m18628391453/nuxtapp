@@ -126,12 +126,11 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import * as echarts from 'echarts'
+
 definePageMeta({
   layout: 'layout'
 })
 
-// -------------------------- 左侧原有代码 完全保留 不要修改！！！ --------------------------
 const searchValue = ref('')
 const selectedKeys = ref(['1-1-1'])
 const expandedKeys = ref(['1', '1-1', '1-2'])
@@ -168,6 +167,7 @@ const treeData = ref([
 ])
 const buttons = ref(['区域', '设备']);
 const activeBtn = ref('区域');
+
 // 搜索事件
 const onQuery = () => {
   console.log('执行左侧搜索，关键字:', searchValue.value)
@@ -175,17 +175,19 @@ const onQuery = () => {
 }
 // 自适应窗口
 const resizeCharts = () => {
+
 }
+
 onMounted(() => {
   nextTick(() => {
-    // 这里原来的initCharts如果没定义可以先注释掉，不影响表格功能
-    // initCharts()
     window.addEventListener('resize', resizeCharts)
   })
 })
+
 onBeforeUnmount(() => {
   window.removeEventListener('resize', resizeCharts)
 })
+
 // -------------------------- 左侧原有代码结束 --------------------------
 // 右侧搜索框
 const modelSearchValue = ref('')
