@@ -1,4 +1,7 @@
-// server/api/index.ts
+/**
+ * server/api/index.ts
+ */
+
 // 提供GET接口，返回菜单配置
 export default defineEventHandler(async (event) => {
     // 只允许GET请求
@@ -9,7 +12,7 @@ export default defineEventHandler(async (event) => {
       })
     }
   
-    // 你要的菜单数据 👇 直接完整写死在这里
+    // 菜单数据
     const menuList = [
       { 
         name: '首页', route: '/', icon: 'Home', index: 0,

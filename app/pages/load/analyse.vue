@@ -4,30 +4,53 @@
         <!-- 左侧 -->
         <div class="flex flex-col h-full max-h-[100%] shrink-0"
             :class="layoutMode === 'sidebar' ? 'min-w-[360px] max-w-[360px]' : 'min-w-[370px] max-w-[370px]'">
-            <!-- 负荷趋势 -->
+            <!-- 负荷趋势（设计稿：用电与负荷趋势） -->
             <div class="flex-[5] min-h-0">
-
+                <DateLineChart 
+                    title="用电与负荷趋势" 
+                    :x-axis-data="timeAxis"
+                    :power-data="powerTrendData"
+                    :radiation-data="loadTrendData"
+                    :y-axis-max="350"
+                    :y-axis-interval="50"
+                />
             </div>
-            <!-- 用电对比 -->
+            <!-- 用电对比（设计稿：设备用电对比 - 横向柱状图） -->
             <div class="flex-[5] min-h-0">
-
+                <HorizBarChart 
+                    title="设备用电对比" 
+                    :buttons="[]"
+                    :x-axis-data="deviceNames"
+                    :bar-data="devicePowerData"
+                    :bar-color="['#00A2FF', '#00C8FF', '#00E0FF']"
+                    :y-axis-max="800"
+                    :y-axis-interval="200"
+                    :bar-width="12"
+                    horizontal
+                />
             </div>
-            <!-- 饼状图 -->
+            <!-- 饼状图（设计稿：尖峰平谷占比） -->
             <div class="flex-[5] min-h-0">
-                <RingPie title="尖峰平谷占比" center-title="总用电量(kWh)" unit="kWh" :pie-size="240" :inner-radius-ratio="0.4"
-                    :max-thickness="0.6" :pie-data="[
-                        { name: '峰', value: 2658, color: '#00A2FF', gradientStart: '#00A2FFC0' },
-                        { name: '尖', value: 1358, color: '#00FFA2', gradientStart: '#00FFA2C0' },
-                        { name: '谷', value: 3723, color: '#D2E43B', gradientStart: '#D2E43BC0' },
-                        { name: '平', value: 1658, color: '#FFB822', gradientStart: '#FFB822C0' },
-                    ]" />
+                <RingPie 
+                    title="尖峰平谷占比" 
+                    center-title="总量(万kW)" 
+                    unit="kW" 
+                    :pie-size="240" 
+                    :inner-radius="55"
+                    :ring-thickness="20"
+                    :pie-data="[
+                        { name: '峰', value: 2658.5, color: '#00A2FF' },
+                        { name: '尖', value: 1358.5, color: '#00FFA2' },
+                        { name: '谷', value: 3723.5, color: '#D2E43B' },
+                        { name: '平', value: 1658.6, color: '#FFB822' },
+                    ]" 
+                />
             </div>
         </div>
-
         <!-- 中间 -->
         <div class="flex-1 flex flex-col gap-4 h-full min-w-[600px]">
-            <!-- 顶部指标数据 -->
-            <TopMetrics :metrics-data="customMetrics" />
+            <!-- 顶部指标数据（设计稿：系统运行指标） -->
+            <TopMetrics :metrics-data="designMetrics" />
             <!-- 厂房视图区域 -->
             <FactoryView :custom-style="{
                 backgroundImage: `url('/image/main.png')`,
@@ -35,40 +58,142 @@
                 backgroundPosition: 'center center',
                 backgroundRepeat: 'no-repeat'
             }" />
-            <!-- 能源供需平衡分析 -->
+            <!-- 能源供需平衡分析（设计稿：本月能耗统计） -->
             <div class="flex-[1.5] min-h-0" :class="layoutMode === 'sidebar' ? '-mt-3 mb-3' : ''">
-                <BalanceChart title="能源供需平衡分析" />
+                <LineBarChart 
+                    title="本月能耗统计" 
+                    :buttons="[]"
+                    :x-axis-data="monthAxis"
+                    :bar-data="monthEnergyData"
+                    :bar-color="['#10B981', '#34D399', '#6EE7B7']"
+                    :y-axis-max="6000"
+                    :y-axis-interval="1000"
+                    :bar-width="10"
+                />
             </div>
         </div>
-
         <!-- 右侧 -->
         <div class="flex flex-col h-full shrink-0"
             :class="layoutMode === 'sidebar' ? 'min-w-[365px] max-w-[365px] max-h-[99%]' : 'min-w-[375px] max-w-[375px] max-h-[100%]'">
-            <!-- 收益分析图表 -->
+            <!-- 收益分析图表（设计稿：计划用电占比） -->
             <div class="flex-[5] mt-1">
-
+                <div class="bg-[#0A162C]/10 rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden">
+                    <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-1 -mr-4 mb-2">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
+                        <h3 class="text-[14px] font-bold text-white ml-1 leading-none">计划用电占比</h3>
+                    </div>
+                    <div class="flex-1 flex items-center justify-around">
+                        <div class="flex flex-col items-center">
+                            <div class="relative w-24 h-24">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#1A2A4A" stroke-width="8" />
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#00A2FF" stroke-width="8" 
+                                        stroke-dasharray="283" stroke-dashoffset="141.5" 
+                                        stroke-linecap="round" transform="rotate(-90 50 50)" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-2xl font-bold text-white">50%</span>
+                                </div>
+                            </div>
+                            <span class="text-gray-400 text-xs mt-2">月计划用电占比</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="relative w-24 h-24">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#1A2A4A" stroke-width="8" />
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#00A2FF" stroke-width="8" 
+                                        stroke-dasharray="283" stroke-dashoffset="141.5" 
+                                        stroke-linecap="round" transform="rotate(-90 50 50)" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-2xl font-bold text-white">50%</span>
+                                </div>
+                            </div>
+                            <span class="text-gray-400 text-xs mt-2">年计划用电占比</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- 发电预测（原封不动5条线数据） -->
+            <!-- 发电预测（设计稿：负荷用能分析） -->
             <div class="flex-[5] -mt-1">
-                <LineChart title="发电预测" :series-data="originalFiveSeries" />
+                <LineChart 
+                    title="负荷用能分析" 
+                    :x-axis-data="timeAxis"
+                    :y-axis-config="{ max: 350, interval: 50 }"
+                    :series-data="energyAnalysisSeries" 
+                />
             </div>
-
-            <!-- 负荷预测（原封不动5条线数据） -->
+            <!-- 负荷预测（设计稿：统计信息） -->
             <div class="flex-[5] -mt-1">
-
+                <div class="bg-[#0A162C]/10 rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden">
+                    <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-1 -mr-4 mb-2">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
+                        <h3 class="text-[14px] font-bold text-white ml-1 leading-none">统计信息</h3>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-4">
+                        <div class="flex justify-between items-center px-2">
+                            <span class="text-gray-400 text-sm">告警总计</span>
+                            <span class="text-cyan-400 font-bold text-lg">126</span>
+                        </div>
+                        <div class="flex justify-between items-center px-2">
+                            <span class="text-gray-400 text-sm">已处理</span>
+                            <span class="text-emerald-400 font-bold text-lg">100</span>
+                        </div>
+                        <div class="flex justify-between items-center px-2">
+                            <span class="text-gray-400 text-sm">待处理</span>
+                            <span class="text-yellow-400 font-bold text-lg">26</span>
+                        </div>
+                        <div class="flex gap-4 mt-2">
+                            <div class="flex-1 bg-[#0D1B35]/50 rounded-lg p-3">
+                                <h4 class="text-gray-300 text-xs font-medium mb-2">设备总览</h4>
+                                <div class="space-y-1.5">
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-gray-400">◆ 设备总计(个)</span>
+                                        <span class="text-white">50</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-gray-400">◆ 运行设备(个)</span>
+                                        <span class="text-white">38</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-gray-400">◆ 总功率占比(%)</span>
+                                        <span class="text-white">80</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex-1 bg-[#0D1B35]/50 rounded-lg p-3">
+                                <h4 class="text-gray-300 text-xs font-medium mb-2">区域总览</h4>
+                                <div class="space-y-1.5">
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-gray-400">◆ 区域总计(个)</span>
+                                        <span class="text-white">30</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-gray-400">◆ 运行区域(个)</span>
+                                        <span class="text-white">21</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-gray-400">◆ 总功率占比(%)</span>
+                                        <span class="text-white">86</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
-
 <script setup>
 import RingPie from '@/components/chart/RingPie.vue'
 import TopMetrics from '@/components/common/TopMetrics.vue'
-import BalanceChart from '@/components/chart/BalanceChart.vue'
 import LineChart from '@/components/chart/LineChart.vue'
+import LineBarChart from '@/components/chart/LineBarChart.vue'
+import HorizBarChart from '~/components/chart/HorizBarChart.vue'
+import DateLineChart from '@/components/chart/DateLineChart.vue'
 import FactoryView from '@/components/dashboard/FactoryView.vue'
-import * as echarts from 'echarts'; // 记得导入echarts，因为数据里用了LinearGradient
+import * as echarts from 'echarts';
 
 definePageMeta({
     layout: 'layout'
@@ -78,15 +203,41 @@ definePageMeta({
 const layoutState = inject('layoutState');
 const { layoutMode } = layoutState;
 
-// ---------------- 核心：原封不动抄过来的5条线数据 ----------------
-const originalFiveSeries = [
+// ---------------- 设计稿数据定义 ----------------
+// 时间轴（统一使用）
+const timeAxis = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+
+// 顶部指标数据（设计稿）
+const designMetrics = [
+    { title: '系统运行功率(MW)', value: '3,862', change: '', vs: '', valueColor: 'text-[#32AFFF]', arrowColor: 'text-gray-400' },
+    { title: '日累计用电量(kWh)', value: '26.84', change: '', vs: '', valueColor: 'text-[#32AFFF]', arrowColor: 'text-gray-400' },
+    { title: '月累计用电量(kWh)', value: '138.25', change: '', vs: '', valueColor: 'text-[#32AFFF]', arrowColor: 'text-gray-400' },
+    { title: '年累计用电量(kWh)', value: '1,221.56', change: '', vs: '', valueColor: 'text-[#32AFFF]', arrowColor: 'text-gray-400' },
+    { title: '额定用电功率(MW)', value: '138.25', change: '', vs: '', valueColor: 'text-[#32AFFF]', arrowColor: 'text-gray-400' },
+    { title: '日放电量(万kWh)', value: '26.16', change: '', vs: '', valueColor: 'text-[#32AFFF]', arrowColor: 'text-gray-400' },
+];
+
+// 用电与负荷趋势数据
+const powerTrendData = [200, 280, 180, 200, 250, 280, 300, 250, 180, 300, 150, 180];
+const loadTrendData = [300, 250, 280, 300, 250, 280, 300, 250, 280, 300, 250, 280];
+
+// 设备用电对比数据
+const deviceNames = ['空调', '投饵机', '增氧机', '底排污'];
+const devicePowerData = [600, 650, 500, 400];
+
+// 本月能耗统计数据
+const monthAxis = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+const monthEnergyData = [4500, 4800, 3200, 3500, 4800, 3000, 3200, 4800, 3000, 4800, 4800, 3000];
+
+// 负荷用能分析多折线数据
+const energyAnalysisSeries = [
     {
-        name: '中期',
+        name: '光伏',
         type: 'line',
         color: '#00D0FF',
         smooth: true,
         showSymbol: false,
-        data: [20, 15, 22, 18, 25, 12, 10, 20],
+        data: [300, 250, 280, 300, 250, 280, 300, 250, 280, 300, 250, 280],
         lineStyle: { width: 1.0 },
         areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -96,12 +247,12 @@ const originalFiveSeries = [
         }
     },
     {
-        name: '短期',
+        name: '储能',
         type: 'line',
         color: '#1DFF8B',
         smooth: true,
         showSymbol: false,
-        data: [22, 18, 15, 20, 28, 15, 8, 15],
+        data: [220, 180, 200, 220, 180, 200, 220, 180, 200, 220, 180, 200],
         lineStyle: { width: 1.0 },
         areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -111,12 +262,12 @@ const originalFiveSeries = [
         }
     },
     {
-        name: '中短期',
+        name: '市电',
         type: 'line',
         color: '#FFB800',
         smooth: true,
         showSymbol: false,
-        data: [18, 20, 12, 15, 22, 20, 15, 18],
+        data: [180, 150, 170, 180, 150, 170, 180, 150, 170, 180, 150, 170],
         lineStyle: { width: 1.0 },
         areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -124,50 +275,6 @@ const originalFiveSeries = [
                 { offset: 1, color: 'rgba(255, 184, 0, 0)' }
             ])
         }
-    },
-    {
-        name: '超短期',
-        type: 'line',
-        color: '#F03900F0',
-        smooth: true,
-        showSymbol: false,
-        data: [25, 22, 18, 25, 20, 18, 12, 10],
-        lineStyle: { width: 1.0 },
-        areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: 'rgba(255, 77, 0, 0.25)' },
-                { offset: 1, color: 'rgba(255, 77, 0, 0)' }
-            ])
-        }
-    },
-    {
-        name: '实际',
-        type: 'line',
-        color: '#00FFFF',
-        smooth: true,
-        showSymbol: false,
-        data: [15, 10, 20, 12, 30, 20, 16, 25],
-        lineStyle: {
-            width: 1.0,
-            shadowColor: 'rgba(0, 255, 255, 0.6)',
-            shadowBlur: 10
-        },
-        areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: 'rgba(0, 255, 255, 0.3)' },
-                { offset: 1, color: 'rgba(0, 255, 255, 0)' }
-            ])
-        }
     }
-];
-
-// 自定义指标数据
-const customMetrics = [
-    { title: '今日用电量(kWh)', value: '38,642', change: '↑1.6%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
-    { title: '综合电费_风平谷折算(元)', value: '26,814', change: '↓节约', vs: '¥3,280', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
-    { title: '光伏发电量(kWh)', value: '12,380', change: '↑1.6%', vs: 'vs 昨日', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
-    { title: '储能套利收益_今日(元)', value: '4,156', change: 'SOC 74%', vs: '· 充放21次', valueColor: 'text-[#32AFFF]', arrowColor: 'text-gray-400' },
-    { title: '碳排放强度_双碳(tCO₂/万元)', value: '0.382', change: '↓11.4%', vs: 'vs 目标', valueColor: 'text-[#32AFFF]', arrowColor: 'text-emerald-400' },
-    { title: '绿电消纳占比_GEC(%)', value: '32.1', change: '↑2.4%', vs: 'vs 上月', valueColor: 'text-[#32AFFF]', arrowColor: 'text-red-500' },
 ];
 </script>
