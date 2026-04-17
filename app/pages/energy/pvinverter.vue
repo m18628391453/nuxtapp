@@ -23,6 +23,15 @@
             </template>
           </svg>
         </button>
+
+        <a-select
+          v-if="currentLayout === 'table'"
+          v-model:value="currentAreaId"
+          :options="areaOptions"
+          class="ml-4 w-[140px]"
+          placeholder="请选择区域"
+          :dropdownStyle="{ backgroundColor: '#0A1A30', color: '#fff' }"
+        />
       </div>
       <div class="flex items-center gap-6">
         <label 
@@ -43,8 +52,7 @@
       </div>
     </div>
 
-    <!-- 中间：区域卡片 → 单击选中，双击弹窗 -->
-    <div class="mb-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] max-h-[380px] min-h-[360px]">
+    <div v-show="currentLayout === 'card'" class="mb-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] max-h-[380px] min-h-[360px]">
       <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
         <div 
           v-for="area in areaList" 
@@ -106,8 +114,7 @@
       </div>
     </div>
 
-    <!-- 下部：逆变器卡片 → 单击选中，双击弹窗 -->
-    <div class="mt-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] ">
+    <div v-show="currentLayout === 'card'" class="mt-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A]">
       <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
         <div 
           v-for="device in deviceList" 
@@ -205,9 +212,54 @@
       </div>
     </div>
 
-    <!-- 逆变器弹窗 -->
+    <div v-if="currentLayout === 'table'" class="flex flex-col gap-[2px] overflow-y-auto overflow-x-hidden max-h-[calc(100vh-120px)] pb-4">
+      <div 
+        v-for="device in deviceList" 
+        :key="device.id"
+        @click="currentDeviceId = device.id"
+        @dblclick="openInverterModal(device.id)"
+        class="flex h-[42px] text-[13px] border border-[#FFFFFF1A] bg-[#0A1A30] hover:border-[#3AB2FF6F] transition-colors cursor-pointer group"
+        :class="{ 'border-[#3AB2FF6F] shadow-[0_0_6px_rgba(50,175,255,0.4)]': currentDeviceId === device.id }"
+      >
+        <div class="w-[120px] flex items-center pl-5 font-bold text-white shrink-0"
+             :class="{
+               'bg-[#1890FF]': device.status === 'normal',
+               'bg-[#FF4D4F]': device.status === 'alarm',
+               'bg-[#E4B243]': device.status === 'warning',
+               'bg-[#888888]': device.status === 'stop'
+             }">
+          {{ device.name }}
+        </div>
+        
+        <div class="flex-1 flex items-center px-6 gap-10 bg-[#0B2240] group-hover:bg-[#0E2544] transition-colors shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-[#FFFFFF99]">有功功率(kW)</span>
+            <span class="font-bold text-white">{{ device.activePower }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[#FFFFFF99]">输入功率(kW)</span>
+            <span class="font-bold text-white">{{ getMockInputPower(device.activePower) }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[#FFFFFF99]">日发电量(kWh)</span>
+            <span class="font-bold text-white">{{ device.dailyPower }}</span>
+          </div>
+        </div>
+
+        <div class="flex h-full shrink-0">
+          <div 
+            v-for="status in tableStatuses" 
+            :key="status"
+            class="w-[110px] border-l border-[#FFFFFF1A] flex items-center justify-center text-[12px]"
+            :class="getTableStatusStyle(device, status)"
+          >
+            {{ status }}
+          </div>
+        </div>
+      </div>
+    </div>
+
     <InverterDetailModal v-model:visible="showInverterModal" />
-    <!-- 区域弹窗 -->
     <AreaDetailModal v-model:visible="showAreaModal" :area-id="currentAreaId" />
   </div>
 </template>
@@ -267,22 +319,60 @@ const openAreaModal = (id) => {
   showAreaModal.value = true
 }
 
-// 设备样式
+// ================== 新增代码区 ====================
+
+// 把区域数据映射为 Ant Design Select 的 options
+const areaOptions = computed(() => {
+  return areaList.value.map(area => ({
+    value: area.id,
+    label: area.name
+  }))
+})
+
+// 列表模式的状态栏标题
+const tableStatuses = ['通讯故障', '残余电流异常', '系统接地异常', '绝缘阻抗低', '温度过高', '设备异常']
+
+// 模拟“输入功率”（因为原数据里没有，为了UI饱满奶奶给你算一个）
+const getMockInputPower = (activePower) => {
+  if (!activePower) return '0.000'
+  const num = parseFloat(String(activePower).replace(/,/g, ''))
+  return (num * 1.015).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 })
+}
+
+// 控制列表模式下的状态块样式
+const getTableStatusStyle = (device, statusName) => {
+  // 奶奶特意比对了你的设计图，正常情况是绿底黑字
+  const normalStyle = 'bg-[#52C41A] text-[#141414] font-medium'
+  const stopStyle = 'bg-[#888888] text-white font-medium'
+  const errorStyle = 'bg-[#FF4D4F] text-white font-medium'
+
+  if (device.status === 'stop') return stopStyle
+  
+  // 模拟异常亮红逻辑 (仅为演示)
+  if (device.status === 'alarm' && statusName === '通讯故障') return errorStyle
+  if (device.status === 'warning' && statusName === '温度过高') return 'bg-[#E4B243] text-white font-medium'
+
+  return normalStyle
+}
+
+// ==================================================
+
+// 设备样式 (原有逻辑完好保留)
 const getDeviceActiveBorderClass = (status) => {
   switch(status) {
-    case 'normal': return 'border-[#3AB2FF6F]'; // 正常-蓝色（和中间区域一致）
-    case 'alarm': return 'border-[#FF4D4F6F]'; // 告警-红色
-    case 'warning': return 'border-[#E4B2436F]'; // 警告-黄色
-    default: return 'border-[#8888886F]'; // 离线/停机-灰色
+    case 'normal': return 'border-[#3AB2FF6F]';
+    case 'alarm': return 'border-[#FF4D4F6F]';
+    case 'warning': return 'border-[#E4B2436F]';
+    default: return 'border-[#8888886F]';
   }
 }
 
 const getDeviceHoverClass = (status) => {
   switch(status) {
-    case 'normal': return 'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]'; // 正常hover
-    case 'alarm': return 'hover:border-[#FF4D4F3F] hover:bg-[#0E2544]'; // 告警hover
-    case 'warning': return 'hover:border-[#E4B2433F] hover:bg-[#0E2544]'; // 警告hover
-    default: return 'hover:border-[#8888883F] hover:bg-[#0E2544]'; // 离线hover
+    case 'normal': return 'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]';
+    case 'alarm': return 'hover:border-[#FF4D4F3F] hover:bg-[#0E2544]';
+    case 'warning': return 'hover:border-[#E4B2433F] hover:bg-[#0E2544]';
+    default: return 'hover:border-[#8888883F] hover:bg-[#0E2544]';
   }
 }
 
@@ -325,22 +415,22 @@ const areaList = ref([
 ])
 
 const deviceList = ref([
-  { id: 1, name: 'N01-01', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 2, name: 'N01-02', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 3, name: 'N01-03', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 4, name: 'N01-04', status: 'alarm', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 5, name: 'N01-05', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 6, name: 'N01-06', status: 'warning', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 7, name: 'N01-07', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 8, name: 'N01-08', status: 'stop', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 9, name: 'N01-09', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 10, name: 'N01-10', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 11, name: 'N01-11', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 12, name: 'N01-12', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 13, name: 'N01-13', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 14, name: 'N01-14', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 15, name: 'N01-15', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-  { id: 16, name: 'N01-16', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 1, name: 'N25-6', status: 'normal', activePower: '165.984', dailyPower: '314.12', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 2, name: 'N20-12', status: 'normal', activePower: '285.835', dailyPower: '544.53', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 3, name: 'N9-13', status: 'normal', activePower: '207.361', dailyPower: '394.16', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 4, name: 'N54-14', status: 'alarm', activePower: '280.019', dailyPower: '522.41', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 5, name: 'N14-6', status: 'normal', activePower: '238.131', dailyPower: '447.71', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 6, name: 'N20-9', status: 'warning', activePower: '284.212', dailyPower: '529.23', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 7, name: 'N48-13', status: 'normal', activePower: '285.288', dailyPower: '529.74', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 8, name: 'N19-8', status: 'stop', activePower: '266.577', dailyPower: '505.69', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 9, name: 'N42-2', status: 'normal', activePower: '284.256', dailyPower: '526.52', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 10, name: 'N19-10', status: 'normal', activePower: '266.805', dailyPower: '503.82', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 11, name: 'N48-15', status: 'normal', activePower: '283.756', dailyPower: '526.76', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 12, name: 'N14-15', status: 'normal', activePower: '271.366', dailyPower: '499.98', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 13, name: 'N19-12', status: 'normal', activePower: '275.496', dailyPower: '503.13', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 14, name: 'N20-8', status: 'normal', activePower: '270.932', dailyPower: '500.13', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 15, name: 'N42-15', status: 'normal', activePower: '268.593', dailyPower: '498.34', installedCapacity: '76.8', equivalentHours: '2.32' },
+  { id: 16, name: 'N19-3', status: 'normal', activePower: '267.698', dailyPower: '496.77', installedCapacity: '76.8', equivalentHours: '2.32' },
 ])
 </script>
 
@@ -348,5 +438,15 @@ const deviceList = ref([
 input[type="checkbox"] {
   -webkit-appearance: none;
   -moz-appearance: none;
+}
+
+/* 覆盖 Ant Design 下拉框部分默认样式，避免在暗黑模式下边框太突兀 */
+:deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+}
+:deep(.ant-select-arrow) {
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 </style>

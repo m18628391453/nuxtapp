@@ -4,6 +4,7 @@ import type { UseFetchOptions } from 'nuxt/app'
 // 定义响应数据的通用类型（根据你后端实际结构改）
 interface ApiResponse<T = any> {
   code: number
+  status: number
   data: T
   message: string
 }
@@ -40,7 +41,7 @@ export function useRequest() {
         const res = response._data as ApiResponse<T>
         
         // 这里可以根据你后端的 code 判断成功失败
-        if (res.code !== 200) {
+        if (res.status !== 200) {
           console.error('接口报错啦:', res.message)
           // 可以在这里弹个 Toast 提示错误
           throw new Error(res.message || '请求失败')
@@ -64,7 +65,7 @@ export function useRequest() {
 
     // 发起请求（用 $fetch，比 useFetch 更灵活，哪里都能用）
     try {
-      return await $fetch<ApiResponse<T>>(url, mergedOptions)
+      return await $fetch<ApiResponse<T>>(url, mergedOptions as any)
     } catch (error) {
       return Promise.reject(error)
     }
