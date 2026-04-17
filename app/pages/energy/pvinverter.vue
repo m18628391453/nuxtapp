@@ -218,10 +218,10 @@
         :key="device.id"
         @click="currentDeviceId = device.id"
         @dblclick="openInverterModal(device.id)"
-        class="flex h-[42px] text-[13px] border border-[#FFFFFF1A] bg-[#0A1A30] hover:border-[#3AB2FF6F] transition-colors cursor-pointer group"
+        class="flex h-[35px] text-[13px] border border-[#FFFFFF1A] bg-[#0A1A30] hover:border-[#3AB2FF6F] transition-colors cursor-pointer group"
         :class="{ 'border-[#3AB2FF6F] shadow-[0_0_6px_rgba(50,175,255,0.4)]': currentDeviceId === device.id }"
       >
-        <div class="w-[120px] flex items-center pl-5 font-bold text-white shrink-0"
+        <div class="w-[180px] flex items-center pl-5 font-bold text-white shrink-0"
              :class="{
                'bg-[#1890FF]': device.status === 'normal',
                'bg-[#FF4D4F]': device.status === 'alarm',
