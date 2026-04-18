@@ -16,7 +16,7 @@
                 />
             </div>
             <!-- 用电对比（设计稿：设备用电对比 - 横向柱状图） -->
-            <div class="flex-[5] min-h-0">
+            <div class="flex-[5] min-h-0 -mt-1">
                 <HorizBarChart 
                     title="设备用电对比" 
                     :buttons="[]"
@@ -30,7 +30,7 @@
                 />
             </div>
             <!-- 饼状图（设计稿：尖峰平谷占比） -->
-            <div class="flex-[5] min-h-0">
+            <div class="flex-[5] min-h-0 -mt-2">
                 <RingPie 
                     title="尖峰平谷占比" 
                     center-title="总量(万kW)" 
@@ -76,7 +76,7 @@
         <div class="flex flex-col h-full shrink-0"
             :class="layoutMode === 'sidebar' ? 'min-w-[365px] max-w-[365px] max-h-[99%]' : 'min-w-[375px] max-w-[375px] max-h-[100%]'">
             <!-- 收益分析图表（设计稿：计划用电占比） -->
-            <div class="flex-[5] mt-1">
+            <div class="flex-[5] min-h-0">
                 <PlanPowerRatio 
                     monthValue="50" 
                     yearValue="50" 
@@ -84,7 +84,7 @@
                 />
             </div>
             <!-- 发电预测（设计稿：负荷用能分析） -->
-            <div class="flex-[5] -mt-1">
+            <div class="flex-[5] min-h-0 -mt-1">
                 <LineChart 
                     title="负荷用能分析" 
                     :x-axis-data="timeAxis"
@@ -93,7 +93,7 @@
                 />
             </div>
             <!-- 负荷预测（设计稿：统计信息） -->
-            <div class="flex-[5] -mt-1">
+            <div class="flex-[5] min-h-0 -mt-2">
                 <StatisticsInfo />
             </div>
         </div>

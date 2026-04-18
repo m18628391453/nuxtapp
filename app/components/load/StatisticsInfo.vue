@@ -18,8 +18,8 @@
   
       <!-- 中间告警指标栏（文字数字同行+中间深两侧浅渐变背景） -->
       <div 
-        class="flex justify-around items-center py-4 px-4 rounded-lg mb-4"
-        style="background: linear-gradient(90deg, transparent 0%, rgba(13, 27, 53, 1) 50%, transparent 100%); backdrop-filter: blur(10px);"
+        class="flex justify-around items-center py-3 px-2 rounded-lg mb-4 bg-gradient-to-r from-transparent via-[#0F3363]/50 to-transparent "
+        style="backdrop-filter: blur(10px);"
       >
         <div class="flex items-center gap-2">
           <span class="text-gray-300 text-[14px]">告警总计</span>
@@ -36,53 +36,53 @@
       </div>
   
       <!-- 底部总览区域（左右分栏+各自渐变背景） -->
-      <div class="flex gap-4 flex-1">
+      <div class="flex gap-8 flex-1 px-2">
         <!-- 左侧设备总览（深色渐变背景） -->
         <div 
-          class="flex-1 rounded-lg p-4 flex flex-col"
-          style="background: linear-gradient(180deg, rgba(13, 27, 53, 0.8) 0%, rgba(10, 22, 44, 1) 100%);"
+          class="flex-1 py-4 px-3 flex flex-col h-[95%]"
+          style="background: linear-gradient(90deg, #0F336390 0%, rgba(0,0,0, 0) 100%);"
         >
-          <h4 class="text-white text-sm font-medium mb-2">{{ deviceOverview.title }}</h4>
+          <h4 class="text-gray-300 text-sm font-medium mb-2">{{ deviceOverview.title }}</h4>
           <!-- 标题下渐变分割线（中间亮两边透明） -->
           <div 
-            class="h-[1px] w-[60%] mb-4"
+            class="h-[1px] w-[60%] mb-4 -ml-[7.5%]"
             style="background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.8) 50%, transparent 100%);"
           ></div>
           <div class="space-y-3 flex-1 flex flex-col justify-around">
-            <div v-for="(item, index) in deviceOverview.items" :key="index" class="flex justify-between text-sm">
-              <span class="text-gray-300 flex items-center">
+            <div v-for="(item, index) in areaOverview.items" :key="index" class="flex justify-between text-sm">
+              <span class="flex items-center text-[12px] text-gray-300">
                 <span 
-                  class="w-2.5 h-2.5 bg-cyan-400 rotate-45 mr-2"
+                  class="w-2 h-2 bg-cyan-400 rotate-45 mr-2"
                   style="box-shadow: 0 0 6px rgba(34, 211, 238, 0.5);"
                 ></span>
                 {{ item.label }}
               </span>
-              <span class="text-cyan-400 font-medium text-xl">{{ item.value }}</span>
+              <span class="text-cyan-400 font-medium text-[14px]">{{ item.value }}</span>
             </div>
           </div>
         </div>
   
         <!-- 右侧区域总览（稍浅渐变背景） -->
         <div 
-          class="flex-1 rounded-lg p-4 flex flex-col"
-          style="background: linear-gradient(180deg, rgba(13, 27, 53, 0.6) 0%, rgba(10, 22, 44, 1) 100%);"
+          class="flex-1 py-4 px-3 flex flex-col h-[95%]"
+          style="background: linear-gradient(90deg, #0F336390 0%, rgba(0, 0, 0, 0) 100%);"
         >
-          <h4 class="text-white text-sm font-medium mb-2">{{ areaOverview.title }}</h4>
+          <h4 class="text-gray-300 text-sm font-medium mb-2">{{ areaOverview.title }}</h4>
           <!-- 标题下渐变分割线（和左侧完全一致） -->
           <div 
-            class="h-[1px] w-full mb-4"
+            class="h-[1px] w-[60%] mb-4 -ml-[7.5%]"
             style="background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.8) 50%, transparent 100%);"
           ></div>
           <div class="space-y-3 flex-1 flex flex-col justify-around">
             <div v-for="(item, index) in areaOverview.items" :key="index" class="flex justify-between text-sm">
-              <span class="text-gray-300 flex items-center">
+              <span class="flex items-center text-[12px] text-gray-300">
                 <span 
-                  class="w-2.5 h-2.5 bg-cyan-400 rotate-45 mr-2"
+                  class="w-2 h-2 bg-cyan-400 rotate-45 mr-2"
                   style="box-shadow: 0 0 6px rgba(34, 211, 238, 0.5);"
                 ></span>
                 {{ item.label }}
               </span>
-              <span class="text-cyan-400 font-medium text-xl">{{ item.value }}</span>
+              <span class="text-cyan-400 font-medium text-[14px]">{{ item.value }}</span>
             </div>
           </div>
         </div>
