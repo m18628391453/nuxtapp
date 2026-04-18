@@ -86,11 +86,11 @@
                     <div class="flex-1 flex items-center justify-around px-2 mt-3">
                         <div class="flex flex-col items-center">
                             <LiquidBall :value="50" :size="140" />
-                            <span class="text-[#FFFFFF] text-[12px] mt-3">月计划用电占比</span>
+                            <span class="text-[#FFFFFF] text-[12px] mt-1">月计划用电占比</span>
                         </div>
                         <div class="flex flex-col items-center">
                             <LiquidBall :value="50" :size="140" />
-                            <span class="text-[#FFFFFF] text-[12px] mt-3">年计划用电占比</span>
+                            <span class="text-[#FFFFFF] text-[12px] mt-1">年计划用电占比</span>
                         </div>
                     </div>
                 </div>
