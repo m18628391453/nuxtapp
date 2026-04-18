@@ -77,39 +77,20 @@
             :class="layoutMode === 'sidebar' ? 'min-w-[365px] max-w-[365px] max-h-[99%]' : 'min-w-[375px] max-w-[375px] max-h-[100%]'">
             <!-- 收益分析图表（设计稿：计划用电占比） -->
             <div class="flex-[5] mt-1">
-                <div class="bg-[#0A162C]/10 rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden">
-                    <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-1 -mr-4 mb-2">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
-                        <h3 class="text-[14px] font-bold text-white ml-1 leading-none">计划用电占比</h3>
+                <div class="bg-[#0A162C]/10 rounded-lg p-4 flex flex-col h-full w-full relative overflow-hidden border border-white/5">
+                    <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-1 -mr-4 mb-4">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
+                        <h3 class="text-[14px] font-bold text-white ml-1 leading-none tracking-wider">计划用电占比</h3>
                     </div>
-                    <div class="flex-1 flex items-center justify-around">
+
+                    <div class="flex-1 flex items-center justify-around px-2 mt-3">
                         <div class="flex flex-col items-center">
-                            <div class="relative w-24 h-24">
-                                <svg class="w-full h-full" viewBox="0 0 100 100">
-                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#1A2A4A" stroke-width="8" />
-                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#00A2FF" stroke-width="8" 
-                                        stroke-dasharray="283" stroke-dashoffset="141.5" 
-                                        stroke-linecap="round" transform="rotate(-90 50 50)" />
-                                </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span class="text-2xl font-bold text-white">50%</span>
-                                </div>
-                            </div>
-                            <span class="text-gray-400 text-xs mt-2">月计划用电占比</span>
+                            <LiquidBall :value="50" :size="140" />
+                            <span class="text-[#FFFFFF] text-[12px] mt-3">月计划用电占比</span>
                         </div>
                         <div class="flex flex-col items-center">
-                            <div class="relative w-24 h-24">
-                                <svg class="w-full h-full" viewBox="0 0 100 100">
-                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#1A2A4A" stroke-width="8" />
-                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#00A2FF" stroke-width="8" 
-                                        stroke-dasharray="283" stroke-dashoffset="141.5" 
-                                        stroke-linecap="round" transform="rotate(-90 50 50)" />
-                                </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span class="text-2xl font-bold text-white">50%</span>
-                                </div>
-                            </div>
-                            <span class="text-gray-400 text-xs mt-2">年计划用电占比</span>
+                            <LiquidBall :value="50" :size="140" />
+                            <span class="text-[#FFFFFF] text-[12px] mt-3">年计划用电占比</span>
                         </div>
                     </div>
                 </div>
@@ -139,6 +120,7 @@ import HorizBarChart from '~/components/chart/HorizBarChart.vue'
 import DateLineChart from '@/components/chart/DateLineChart.vue'
 import FactoryView from '@/components/dashboard/FactoryView.vue'
 import StatisticsInfo from '@/components/load/StatisticsInfo.vue'
+import LiquidBall from '@/components/chart/LiquidBall.vue'
 import * as echarts from 'echarts';
 
 definePageMeta({
