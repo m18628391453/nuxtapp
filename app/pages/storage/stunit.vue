@@ -215,7 +215,6 @@
           </div>
         </div>
       </div>
-      <!-- 这里是奶奶修好的列表模式，撑满+双滚动条 -->
       <div 
         v-if="currentLayout === 'table'" 
         class="flex-1 w-full overflow-x-auto overflow-y-auto rounded-[4px] border border-[#FFFFFF1A] bg-[#0A1A30]"
