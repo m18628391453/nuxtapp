@@ -50,8 +50,8 @@
         </label>
       </div>
     </div>
-    <div v-show="currentLayout === 'card'" class="mb-4 bg-[#FFFFFF0F] py-3 px-4 rounded-[4px] border border-[#FFFFFF1A] max-h-[380px] min-h-[360px]">
-      <div class="grid grid-cols-8 gap-5 mb-6 mt-2">
+    <div v-show="currentLayout === 'card'" class="mb-4 bg-[#FFFFFF0F] py-3 px-4 rounded-[4px] border border-[#FFFFFF1A] max-h-[360px] min-h-[360px]">
+      <div class="grid grid-cols-8 gap-3 mb-6 mt-2">
         <div 
           v-for="area in areaList" 
           :key="area.id"
