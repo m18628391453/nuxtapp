@@ -50,7 +50,6 @@
         </label>
       </div>
     </div>
-
     <div v-show="currentLayout === 'card'" class="mb-4 bg-[#FFFFFF0F] py-3 px-4 rounded-[4px] border border-[#FFFFFF1A] max-h-[380px] min-h-[360px]">
       <div class="grid grid-cols-8 gap-5 mb-6 mt-2">
         <div 
@@ -111,7 +110,6 @@
         </button>
       </div>
     </div>
-
     <div v-show="currentLayout === 'card'" class="mt-4 bg-[#FFFFFF0F] py-3 px-4 rounded-[4px] border border-[#FFFFFF1A]">
       <div class="grid grid-cols-8 gap-5 mb-6 mt-2">
         <div 
@@ -209,23 +207,22 @@
         </div>
       </div>
     </div>
-
     <!-- 这里是奶奶修好的列表模式，撑满+双滚动条 -->
     <div 
       v-if="currentLayout === 'table'" 
       class="flex-1 w-full overflow-x-auto overflow-y-auto rounded-[4px] border border-[#FFFFFF1A] bg-[#0A1A30]"
       style="height: calc(100vh - 120px) !important;"
     >
-      <div class="flex flex-col gap-[2px] w-full min-w-max pb-1">
+      <div class="flex flex-col gap-[0px] w-full min-w-max pb-1 table-container">
         <div 
           v-for="device in deviceList" 
           :key="device.id"
           @click="currentDeviceId = device.id"
           @dblclick="openInverterModal(device.id)"
-          class="flex h-[36px] text-[13px] border-b border-[#FFFFFF1A] hover:border-[#3AB2FF6F] transition-colors cursor-pointer group items-center flex-nowrap w-full"
+          class="flex h-[35px] text-[13px] pb-[1px] border-b border-[#FFFFFF1A] hover:border-[#3AB2FFFF] group-hover:bg-[#3AB2FF] transition-colors cursor-pointer group items-center flex-nowrap w-full"
           :class="{ 'border-[#3AB2FF6F]': currentDeviceId === device.id }"
         >
-          <div class="w-[180px] flex items-center py-2 pl-5 font-bold text-white shrink-0"
+          <div class="w-[180px] flex items-center py-1.5 my-1 pl-5 font-bold text-white shrink-0"
                :class="{
                  'bg-[#1890FF]': device.status === 'normal',
                  'bg-[#FF4D4F]': device.status === 'alarm',
@@ -235,26 +232,26 @@
             {{ device.name }}
           </div>
           
-          <div class="w-[550px] flex items-center px-6 gap-0 bg-[#0B2240]/20 group-hover:bg-[#0E2544] transition-colors shrink-0">
-            <div class="flex-[1] flex flex-row items-center gap-2">
+          <div class="w-[550px] mb-0 mt-0 flex items-center px-6 gap-0 data-column group-hover:bg-[#3AB2FF] bg-transparent transition-colors shrink-0">
+            <div class="flex-[1] flex flex-row items-center bg-transparent gap-2">
               <span class="text-[#FFFFFF99] w-[90px]">有功功率(kW)</span>
               <span class="font-bold text-white ml-1 text-right">{{ device.activePower }}</span>
             </div>
-            <div class="flex-[1] flex flex-row items-center gap-2">
+            <div class="flex-[1] flex flex-row items-center bg-transparent gap-2">
               <span class="text-[#FFFFFF99] w-[90px]">输入功率(kW)</span>
               <span class="font-bold text-white m-1 text-right">{{ getMockInputPower(device.activePower) }}</span>
             </div>
-            <div class="flex-[1] flex flex-row items-center gap-2">
+            <div class="flex-[1] flex flex-row items-center bg-transparent gap-2">
               <span class="text-[#FFFFFF99] w-[90px]">日发电量(kWh)</span>
               <span class="font-bold text-white ml-1 text-right">{{ device.dailyPower }}</span>
             </div>
           </div>
-
+          
           <div class="flex h-full flex-nowrap shrink-0">
             <div 
               v-for="status in tableStatuses" 
               :key="status"
-              class="w-[150px] mx-0.5 border-l border-[#FFFFFF1A] flex items-center justify-center text-[12px]"
+              class="w-[150px] border-l border-[#FFFFFF1A] flex items-center justify-center text-[12px]" style="margin: 1px 2px"
               :class="getTableStatusStyle(device, status)"
             >
               {{ status }}
@@ -263,25 +260,20 @@
         </div>
       </div>
     </div>
-
     <InverterDetailModal v-model:visible="showInverterModal" />
     <AreaDetailModal v-model:visible="showAreaModal" :area-id="currentAreaId" />
   </div>
 </template>
-
 <script setup>
 import { ref, computed } from 'vue'
 import InverterDetailModal from '@/components/energy/InverterDetailModal.vue'
 import AreaDetailModal from '@/components/energy/AreaDetailModal.vue'
-
 definePageMeta({ layout: 'layout' })
-
 const currentLayout = ref('card')
 const layoutOptions = ref([
   { label: '图标布局', value: 'card' },
   { label: 'table布局', value: 'table' }
 ])
-
 const filterOptions = ref([
   { label: '全部 600', value: 'all', checked: false },
   { label: '正常 25', value: 'normal', checked: true },
@@ -289,7 +281,6 @@ const filterOptions = ref([
   { label: '告警 2', value: 'alarm', checked: false },
   { label: '通讯中断 1', value: 'offline', checked: false }
 ])
-
 const handleFilterChange = (clickedFilter) => {
   if (clickedFilter.value === 'all') {
     const isChecked = !clickedFilter.checked;
@@ -302,39 +293,31 @@ const handleFilterChange = (clickedFilter) => {
     if (allFilter) allFilter.checked = false;
   }
 }
-
 const currentPage = ref(1)
 const currentAreaId = ref(1)
 const currentDeviceId = ref(1) 
-
 const showInverterModal = ref(false)
 const showAreaModal = ref(false)
-
 const openInverterModal = (id) => {
   currentDeviceId.value = id
   showInverterModal.value = true
 }
-
 const openAreaModal = (id) => {
   currentAreaId.value = id
   showAreaModal.value = true
 }
-
 const areaOptions = computed(() => {
   return areaList.value.map(area => ({
     value: area.id,
     label: area.name
   }))
 })
-
 const tableStatuses = ['通讯故障', '残余电流异常', '系统接地异常', '绝缘阻抗低', '温度过高', '设备异常']
-
 const getMockInputPower = (activePower) => {
   if (!activePower) return '0.000'
   const num = parseFloat(String(activePower).replace(/,/g, ''))
   return (num * 1.015).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 })
 }
-
 const getTableStatusStyle = (device, statusName) => {
   const normalStyle = 'bg-[#52C41A] text-[#141414] font-medium'
   const stopStyle = 'bg-[#888888] text-white font-medium'
@@ -345,7 +328,6 @@ const getTableStatusStyle = (device, statusName) => {
   if (device.status === 'warning' && statusName === '温度过高') return 'bg-[#E4B243] text-white font-medium'
   return normalStyle
 }
-
 const getDeviceActiveBorderClass = (status) => {
   switch(status) {
     case 'normal': return 'border-[#3AB2FF6F]';
@@ -354,7 +336,6 @@ const getDeviceActiveBorderClass = (status) => {
     default: return 'border-[#8888886F]';
   }
 }
-
 const getDeviceHoverClass = (status) => {
   switch(status) {
     case 'normal': return 'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]';
@@ -363,7 +344,6 @@ const getDeviceHoverClass = (status) => {
     default: return 'hover:border-[#8888883F] hover:bg-[#0E2544]';
   }
 }
-
 const getDeviceBgColor = (status) => {
   switch(status) {
     case 'normal': return 'rgba(50,175,255,0.06)'
@@ -372,7 +352,6 @@ const getDeviceBgColor = (status) => {
     default: return 'rgba(136,136,136,0.1)'
   }
 }
-
 const getDeviceActiveShadow = (status) => {
   switch(status) {
     case 'normal': return '0 0 6px rgba(50,175,255,0.6)';
@@ -381,7 +360,6 @@ const getDeviceActiveShadow = (status) => {
     default: return '0 0 6px rgba(136,136,136,0.6)';
   }
 }
-
 const areaList = ref([
   { id: 1, name: '1#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
   { id: 2, name: '2#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 21 },
@@ -400,7 +378,6 @@ const areaList = ref([
   { id: 15, name: '15#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
   { id: 16, name: '16#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
 ])
-
 const deviceList = ref([
   { id: 1, name: 'N25-6', status: 'normal', activePower: '165.984', dailyPower: '314.12', installedCapacity: '76.8', equivalentHours: '2.32' },
   { id: 2, name: 'N20-12', status: 'normal', activePower: '285.835', dailyPower: '544.53', installedCapacity: '76.8', equivalentHours: '2.32' },
@@ -420,8 +397,9 @@ const deviceList = ref([
   { id: 16, name: 'N19-3', status: 'normal', activePower: '267.698', dailyPower: '496.77', installedCapacity: '76.8', equivalentHours: '2.32' },
 ])
 </script>
-
 <style scoped>
+@import url('../../assets/css/antd.css');
+
 input[type="checkbox"] {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -435,8 +413,23 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
 }
-
 :deep(.ant-select-arrow) {
   color: rgba(255, 255, 255, 0.65) !important;
+}
+
+/* 修复下拉框弹出时输入框字体变黑问题 */
+:deep(.ant-select.ant-select-open .ant-select-selector),
+:deep(.ant-select.ant-select-focused .ant-select-selector),
+:deep(.ant-select .ant-select-selection-item),
+:deep(.ant-select .ant-select-selection-placeholder) {
+  color: white !important;
+}
+
+/* 表格数据列奇偶行换色 */
+.table-container > div:nth-child(odd) {
+  background-color: rgba(25, 71, 131, 0.2);
+}
+.table-container > div:nth-child(even) {
+  background-color: rgb(7, 51, 113, 0.2);
 }
 </style>
