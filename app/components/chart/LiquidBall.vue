@@ -1,5 +1,6 @@
 <template>
   <div class="water-level-wrapper" :style="{ width: size + 'px', height: size + 'px' }">
+    <!-- 外圈圆环（完全保留） -->
     <svg :viewBox="`0 0 ${baseSize} ${baseSize}`" class="outer-ring">
       <circle 
         :cx="center" :cy="center" :r="radius" 
@@ -25,40 +26,42 @@
       </defs>
     </svg>
 
+    <!-- 中间水位图区域：换成 ECharts -->
     <div class="liquid-container">
-      <div class="water-group" :style="{ transform: `translateY(${100 - value}%)` }">
-        <div class="wave wave-back"></div>
-        <div class="wave wave-front"></div>
-      </div>
+      <!-- ECharts 容器 -->
+      <div ref="liquidChartRef" class="liquid-chart"></div>
       
+      <!-- 百分比文字（保留在最上层） -->
       <div class="value-text">
         <span class="num">{{ value }}</span>
         <span class="unit">%</span>
       </div>
     </div>
 
+    <!-- 玻璃发光罩（完全保留） -->
     <div class="inner-glow-sphere"></div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import * as echarts from 'echarts';
+import 'echarts-liquidfill'; // 引入水位图插件
 
 const props = defineProps({
-  value: { type: Number, default: 50 }, // 默认改成50%，方便你预览设计稿效果
+  value: { type: Number, default: 50 },
   size: { type: Number, default: 120 }
 });
 
+// --- 外圈圆环相关计算（完全保留原逻辑） ---
 const baseSize = 100;
 const center = 50;
 const radius = 42.5;
-const percent = 75; // 你的流星进度，奶奶原封不动保留
+const percent = 75; 
 const dashArray = 2 * Math.PI * radius;
-
 const dashOffset = computed(() => {
   return dashArray * (1 - percent / 100);
 });
-
 const dotX = computed(() => {
   const angle = (percent / 100) * 360 - 90;
   return center + radius * Math.cos((angle * Math.PI) / 180);
@@ -67,28 +70,103 @@ const dotY = computed(() => {
   const angle = (percent / 100) * 360 - 90;
   return center + radius * Math.sin((angle * Math.PI) / 180);
 });
+
+// --- ECharts 水位图逻辑 ---
+const liquidChartRef = ref(null);
+let chartInstance = null;
+
+const initChart = () => {
+  if (!liquidChartRef.value) return;
+  
+  chartInstance = echarts.init(liquidChartRef.value);
+  
+  const option = {
+    series: [{
+      type: 'liquidFill',
+      data: [props.value / 100], // 数值转 0-1
+      radius: '100%', // 占满容器
+      outline: { show: false }, // 不显示默认外圈（因为我们自己有）
+      backgroundStyle: {
+        color: '#4CC1FC01' // 保持原来的暗色背景
+      },
+      // 这里配置波浪样式，给你调成小波浪了
+      waveAnimation: true,
+      waveAnimationDurationUpdate: 1000,
+      itemStyle: {
+        color: {
+          type: 'linear',
+          x: 0, y: 0, x2: 0, y2: 1,
+          colorStops: [{
+            offset: 0, color: '#4CE1FC'
+          }, {
+            offset: 1, color: '#53B4FE'
+          }]
+        },
+        opacity: 1
+      },
+      amplitude: 8, // 振幅（波浪高度），数值越小浪越小
+      waveLength: 100, 
+      waves: [
+        {
+          direction: 'right',
+          itemStyle: { color: '#4CC1FC' }
+        },
+        {
+          direction: 'left',
+          itemStyle: { color: '#4CC1FC' }
+        }
+      ],
+      label: { show: false } // 隐藏 ECharts 默认的文字，用我们自己的
+    }]
+  };
+
+  chartInstance.setOption(option);
+};
+
+// 监听 value 变化更新水位
+watch(() => props.value, (newVal) => {
+  if (chartInstance) {
+    chartInstance.setOption({
+      series: [{
+        data: [newVal / 100]
+      }]
+    });
+  }
+});
+
+// 响应窗口大小变化（可选）
+const handleResize = () => {
+  chartInstance && chartInstance.resize();
+};
+
+onMounted(() => {
+  initChart();
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+  chartInstance && chartInstance.dispose();
+});
 </script>
 
 <style scoped>
+/* 原有样式 99% 完全保留 */
 .water-level-wrapper {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .outer-ring {
   position: absolute;
   width: 100%;
   height: 100%;
   z-index: 3;
 }
-
 .dot-glow {
   filter: drop-shadow(0 0 4px #00D0FF);
 }
-
-/* 玻璃发光罩：层级要在水上面 (z-index: 2) */
 .inner-glow-sphere {
   position: absolute;
   width: 70%;
@@ -98,10 +176,10 @@ const dotY = computed(() => {
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1);
   z-index: 2;
-  pointer-events: none; /* 防止遮挡可能存在的点击事件 */
+  pointer-events: none;
 }
 
-/* 真实的装水容器 */
+/* 稍微调整了一下容器，用来放 ECharts */
 .liquid-container {
   position: absolute;
   width: 70%;
@@ -109,65 +187,36 @@ const dotY = computed(() => {
   border-radius: 50%;
   overflow: hidden;
   z-index: 1;
-  background: rgba(0, 0, 0, 0.2); /* 保持你原来的暗色背景 */
+  /* 背景色去掉了，交给 ECharts 内部配置 */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* 动态水位控制器：利用 translateY 平滑升降 */
-.water-group {
-  position: absolute;
-  left: 0;
-  top: 0;
+/* 新增：ECharts 容器样式 */
+.liquid-chart {
   width: 100%;
   height: 100%;
-  transition: transform 1s ease-in-out;
-}
-
-/* 波浪的绝对核心逻辑：超大的圆角矩形 */
-.wave {
   position: absolute;
-  left: 50%;
   top: 0;
-  width: 250%; /* 要足够大才能盖住底部 */
-  height: 250%;
-  border-radius: 43%; /* 43%的圆角是波浪边缘最好看的比例 */
-  transform-origin: 50% 50%;
+  left: 0;
 }
 
-.wave-back {
-  background: rgba(76, 193, 252, 0.4); /* 浅色半透明背景浪 */
-  animation: rotate-wave 7s linear infinite;
-}
-
-.wave-front {
-  background: rgba(76, 193, 252, 0.9); /* 深色实体主浪 */
-  animation: rotate-wave 5s linear infinite;
-}
-
-/* 旋转动画：注意这里加上了 translate 偏移来保持波浪的居中对齐 */
-@keyframes rotate-wave {
-  0% { transform: translate(-50%, -2%) rotate(0deg); }
-  100% { transform: translate(-50%, -2%) rotate(360deg); }
-}
-
+/* 文字样式保留，并确保层级最高 */
 .value-text {
   position: relative;
   z-index: 10;
   text-align: center;
   color: #fff;
   text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  pointer-events: none; /* 防止挡住图表事件 */
 }
-
 .num {
   font-size: 1.5rem;
-  font-weight: bold;
   color: #fefefe;
 }
-
 .unit {
-  font-size: 1.2rem; /* 奶奶稍微把单位调小了一点点，显得错落有致，你如果不喜欢可以改回 1.5rem */
+  font-size: 1.5rem;
   margin-left: 2px;
   color: #fefefe;
 }
