@@ -45,10 +45,10 @@
           <h4 class="text-gray-300 text-sm font-medium mb-2">{{ deviceOverview.title }}</h4>
           <!-- 标题下渐变分割线（中间亮两边透明） -->
           <div 
-            class="h-[1px] w-[60%] mb-4 -ml-[7.5%]"
+            class="h-[1px] w-[60%] -ml-[7.5%]"
             style="background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.8) 50%, transparent 100%);"
           ></div>
-          <div class="space-y-3 flex-1 flex flex-col justify-around">
+          <div class="space-y-3 flex-1 flex flex-col justify-around mt-3">
             <div v-for="(item, index) in areaOverview.items" :key="index" class="flex justify-between text-sm">
               <span class="flex items-center text-[12px] text-gray-300">
                 <span 
@@ -70,10 +70,10 @@
           <h4 class="text-gray-300 text-sm font-medium mb-2">{{ areaOverview.title }}</h4>
           <!-- 标题下渐变分割线（和左侧完全一致） -->
           <div 
-            class="h-[1px] w-[60%] mb-4 -ml-[7.5%]"
+            class="h-[1px] w-[60%] -ml-[7.5%]"
             style="background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.8) 50%, transparent 100%);"
           ></div>
-          <div class="space-y-3 flex-1 flex flex-col justify-around">
+          <div class="space-y-3 flex-1 flex flex-col justify-around mt-3">
             <div v-for="(item, index) in areaOverview.items" :key="index" class="flex justify-between text-sm">
               <span class="flex items-center text-[12px] text-gray-300">
                 <span 
