@@ -210,48 +210,55 @@
       </div>
     </div>
 
-    <div v-if="currentLayout === 'table'" class="flex flex-col gap-[2px] overflow-y-auto overflow-x-hidden max-h-[calc(100vh-120px)] pb-4">
-      <div 
-        v-for="device in deviceList" 
-        :key="device.id"
-        @click="currentDeviceId = device.id"
-        @dblclick="openInverterModal(device.id)"
-        class="flex h-[36px] text-[13px] border border-[#FFFFFF1A] bg-[#0A1A30] hover:border-[#3AB2FF6F] transition-colors cursor-pointer group"
-        :class="{ 'border-[#3AB2FF6F] shadow-[0_0_6px_rgba(50,175,255,0.4)]': currentDeviceId === device.id }"
-      >
-        <div class="w-[180px] flex items-center pl-5 font-bold text-white shrink-0"
-             :class="{
-               'bg-[#1890FF]': device.status === 'normal',
-               'bg-[#FF4D4F]': device.status === 'alarm',
-               'bg-[#E4B243]': device.status === 'warning',
-               'bg-[#888888]': device.status === 'stop'
-             }">
-          {{ device.name }}
-        </div>
-        
-        <div class="w-[550px] flex items-center px-6 gap-0 bg-[#0B2240]/20 group-hover:bg-[#0E2544] transition-colors shrink-0">
-          <div class="flex-[1] flex flex-row items-center gap-2">
-            <span class="text-[#FFFFFF99] w-[90px]">有功功率(kW)</span>
-            <span class="font-bold text-white ml-1 text-right">{{ device.activePower }}</span>
+    <!-- 这里是奶奶修好的列表模式，撑满+双滚动条 -->
+    <div 
+      v-if="currentLayout === 'table'" 
+      class="flex-1 w-full overflow-x-auto overflow-y-auto rounded-[4px] border border-[#FFFFFF1A] bg-[#0A1A30]"
+      style="height: calc(100vh - 120px) !important;"
+    >
+      <div class="flex flex-col gap-[2px] w-full min-w-max pb-1">
+        <div 
+          v-for="device in deviceList" 
+          :key="device.id"
+          @click="currentDeviceId = device.id"
+          @dblclick="openInverterModal(device.id)"
+          class="flex h-[36px] text-[13px] border-b border-[#FFFFFF1A] hover:border-[#3AB2FF6F] transition-colors cursor-pointer group items-center flex-nowrap w-full"
+          :class="{ 'border-[#3AB2FF6F]': currentDeviceId === device.id }"
+        >
+          <div class="w-[180px] flex items-center py-2 pl-5 font-bold text-white shrink-0"
+               :class="{
+                 'bg-[#1890FF]': device.status === 'normal',
+                 'bg-[#FF4D4F]': device.status === 'alarm',
+                 'bg-[#E4B243]': device.status === 'warning',
+                 'bg-[#888888]': device.status === 'stop'
+               }">
+            {{ device.name }}
           </div>
-          <div class="flex-[1] flex flex-row items-center gap-2">
-            <span class="text-[#FFFFFF99] w-[90px]">输入功率(kW)</span>
-            <span class="font-bold text-white m-1 text-right">{{ getMockInputPower(device.activePower) }}</span>
+          
+          <div class="w-[550px] flex items-center px-6 gap-0 bg-[#0B2240]/20 group-hover:bg-[#0E2544] transition-colors shrink-0">
+            <div class="flex-[1] flex flex-row items-center gap-2">
+              <span class="text-[#FFFFFF99] w-[90px]">有功功率(kW)</span>
+              <span class="font-bold text-white ml-1 text-right">{{ device.activePower }}</span>
+            </div>
+            <div class="flex-[1] flex flex-row items-center gap-2">
+              <span class="text-[#FFFFFF99] w-[90px]">输入功率(kW)</span>
+              <span class="font-bold text-white m-1 text-right">{{ getMockInputPower(device.activePower) }}</span>
+            </div>
+            <div class="flex-[1] flex flex-row items-center gap-2">
+              <span class="text-[#FFFFFF99] w-[90px]">日发电量(kWh)</span>
+              <span class="font-bold text-white ml-1 text-right">{{ device.dailyPower }}</span>
+            </div>
           </div>
-          <div class="flex-[1] flex flex-row items-center gap-2">
-            <span class="text-[#FFFFFF99] w-[90px]">日发电量(kWh)</span>
-            <span class="font-bold text-white ml-1 text-right">{{ device.dailyPower }}</span>
-          </div>
-        </div>
 
-        <div class="flex h-full shrink-0">
-          <div 
-            v-for="status in tableStatuses" 
-            :key="status"
-            class="w-[150px] mx-0.5 border-l border-[#FFFFFF1A] flex items-center justify-center text-[12px]"
-            :class="getTableStatusStyle(device, status)"
-          >
-            {{ status }}
+          <div class="flex h-full flex-nowrap shrink-0">
+            <div 
+              v-for="status in tableStatuses" 
+              :key="status"
+              class="w-[150px] mx-0.5 border-l border-[#FFFFFF1A] flex items-center justify-center text-[12px]"
+              :class="getTableStatusStyle(device, status)"
+            >
+              {{ status }}
+            </div>
           </div>
         </div>
       </div>
@@ -269,14 +276,12 @@ import AreaDetailModal from '@/components/energy/AreaDetailModal.vue'
 
 definePageMeta({ layout: 'layout' })
 
-// 布局切换
 const currentLayout = ref('card')
 const layoutOptions = ref([
   { label: '图标布局', value: 'card' },
   { label: 'table布局', value: 'table' }
 ])
 
-// 筛选
 const filterOptions = ref([
   { label: '全部 600', value: 'all', checked: false },
   { label: '正常 25', value: 'normal', checked: true },
@@ -298,12 +303,10 @@ const handleFilterChange = (clickedFilter) => {
   }
 }
 
-// 分页与选中
 const currentPage = ref(1)
 const currentAreaId = ref(1)
 const currentDeviceId = ref(1) 
 
-// 弹窗控制
 const showInverterModal = ref(false)
 const showAreaModal = ref(false)
 
@@ -317,7 +320,6 @@ const openAreaModal = (id) => {
   showAreaModal.value = true
 }
 
-// 把区域数据映射为 Ant Design Select 的 options
 const areaOptions = computed(() => {
   return areaList.value.map(area => ({
     value: area.id,
@@ -325,30 +327,25 @@ const areaOptions = computed(() => {
   }))
 })
 
-// 列表模式的状态栏标题
 const tableStatuses = ['通讯故障', '残余电流异常', '系统接地异常', '绝缘阻抗低', '温度过高', '设备异常']
 
-// 模拟“输入功率”
 const getMockInputPower = (activePower) => {
   if (!activePower) return '0.000'
   const num = parseFloat(String(activePower).replace(/,/g, ''))
   return (num * 1.015).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 })
 }
 
-// 控制列表模式下的状态块样式
 const getTableStatusStyle = (device, statusName) => {
   const normalStyle = 'bg-[#52C41A] text-[#141414] font-medium'
   const stopStyle = 'bg-[#888888] text-white font-medium'
   const errorStyle = 'bg-[#FF4D4F] text-white font-medium'
   if (device.status === 'stop') return stopStyle
   
-  // 模拟异常亮红逻辑 (仅为演示)
   if (device.status === 'alarm' && statusName === '通讯故障') return errorStyle
   if (device.status === 'warning' && statusName === '温度过高') return 'bg-[#E4B243] text-white font-medium'
   return normalStyle
 }
 
-// 设备样式
 const getDeviceActiveBorderClass = (status) => {
   switch(status) {
     case 'normal': return 'border-[#3AB2FF6F]';
@@ -385,7 +382,6 @@ const getDeviceActiveShadow = (status) => {
   }
 }
 
-// 区域数据
 const areaList = ref([
   { id: 1, name: '1#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
   { id: 2, name: '2#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 21 },
@@ -405,7 +401,6 @@ const areaList = ref([
   { id: 16, name: '16#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
 ])
 
-// 设备数据
 const deviceList = ref([
   { id: 1, name: 'N25-6', status: 'normal', activePower: '165.984', dailyPower: '314.12', installedCapacity: '76.8', equivalentHours: '2.32' },
   { id: 2, name: 'N20-12', status: 'normal', activePower: '285.835', dailyPower: '544.53', installedCapacity: '76.8', equivalentHours: '2.32' },
@@ -432,7 +427,6 @@ input[type="checkbox"] {
   -moz-appearance: none;
 }
 
-/* 覆盖 Ant Design 下拉框样式，对齐设计稿 */
 :deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector) {
   background-color: rgba(255, 255, 255, 0.06) !important;
   border: 1px solid rgba(255, 255, 255, 0.22) !important;
@@ -441,6 +435,7 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
 }
+
 :deep(.ant-select-arrow) {
   color: rgba(255, 255, 255, 0.65) !important;
 }
