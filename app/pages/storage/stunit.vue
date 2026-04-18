@@ -1,336 +1,362 @@
 <template>
-    <div class="w-full h-full min-h-screen bg-transparent overflow-auto px-4 py-4 font-yahei text-white">
-        <div
-            class="flex justify-between items-center mb-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] max-h-[56px]">
-            <div class="flex items-center">
-                <button v-for="layout in layoutOptions" :key="layout.value" @click="currentLayout = layout.value"
-                    :class="[
-                        'w-8 h-7 flex items-center justify-center border transition-all duration-200',
-                        currentLayout === layout.value
-                            ? 'border-[#FFFFFF2A] text-[#32AFFF] bg-[#32AFFF10]'
-                            : 'border-[#FFFFFF2A] text-[#FFFFFF99] bg-transparent hover:bg-[#FFFFFF0A]',
-                        layout.value === 'card' ? 'rounded-l-[2px] border-r-0' : 'rounded-r-[2px]'
-                    ]">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                        <template v-if="layout.value === 'card'">
-                            <path
-                                d="M3 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3zm10 0a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1V3zM3 13a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6zm10 0a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1v-6z" />
-                        </template>
-                        <template v-else>
-                            <path
-                                d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4zm0 6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2zm0 6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2z" />
-                        </template>
-                    </svg>
-                </button>
-            </div>
-            <div class="flex items-center gap-6">
-                <label v-for="filter in filterOptions" :key="filter.value"
-                    class="flex items-center gap-2 cursor-pointer text-sm text-[#FFFFFF99] hover:text-white transition-colors">
-                    <input type="checkbox" :checked="filter.checked" @change="handleFilterChange(filter)"
-                        class="w-4 h-4 rounded-[2px] bg-transparent border border-[#FFFFFF2A] appearance-none relative flex items-center justify-center transition-colors checked:border-[#32AFFF] checked:bg-transparent
-              after:content-[''] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:flex after:items-center after:justify-center
-              checked:after:content-['✓'] checked:after:text-[12px] checked:after:font-bold checked:after:text-[#32AFFF]" />
-                    <span>{{ filter.label }}</span>
-                </label>
-            </div>
+    <!-- 储能区域主页面 -->
+    <div class="stunit-container">
+      <!-- 页面头部：标题 + 模式切换 + 操作按钮 -->
+      <div class="page-header">
+        <div class="header-left">
+          <!-- 储能区域图标 + 标题 -->
+          <svg class="stunit-icon" aria-hidden="true">
+            <!-- 替换成你的储能区域SVG图标内容，这里用示例路径/代码 -->
+            <use xlink:href="#icon-storage-unit"></use>
+            <!-- 如果是本地SVG文件，可这样写：
+            <image xlink:href="@/assets/icons/stunit.svg" width="24" height="24" />
+            -->
+          </svg>
+          <h2>储能区域</h2>
         </div>
-
-        <!-- 中间：区域卡片 → 单击选中，双击弹窗 -->
-        <div class="mb-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] max-h-[380px] min-h-[360px]">
-            <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
-                <div v-for="area in areaList" :key="area.id" @click="currentAreaId = area.id"
-                    @dblclick="openAreaModal(area.id)" :class="[
-                        'relative rounded-[2px] px-3 pb-3 pt-[42px] transition-all duration-200 cursor-pointer min-h-[135px] flex flex-col justify-end',
-                        'bg-[#0A1A30] border',
-                        currentAreaId === area.id ? 'border-[#3AB2FF6F]' : 'border-[#FFFFFF0F]',
-                        'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]'
-                    ]" :style="{
-                        backgroundColor: 'rgba(50,175,255,0.1)',
-                        boxShadow: currentAreaId === area.id ? '0 0 4px rgba(50,175,255,0.8)' : '',
-                    }">
-                    <div class="absolute top-2 left-0 h-[28px] pl-3 pr-6 flex items-center justify-start z-10"
-                        style="background: linear-gradient(90deg, #19ADD8 0%, #0E9ED3 50%, #4FB2E5 100%); clip-path: polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%);">
-                        <span class="font-bold text-[14px] text-white tracking-wide">
-                            {{ area.name }}
-                        </span>
-                    </div>
-
-                    <span v-if="area.warnCount"
-                        class="absolute top-1 right-2 bg-[#FF4B4B] text-white text-[12px] font-bold rounded-full w-[22px] h-[22px] flex items-center justify-center z-10 shadow-md">
-                        {{ area.warnCount }}
-                    </span>
-                    <div class="text-[13px] w-full flex flex-col gap-[6px]">
-                        <div class="flex justify-between items-center w-full">
-                            <span class="text-[#FFFFFF99]">日发电量(kWh):</span>
-                            <span class="font-bold text-white text-[14px]">{{ area.dailyPower }}</span>
-                        </div>
-                        <div class="flex justify-between items-center w-full">
-                            <span class="text-[#FFFFFF99]">实时功率(kW):</span>
-                            <span class="font-bold text-white text-[14px]">{{ area.realTimePower }}</span>
-                        </div>
-                        <div class="flex justify-between items-center w-full">
-                            <span class="text-[#FFFFFF99]">装机容量(kWp):</span>
-                            <span class="font-bold text-white text-[14px]">{{ area.installedCapacity }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-center items-center gap-3 -mt-2">
-                <button v-for="page in [1, 2, 3]" :key="page" :class="[
-                    'w-7 h-7 rounded-full flex items-center justify-center text-sm border transition-all',
-                    currentPage === page
-                        ? 'bg-[#32AFFF] text-white border-[#32AFFF] font-bold shadow-[0_0_8px_rgba(50,175,255,0.5)]'
-                        : 'bg-transparent text-white border-[#FFFFFF33] hover:border-[#32AFFF] hover:text-[#32AFFF]'
-                ]" @click="currentPage = page">
-                    {{ page }}
-                </button>
-            </div>
+  
+        <!-- card/list模式切换按钮 -->
+        <div class="mode-switch">
+          <button 
+            class="switch-btn" 
+            :class="{ active: currentMode === 'card' }"
+            @click="switchMode('card')"
+          >
+            <svg class="mode-icon" aria-hidden="true">
+              <use xlink:href="#icon-card"></use>
+            </svg>
+            卡片模式
+          </button>
+          <button 
+            class="switch-btn" 
+            :class="{ active: currentMode === 'list' }"
+            @click="switchMode('list')"
+          >
+            <svg class="mode-icon" aria-hidden="true">
+              <use xlink:href="#icon-list"></use>
+            </svg>
+            列表模式
+          </button>
         </div>
-
-        <!-- 下部：逆变器卡片 → 单击选中，双击弹窗 -->
-        <div class="mt-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] ">
-            <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
-                <div v-for="device in deviceList" :key="device.id" @click="currentDeviceId = device.id"
-                    @dblclick="openInverterModal(device.id)" :class="[
-                        'relative rounded-[2px] transition-all duration-200 cursor-pointer min-h-[160px] flex flex-col pt-10 pb-3 px-3 border bg-[#0A1A30]',
-                        currentDeviceId === device.id ? getDeviceActiveBorderClass(device.status) : 'border-[#FFFFFF0F]',
-                        getDeviceHoverClass(device.status)
-                    ]" :style="{
-                        backgroundColor: getDeviceBgColor(device.status),
-                        boxShadow: currentDeviceId === device.id ? getDeviceActiveShadow(device.status) : 'none'
-                    }">
-                    <div class="absolute top-2 left-0 px-3 py-1 text-[13px] font-bold text-white z-10 rounded-br-[4px] rounded-tr-[4px]"
-                        :style="{
-                            background: device.status === 'normal' ? '#32AFFF' :
-                                device.status === 'alarm' ? 'linear-gradient(45deg, #FF4D4F, #FD6365)' :
-                                    device.status === 'warning' ? 'linear-gradient(45deg, #E4B243, #FDCF68)' :
-                                        'linear-gradient(45deg, #888888, #999999)'
-                        }">
-                        {{ device.name }}
-                    </div>
-                    <div class="flex gap-2 h-full items-center">
-                        <div class="flex flex-col items-center justify-center w-[45%]">
-                            <div class="w-[68px] h-[55px] flex items-center justify-center" :style="{
-                                color: device.status === 'normal' ? '#32AFFF' :
-                                    device.status === 'alarm' ? '#FF4D4F' :
-                                        device.status === 'warning' ? '#E4B243' :
-                                            '#888888'
-                            }">
-                                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <defs>
-                                        <mask id="device-mask">
-                                            <rect x="0" y="0" width="100" height="100" fill="white" />
-
-                                            <rect x="20" y="33" width="18" height="5" rx="1" fill="black" />
-
-                                            <path d="M55 56 C 58 48, 62 48, 65 56 S 72 64, 75 56" stroke="black"
-                                                stroke-width="5" stroke-linecap="round" fill="none" />
-                                        </mask>
-                                    </defs>
-
-                                    <rect x="25" y="13" width="18" height="8" rx="2" fill="currentColor" />
-                                    <rect x="57" y="13" width="18" height="8" rx="2" fill="currentColor" />
-
-                                    <rect x="12" y="23" width="76" height="53" rx="6" fill="currentColor"
-                                        mask="url(#device-mask)" />
-                                </svg>
-                            </div>
-                            <div class="mt-2 flex items-baseline" :style="{
-                                color: device.status === 'normal' ? '#32AFFF' :
-                                    device.status === 'alarm' ? '#FF4D4F' :
-                                        device.status === 'warning' ? '#E4B243' :
-                                            '#888888'
-                            }">
-                                <span class="font-bold text-[15px]">{{ device.installedCapacity }}</span>
-                                <span class="text-[12px] ml-[2px]">kWp</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col justify-center w-[55%] text-[12px] space-y-[6px]">
-                            <div class="flex flex-col">
-                                <span class="text-[#FFFFFF99] leading-tight mb-1">有功功率</span>
-                                <div class="flex items-baseline" :style="{
-                                    color: device.status === 'normal' ? '#32AFFF' :
-                                        device.status === 'alarm' ? '#FF4D4F' :
-                                            device.status === 'warning' ? '#E4B243' :
-                                                '#888888'
-                                }">
-                                    <span class="font-bold text-[15px]">{{ device.activePower }}</span>
-                                    <span class="text-[#FFFFFF99] scale-90 ml-1">kW</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-[#FFFFFF99] leading-tight mb-1">日发电量</span>
-                                <div class="flex items-baseline" :style="{
-                                    color: device.status === 'normal' ? '#32AFFF' :
-                                        device.status === 'alarm' ? '#FF4D4F' :
-                                            device.status === 'warning' ? '#E4B243' :
-                                                '#888888'
-                                }">
-                                    <span class="font-bold text-[13px]">{{ device.dailyPower }}</span>
-                                    <span class="text-[#FFFFFF99] scale-90 ml-1">kWh</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-[#FFFFFF99] leading-tight mb-1">等效小时数</span>
-                                <div class="flex items-baseline" :style="{
-                                    color: device.status === 'normal' ? '#32AFFF' :
-                                        device.status === 'alarm' ? '#FF4D4F' :
-                                            device.status === 'warning' ? '#E4B243' :
-                                                '#888888'
-                                }">
-                                    <span class="font-bold text-[13px]">{{ device.equivalentHours }}</span>
-                                    <span class="text-[#FFFFFF99] scale-90 ml-1">h</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      </div>
+  
+      <!-- 内容区域：根据模式渲染不同布局 -->
+      <div class="content-area">
+        <!-- 卡片模式 -->
+        <div class="card-mode" v-if="currentMode === 'card'">
+          <div class="stunit-card" v-for="item in stunitData" :key="item.id">
+            <div class="card-header">
+              <h3>{{ item.name }}</h3>
+              <span class="status" :class="item.status">{{ item.statusText }}</span>
             </div>
+            <div class="card-body">
+              <div class="data-item">
+                <label>储能容量</label>
+                <span>{{ item.capacity }} kWh</span>
+              </div>
+              <div class="data-item">
+                <label>充放电功率</label>
+                <span>{{ item.power }} kW</span>
+              </div>
+              <div class="data-item">
+                <label>剩余电量</label>
+                <span>{{ item.remainPower }} %</span>
+              </div>
+              <div class="data-item">
+                <label>运行时长</label>
+                <span>{{ item.runTime }} h</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="operate-btn">详情</button>
+              <button class="operate-btn">设置</button>
+            </div>
+          </div>
         </div>
-
-        <!-- 逆变器弹窗 -->
-        <InverterDetailModal v-model:visible="showInverterModal" />
-        <!-- 区域弹窗 -->
-        <AreaDetailModal v-model:visible="showAreaModal" :area-id="currentAreaId" />
+  
+        <!-- 列表模式 -->
+        <div class="list-mode" v-else>
+          <table class="stunit-list">
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>储能单元名称</th>
+                <th>储能容量(kWh)</th>
+                <th>充放电功率(kW)</th>
+                <th>剩余电量(%)</th>
+                <th>运行状态</th>
+                <th>运行时长(h)</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in stunitData" :key="item.id">
+                <td>{{ index + 1 }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.capacity }}</td>
+                <td>{{ item.power }}</td>
+                <td>{{ item.remainPower }}</td>
+                <td><span class="status" :class="item.status">{{ item.statusText }}</span></td>
+                <td>{{ item.runTime }}</td>
+                <td class="operate-col">
+                  <button class="operate-btn">详情</button>
+                  <button class="operate-btn">设置</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-</template>
-
-<script setup>
-import { ref, computed } from 'vue'
-import InverterDetailModal from '@/components/energy/InverterDetailModal.vue'
-import AreaDetailModal from '@/components/energy/AreaDetailModal.vue'
-
-definePageMeta({ layout: 'layout' })
-
-// 布局切换
-const currentLayout = ref('card')
-const layoutOptions = ref([
-    { label: '图标布局', value: 'card' },
-    { label: 'table布局', value: 'table' }
-])
-
-// 筛选
-const filterOptions = ref([
-    { label: '全部 600', value: 'all', checked: false },
-    { label: '正常 25', value: 'normal', checked: true },
-    { label: '停机 1', value: 'stop', checked: true },
-    { label: '告警 2', value: 'alarm', checked: false },
-    { label: '通讯中断 1', value: 'offline', checked: false }
-])
-
-const handleFilterChange = (clickedFilter) => {
-    if (clickedFilter.value === 'all') {
-        const isChecked = !clickedFilter.checked;
-        filterOptions.value.forEach(item => {
-            item.checked = item.value === 'all' ? isChecked : false;
-        });
-    } else {
-        clickedFilter.checked = !clickedFilter.checked;
-        const allFilter = filterOptions.value.find(item => item.value === 'all');
-        if (allFilter) allFilter.checked = false;
+  </template>
+  
+  <script setup>
+  import { ref } from 'vue'
+  
+  // 模式切换：默认卡片模式
+  const currentMode = ref('card')
+  
+  // 切换模式方法
+  const switchMode = (mode) => {
+    currentMode.value = mode
+  }
+  
+  // 模拟储能区域数据（和逆变器页面数据结构一致，仅名称/字段适配储能）
+  const stunitData = ref([
+    {
+      id: 1,
+      name: '储能区域-1号单元',
+      capacity: 100,
+      power: 50,
+      remainPower: 85,
+      runTime: 1200,
+      status: 'normal',
+      statusText: '正常运行'
+    },
+    {
+      id: 2,
+      name: '储能区域-2号单元',
+      capacity: 200,
+      power: 80,
+      remainPower: 60,
+      runTime: 850,
+      status: 'warning',
+      statusText: '低电量预警'
+    },
+    {
+      id: 3,
+      name: '储能区域-3号单元',
+      capacity: 150,
+      power: 60,
+      remainPower: 0,
+      runTime: 1500,
+      status: 'error',
+      statusText: '已断电'
     }
-}
-
-// 分页与选中
-const currentPage = ref(1)
-const currentAreaId = ref(1)
-const currentDeviceId = ref(1)
-
-// 弹窗控制
-const showInverterModal = ref(false)
-const showAreaModal = ref(false)
-
-const openInverterModal = (id) => {
-    currentDeviceId.value = id
-    showInverterModal.value = true
-}
-
-const openAreaModal = (id) => {
-    currentAreaId.value = id
-    showAreaModal.value = true
-}
-
-// 设备样式
-const getDeviceActiveBorderClass = (status) => {
-    switch (status) {
-        case 'normal': return 'border-[#3AB2FF6F]'; // 正常-蓝色（和中间区域一致）
-        case 'alarm': return 'border-[#FF4D4F6F]'; // 告警-红色
-        case 'warning': return 'border-[#E4B2436F]'; // 警告-黄色
-        default: return 'border-[#8888886F]'; // 离线/停机-灰色
-    }
-}
-
-const getDeviceHoverClass = (status) => {
-    switch (status) {
-        case 'normal': return 'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]'; // 正常hover
-        case 'alarm': return 'hover:border-[#FF4D4F3F] hover:bg-[#0E2544]'; // 告警hover
-        case 'warning': return 'hover:border-[#E4B2433F] hover:bg-[#0E2544]'; // 警告hover
-        default: return 'hover:border-[#8888883F] hover:bg-[#0E2544]'; // 离线hover
-    }
-}
-
-const getDeviceBgColor = (status) => {
-    switch (status) {
-        case 'normal': return 'rgba(50,175,255,0.06)'
-        case 'alarm': return 'rgba(255,77,79,0.1)'
-        case 'warning': return 'rgba(228,178,67,0.1)'
-        default: return 'rgba(136,136,136,0.1)'
-    }
-}
-
-const getDeviceActiveShadow = (status) => {
-    switch (status) {
-        case 'normal': return '0 0 8px rgba(50,175,255,0.6)';
-        case 'alarm': return '0 0 8px rgba(255,77,79,0.6)';
-        case 'warning': return '0 0 8px rgba(228,178,67,0.6)';
-        default: return '0 0 8px rgba(136,136,136,0.6)';
-    }
-}
-
-// 区域数据
-const areaList = ref([
-    { id: 1, name: '1#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 2, name: '2#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 21 },
-    { id: 3, name: '3#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 4, name: '4#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 5, name: '5#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 6, name: '6#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 7, name: '7#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 8, name: '8#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 9, name: '9#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 10, name: '10#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 11, name: '11#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 12, name: '12#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 13, name: '13#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 14, name: '14#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 15, name: '15#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-    { id: 16, name: '16#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
-])
-
-const deviceList = ref([
-    { id: 1, name: 'N01-01', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 2, name: 'N01-02', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 3, name: 'N01-03', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 4, name: 'N01-04', status: 'alarm', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 5, name: 'N01-05', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 6, name: 'N01-06', status: 'warning', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 7, name: 'N01-07', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 8, name: 'N01-08', status: 'stop', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 9, name: 'N01-09', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 10, name: 'N01-10', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 11, name: 'N01-11', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 12, name: 'N01-12', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 13, name: 'N01-13', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 14, name: 'N01-14', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 15, name: 'N01-15', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-    { id: 16, name: 'N01-16', status: 'normal', activePower: '3,512', dailyPower: '52,680', installedCapacity: '76.8', equivalentHours: '2.32' },
-])
-</script>
-
-<style scoped>
-input[type="checkbox"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-</style>
+  ])
+  </script>
+  
+  <style scoped>
+  /* 全局容器样式 */
+  .stunit-container {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #f5f7fa;
+  }
+  
+  /* 页面头部 */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e4e7ed;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .stunit-icon {
+    width: 24px;
+    height: 24px;
+    fill: #1890ff;
+  }
+  
+  .page-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #303133;
+  }
+  
+  /* 模式切换按钮 */
+  .mode-switch {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .switch-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .switch-btn.active {
+    background: #1890ff;
+    color: #fff;
+    border-color: #1890ff;
+  }
+  
+  .mode-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  /* 内容区域通用 */
+  .content-area {
+    width: 100%;
+  }
+  
+  /* 卡片模式样式 */
+  .card-mode {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .stunit-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.04);
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f2f5;
+  }
+  
+  .card-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #303133;
+  }
+  
+  .status {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .status.normal {
+    background: #f0f9ff;
+    color: #1890ff;
+  }
+  
+  .status.warning {
+    background: #fdf6ec;
+    color: #faad14;
+  }
+  
+  .status.error {
+    background: #fff2f0;
+    color: #f5222d;
+  }
+  
+  .card-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .data-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .data-item label {
+    font-size: 12px;
+    color: #909399;
+  }
+  
+  .data-item span {
+    font-size: 14px;
+    color: #303133;
+    font-weight: 500;
+  }
+  
+  .card-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  
+  .operate-btn {
+    padding: 4px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    background: #fff;
+    cursor: pointer;
+    color: #606266;
+    transition: all 0.2s;
+  }
+  
+  .operate-btn:hover {
+    color: #1890ff;
+    border-color: #1890ff;
+  }
+  
+  /* 列表模式样式 */
+  .list-mode {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.04);
+  }
+  
+  .stunit-list {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .stunit-list th,
+  .stunit-list td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #f0f2f5;
+  }
+  
+  .stunit-list th {
+    font-size: 14px;
+    color: #606266;
+    font-weight: 500;
+  }
+  
+  .stunit-list td {
+    font-size: 14px;
+    color: #303133;
+  }
+  
+  .operate-col {
+    display: flex;
+    gap: 8px;
+  }
+  </style>
