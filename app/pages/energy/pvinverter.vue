@@ -23,7 +23,6 @@
             </template>
           </svg>
         </button>
-
         <a-select
           v-if="currentLayout === 'table'"
           v-model:value="currentAreaId"
@@ -52,22 +51,21 @@
       </div>
     </div>
 
-    <div v-show="currentLayout === 'card'" class="mb-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A] max-h-[380px] min-h-[360px]">
-      <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
+    <div v-show="currentLayout === 'card'" class="mb-4 bg-[#FFFFFF0F] py-3 px-4 rounded-[4px] border border-[#FFFFFF1A] max-h-[380px] min-h-[360px]">
+      <div class="grid grid-cols-8 gap-5 mb-6 mt-2">
         <div 
           v-for="area in areaList" 
           :key="area.id"
           @click="currentAreaId = area.id"
           @dblclick="openAreaModal(area.id)"
           :class="[
-            'relative rounded-[2px] px-3 pb-3 pt-[42px] transition-all duration-200 cursor-pointer min-h-[135px] flex flex-col justify-end',
-            'bg-[#0A1A30] border',
+            'relative rounded-[4px] px-3 pb-3 pt-[42px] transition-all duration-200 cursor-pointer min-h-[135px] flex flex-col justify-end border',
             currentAreaId === area.id ? 'border-[#3AB2FF6F]' : 'border-[#FFFFFF0F]',
             'hover:border-[#3AB2FF3F] hover:bg-[#0E2544]'
           ]"
           :style="{
             backgroundColor: 'rgba(50,175,255,0.1)',
-            boxShadow: currentAreaId === area.id ? '0 0 4px rgba(50,175,255,0.8)' : '',
+            boxShadow: currentAreaId === area.id ? '0 0 6px rgba(50,175,255,0.6)' : '',
           }"
         >
           <div class="absolute top-2 left-0 h-[28px] pl-3 pr-6 flex items-center justify-start z-10"
@@ -114,15 +112,15 @@
       </div>
     </div>
 
-    <div v-show="currentLayout === 'card'" class="mt-4 bg-[#FFFFFF0F] py-2 px-3 rounded-[4px] border border-[#FFFFFF1A]">
-      <div class="grid grid-cols-8 gap-4 mb-6 mt-2">
+    <div v-show="currentLayout === 'card'" class="mt-4 bg-[#FFFFFF0F] py-3 px-4 rounded-[4px] border border-[#FFFFFF1A]">
+      <div class="grid grid-cols-8 gap-5 mb-6 mt-2">
         <div 
           v-for="device in deviceList" 
           :key="device.id"
           @click="currentDeviceId = device.id"
           @dblclick="openInverterModal(device.id)"
           :class="[
-            'relative rounded-[2px] transition-all duration-200 cursor-pointer min-h-[160px] flex flex-col pt-10 pb-3 px-3 border bg-[#0A1A30]',
+            'relative rounded-[4px] transition-all duration-200 cursor-pointer min-h-[160px] flex flex-col pt-10 pb-3 px-3 border bg-[#0A1A30]',
             currentDeviceId === device.id ? getDeviceActiveBorderClass(device.status) : 'border-[#FFFFFF0F]',
             getDeviceHoverClass(device.status)
           ]"
@@ -140,9 +138,9 @@
                }">
             {{ device.name }}
           </div>
-          <div class="flex gap-2 h-full items-center">
+          <div class="flex gap-3 h-full items-center">
             <div class="flex flex-col items-center justify-center w-[45%]">
-              <div class="w-[68px] h-[55px] flex items-center justify-center"
+              <div class="w-[70px] h-[58px] flex items-center justify-center"
                    :style="{
                      color: device.status === 'normal' ? '#32AFFF' :
                             device.status === 'alarm' ? '#FF4D4F' :
@@ -218,7 +216,7 @@
         :key="device.id"
         @click="currentDeviceId = device.id"
         @dblclick="openInverterModal(device.id)"
-        class="flex h-[35px] text-[13px] border border-[#FFFFFF1A] bg-[#0A1A30] hover:border-[#3AB2FF6F] transition-colors cursor-pointer group"
+        class="flex h-[36px] text-[13px] border border-[#FFFFFF1A] bg-[#0A1A30] hover:border-[#3AB2FF6F] transition-colors cursor-pointer group"
         :class="{ 'border-[#3AB2FF6F] shadow-[0_0_6px_rgba(50,175,255,0.4)]': currentDeviceId === device.id }"
       >
         <div class="w-[180px] flex items-center pl-5 font-bold text-white shrink-0"
@@ -231,18 +229,18 @@
           {{ device.name }}
         </div>
         
-        <div class="flex-1 flex items-center px-6 gap-10 bg-[#0B2240] group-hover:bg-[#0E2544] transition-colors shrink-0">
-          <div class="flex items-center gap-2">
-            <span class="text-[#FFFFFF99]">有功功率(kW)</span>
-            <span class="font-bold text-white">{{ device.activePower }}</span>
+        <div class="w-[550px] flex items-center px-6 gap-0 bg-[#0B2240]/20 group-hover:bg-[#0E2544] transition-colors shrink-0">
+          <div class="flex-[1] flex flex-row items-center gap-2">
+            <span class="text-[#FFFFFF99] w-[90px]">有功功率(kW)</span>
+            <span class="font-bold text-white ml-1 text-right">{{ device.activePower }}</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-[#FFFFFF99]">输入功率(kW)</span>
-            <span class="font-bold text-white">{{ getMockInputPower(device.activePower) }}</span>
+          <div class="flex-[1] flex flex-row items-center gap-2">
+            <span class="text-[#FFFFFF99] w-[90px]">输入功率(kW)</span>
+            <span class="font-bold text-white m-1 text-right">{{ getMockInputPower(device.activePower) }}</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-[#FFFFFF99]">日发电量(kWh)</span>
-            <span class="font-bold text-white">{{ device.dailyPower }}</span>
+          <div class="flex-[1] flex flex-row items-center gap-2">
+            <span class="text-[#FFFFFF99] w-[90px]">日发电量(kWh)</span>
+            <span class="font-bold text-white ml-1 text-right">{{ device.dailyPower }}</span>
           </div>
         </div>
 
@@ -250,7 +248,7 @@
           <div 
             v-for="status in tableStatuses" 
             :key="status"
-            class="w-[110px] border-l border-[#FFFFFF1A] flex items-center justify-center text-[12px]"
+            class="w-[150px] mx-0.5 border-l border-[#FFFFFF1A] flex items-center justify-center text-[12px]"
             :class="getTableStatusStyle(device, status)"
           >
             {{ status }}
@@ -319,8 +317,6 @@ const openAreaModal = (id) => {
   showAreaModal.value = true
 }
 
-// ================== 新增代码区 ====================
-
 // 把区域数据映射为 Ant Design Select 的 options
 const areaOptions = computed(() => {
   return areaList.value.map(area => ({
@@ -344,19 +340,15 @@ const getTableStatusStyle = (device, statusName) => {
   const normalStyle = 'bg-[#52C41A] text-[#141414] font-medium'
   const stopStyle = 'bg-[#888888] text-white font-medium'
   const errorStyle = 'bg-[#FF4D4F] text-white font-medium'
-
   if (device.status === 'stop') return stopStyle
   
   // 模拟异常亮红逻辑 (仅为演示)
   if (device.status === 'alarm' && statusName === '通讯故障') return errorStyle
   if (device.status === 'warning' && statusName === '温度过高') return 'bg-[#E4B243] text-white font-medium'
-
   return normalStyle
 }
 
-// ==================================================
-
-// 设备样式 (原有逻辑完好保留)
+// 设备样式
 const getDeviceActiveBorderClass = (status) => {
   switch(status) {
     case 'normal': return 'border-[#3AB2FF6F]';
@@ -386,10 +378,10 @@ const getDeviceBgColor = (status) => {
 
 const getDeviceActiveShadow = (status) => {
   switch(status) {
-    case 'normal': return '0 0 8px rgba(50,175,255,0.6)';
-    case 'alarm': return '0 0 8px rgba(255,77,79,0.6)';
-    case 'warning': return '0 0 8px rgba(228,178,67,0.6)';
-    default: return '0 0 8px rgba(136,136,136,0.6)';
+    case 'normal': return '0 0 6px rgba(50,175,255,0.6)';
+    case 'alarm': return '0 0 6px rgba(255,77,79,0.6)';
+    case 'warning': return '0 0 6px rgba(228,178,67,0.6)';
+    default: return '0 0 6px rgba(136,136,136,0.6)';
   }
 }
 
@@ -413,6 +405,7 @@ const areaList = ref([
   { id: 16, name: '16#区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
 ])
 
+// 设备数据
 const deviceList = ref([
   { id: 1, name: 'N25-6', status: 'normal', activePower: '165.984', dailyPower: '314.12', installedCapacity: '76.8', equivalentHours: '2.32' },
   { id: 2, name: 'N20-12', status: 'normal', activePower: '285.835', dailyPower: '544.53', installedCapacity: '76.8', equivalentHours: '2.32' },
@@ -439,13 +432,16 @@ input[type="checkbox"] {
   -moz-appearance: none;
 }
 
-/* 覆盖 Ant Design 下拉框部分默认样式，避免在暗黑模式下边框太突兀 */
+/* 覆盖 Ant Design 下拉框样式，对齐设计稿 */
 :deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector) {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
   color: white !important;
+  height: 32px !important;
+  display: flex;
+  align-items: center;
 }
 :deep(.ant-select-arrow) {
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(255, 255, 255, 0.65) !important;
 }
 </style>
