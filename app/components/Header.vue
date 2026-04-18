@@ -148,7 +148,7 @@ const menuIconMap: Record<string, any> = {
   Monitor
 }
 
-// 定义抛出的事件，奶奶加了一个 toggle-sidebar 用来适配边侧栏控制
+// 定义抛出的事件，加了一个 toggle-sidebar 用来适配边侧栏控制
 const emit = defineEmits<{
   (e: 'menu-change', payload: SubMenuItem): void
   (e: 'search'): void

@@ -80,7 +80,6 @@ const activeBtn = ref(props.buttons[0] || '日');
 </script>
 
 <style scoped>
-/* 奶奶特意为你准备的滚动条美化，防止数据多了变丑 */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }

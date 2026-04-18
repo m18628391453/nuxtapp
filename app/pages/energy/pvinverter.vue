@@ -332,7 +332,7 @@ const areaOptions = computed(() => {
 // 列表模式的状态栏标题
 const tableStatuses = ['通讯故障', '残余电流异常', '系统接地异常', '绝缘阻抗低', '温度过高', '设备异常']
 
-// 模拟“输入功率”（因为原数据里没有，为了UI饱满奶奶给你算一个）
+// 模拟“输入功率”
 const getMockInputPower = (activePower) => {
   if (!activePower) return '0.000'
   const num = parseFloat(String(activePower).replace(/,/g, ''))
@@ -341,7 +341,6 @@ const getMockInputPower = (activePower) => {
 
 // 控制列表模式下的状态块样式
 const getTableStatusStyle = (device, statusName) => {
-  // 奶奶特意比对了你的设计图，正常情况是绿底黑字
   const normalStyle = 'bg-[#52C41A] text-[#141414] font-medium'
   const stopStyle = 'bg-[#888888] text-white font-medium'
   const errorStyle = 'bg-[#FF4D4F] text-white font-medium'

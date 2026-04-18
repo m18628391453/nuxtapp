@@ -546,7 +546,7 @@ const userStore = useUserStore()
 <template>
   <div>
     <p>用户名：{{ userStore.nickname }}</p>
-    <button @click="userStore.login({ nickname: 'Nuxt奶奶' })">
+    <button @click="userStore.login({ nickname: 'Nux' })">
       登录
     </button>
   </div>
