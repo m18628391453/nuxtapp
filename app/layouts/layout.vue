@@ -57,6 +57,7 @@ const initSystemData = async () => {
     // 从后端拿菜单
     // const res = await getMenuList()
     // if (res && res.code === 200 && Array.isArray(res.data)) {
+    //    menuList.value = res.data;
     // }
     menuList.value = [
       { 
@@ -100,7 +101,14 @@ const initSystemData = async () => {
           { name: '负荷分析', route: '/load/analyse', icon: 'ChartNoAxesCombined', index: 2 },
         ] 
       },
-      { name: '预测管理', route: '/forecast', icon: 'TrendingUp', index: 4, subMenu: [] },
+      { name: '预测管理', route: '/forecast', icon: 'TrendingUp', index: 4, 
+        subMenu: [
+          { name: '出力预测 - 光伏', route: '/forecast/pv', icon: 'GalleryThumbnails', index: 0 },
+          { name: '出力预测 - 风电', route: '/forecast/wind', icon: 'Boxes', index: 1 },
+          { name: '负荷预测', route: '/forecast/load', icon: 'ChartNoAxesCombined', index: 2 },
+          { name: '电价预测', route: '/forecast/price', icon: 'ChartNoAxesCombined', index: 2 },
+        ] 
+      },
       { name: '策略管理', route: '/strategy', icon: 'Sliders', index: 5, subMenu: [] },
       { name: '能碳管理', route: '/carbon', icon: 'Cloud', index: 6, subMenu: [] },
       { name: '电力交易', route: '/trade', icon: 'BarChart3', index: 7, subMenu: [] },

@@ -213,7 +213,6 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-// 如果有引入路径报错，请根据你实际的组件位置调整哈，奶奶这里照搬原页面的
 import InverterDetailModal from '@/components/energy/InverterDetailModal.vue'
 import AreaDetailModal from '@/components/energy/AreaDetailModal.vue'
 
