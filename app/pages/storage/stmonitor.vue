@@ -263,7 +263,6 @@ const openAreaModal = (id) => {
 const areaList = ref([
   { id: 1, name: '1#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 0 },
   { id: 2, name: '2#储能区域', dailyPower: '26,671', realTimePower: '2,880', installedCapacity: '1,700', warnCount: 21 },
-  // ... 其他如果需要的话自己加，奶奶先按原样带过来
 ])
 
 const areaOptions = computed(() => {
