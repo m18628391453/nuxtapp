@@ -331,7 +331,6 @@ onBeforeUnmount(() => {
 <style scoped>
 @import url('../../assets/css/antd.css');
 
-/* 修复搜索框背景与边框样式 */
 :deep(.custom-search .ant-input),
 :deep(.custom-search .ant-input-affix-wrapper) {
   background-color: transparent !important;
@@ -347,8 +346,6 @@ onBeforeUnmount(() => {
 :deep(.custom-search .ant-input::placeholder) {
   color: rgba(255, 255, 255, 0.3);
 }
-
-/* Tree 样式覆盖 */
 :deep(.custom-tree-wrapper .ant-tree) {
   background: transparent !important;
   color: rgba(255, 255, 255, 0.85);
@@ -364,26 +361,29 @@ onBeforeUnmount(() => {
   color: rgba(255, 255, 255, 0.45);
 }
 
-/* 通用滚动条定制 */
 .custom-tree-wrapper::-webkit-scrollbar,
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
+
 .custom-tree-wrapper::-webkit-scrollbar-thumb,
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
+
 .custom-tree-wrapper::-webkit-scrollbar-track,
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .metric-title {
   font-family: Source Han Sans CN;
   font-weight: 400;
   font-size: 13px;
   color: #FFFFFFCC;
 }
+
 .metric-values {
   font-family: Microsoft YaHei;
   font-weight: 400;
@@ -391,9 +391,11 @@ onBeforeUnmount(() => {
   color: #FFFFFF;
   line-height: 42px;
 }
+
 .img-content {
   height: 40%;
 }
+
 .monitor-button {
   background: rgba(7,59,109,0.5);
 }
