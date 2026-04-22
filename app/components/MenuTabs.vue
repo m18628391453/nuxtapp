@@ -577,11 +577,9 @@ onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   window.addEventListener('add-tab', handleAddTabEvent as EventListener)
 
-  // 监听容器大小变化动态显隐箭头
   if (scrollContainerRef.value) {
     resizeObserver = new ResizeObserver(() => checkScroll())
     resizeObserver.observe(scrollContainerRef.value)
-    // 初始化检查一次
     nextTick(() => checkScroll())
   }
 })

@@ -257,7 +257,6 @@ svg {
 button:hover svg {
     transform: scale(1.1);
 }
-/* 新增：保证收缩后Header内容贴左 */
 :deep(.reduce) {
     transition: margin-left 0.3s ease;
 }
