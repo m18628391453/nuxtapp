@@ -48,11 +48,11 @@ export default defineEventHandler(async (event) => {
           { name: 'BMS监视', route: '/storage/stmonitor', icon: 'ChartNoAxesCombined', index: 2 },
         ]
       },
-      { name: '负荷管理', route: '/load', icon: 'Activity', index: 3, 
+      { name: '负荷管理', route: '/powerload', icon: 'Activity', index: 3, 
         subMenu: [
-          { name: '负荷监测', route: '/load/monitor', icon: 'GalleryThumbnails', index: 0 },
-          { name: '负荷建模', route: '/load/model', icon: 'Boxes', index: 1 },
-          { name: '负荷分析', route: '/load/analyse', icon: 'ChartNoAxesCombined', index: 2 },
+          { name: '负荷监测', route: '/powerload/monitor', icon: 'GalleryThumbnails', index: 0 },
+          { name: '负荷建模', route: '/powerload/model', icon: 'Boxes', index: 1 },
+          { name: '负荷分析', route: '/powerload/analyse', icon: 'ChartNoAxesCombined', index: 2 },
         ] 
       },
       { name: '预测管理', route: '/forecast', icon: 'TrendingUp', index: 4, subMenu: [] },
