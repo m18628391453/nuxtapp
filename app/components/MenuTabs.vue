@@ -1,77 +1,58 @@
 <template>
-  <div
-    v-if="layoutMode === 'sidebar'"
-    class="h-9 border-b border-gray-800/80 flex items-center px-2 z-20 relative"
-    :style="layoutMode !== 'fullscreen' ? { 
-        backgroundImage: `url('/image/matrix.png')`, 
-        backgroundSize: '12%',  
-        backgroundPosition: 'center',
-        backgroundRepeat: 'repeat',
-        paddingTop: '2px',
-        opacity: 0.99 
-    }: null"
-    @dragover.prevent="handleContainerDragOver"
-    @drop="handleContainerDrop"
-  >
-    <div
-      v-if="homeTab"
+  <div v-if="layoutMode === 'sidebar'" class="h-9 border-b border-gray-800/80 flex items-center px-2 z-20 relative"
+    :style="layoutMode !== 'fullscreen' ? {
+      backgroundImage: `url('/image/matrix.png')`,
+      backgroundSize: '12%',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'repeat',
+      paddingTop: '2px',
+      opacity: 0.99
+    } : null" @dragover.prevent="handleContainerDragOver" @drop="handleContainerDrop">
+    <div v-if="homeTab"
       class="relative h-full flex items-center px-3 mx-0.5 cursor-pointer text-sm transition-all duration-200 group flex-shrink-0"
       :class="[
         activeTabRoute === homeTab.route
           ? 'tab-active text-white'
           : 'tab-inactive text-gray-200 hover:text-white'
-      ]"
-      @click="goToTab(homeTab.route)"
-      @contextmenu.prevent="openContextMenu($event, homeTab.route)"
-    >
+      ]" @click="goToTab(homeTab.route)" @contextmenu.prevent="openContextMenu($event, homeTab.route)">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
       </svg>
     </div>
 
-    <button
-      v-show="showArrows"
-      @click="scrollTabs('left')"
-      class="flex-shrink-0 w-6 h-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#32AFFF03] transition-colors z-10"
-    >
+    <button v-show="showArrows" @click="scrollTabs('left')" :disabled="isAtStart"
+      class="flex-shrink-0 w-6 h-full flex items-center justify-center transition-colors z-10" :class="[
+        isAtStart
+          ? 'text-gray-600 cursor-not-allowed opacity-50'
+          : 'text-gray-400 hover:text-white hover:bg-[#32AFFF09] cursor-pointer'
+      ]">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
 
-    <div
-      ref="scrollContainerRef"
-      class="flex-1 h-full overflow-x-auto flex items-center hide-scrollbar scroll-smooth"
-      @wheel.prevent="handleWheelScroll"
-    >
+    <div ref="scrollContainerRef" class="flex-1 h-full overflow-x-auto flex items-center hide-scrollbar scroll-smooth"
+      @wheel.prevent="handleWheelScroll" @scroll="handleScrollUpdate">
       <transition-group name="tab-list" tag="div" class="flex items-center h-full flex-nowrap w-max">
-        <div
-          v-for="tab in scrollableTabsList"
-          :key="tab.route"
+        <div v-for="tab in scrollableTabsList" :key="tab.route"
           class="relative h-full flex items-center px-3 mx-0.5 cursor-pointer text-sm transition-all duration-200 group flex-shrink-0"
           :class="[
             activeTabRoute === tab.route
               ? 'tab-active text-white'
               : 'tab-inactive text-gray-200 hover:text-white'
-          ]"
-          @click="goToTab(tab.route)"
-          @contextmenu.prevent="openContextMenu($event, tab.route)"
-          :draggable="true"
-          @dragstart="handleDragStart(tab, $event)"
-          @dragover.prevent="handleDragOver($event, tab)"
-          @drop="handleDrop(tab, $event)"
-          @dragend="handleDragEnd"
-        >
+          ]" @click="goToTab(tab.route)" @contextmenu.prevent="openContextMenu($event, tab.route)" :draggable="true"
+          @dragstart="handleDragStart(tab, $event)" @dragover.prevent="handleDragOver($event, tab)"
+          @drop="handleDrop(tab, $event)" @dragend="handleDragEnd">
           <span>{{ tab.name }}</span>
-          <button
-            @click.stop="tab.isFixed ? toggleFixed(tab.route) : closeTab(tab.route)"
+          <button @click.stop="tab.isFixed ? toggleFixed(tab.route) : closeTab(tab.route)"
             class="ml-2 -mr-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#32AFFF1F] hover:text-white transition-all duration-200 opacity-100 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
             :class="[
               activeTabRoute === tab.route ? 'opacity-100 pointer-events-auto' : ''
-            ]"
-          >
+            ]">
             <svg v-if="tab.isFixed" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
             <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -81,26 +62,24 @@
       </transition-group>
     </div>
 
-    <button
-      v-show="showArrows"
-      @click="scrollTabs('right')"
-      class="flex-shrink-0 w-6 h-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#32AFFF03] transition-colors z-10"
-    >
+    <button v-show="showArrows" @click="scrollTabs('right')" :disabled="isAtEnd"
+      class="flex-shrink-0 w-6 h-full flex items-center justify-center transition-colors z-10" :class="[
+        isAtEnd
+          ? 'text-gray-600 cursor-not-allowed opacity-50'
+          : 'text-gray-400 hover:text-white hover:bg-[#32AFFF09] cursor-pointer'
+      ]">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
     </button>
 
-    <div
-      v-if="contextMenu.show"
+    <div v-if="contextMenu.show"
       class="fixed z-50 w-40 bg-[#0F172A] border border-gray-700 rounded shadow-lg text-sm overflow-hidden"
-      :style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y - 15 }px` }"
-    >
+      :style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y - 15}px` }">
       <div
         class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
         :class="disableClose ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
-        @click="closeTab(contextMenu.route)"
-      >
+        @click="closeTab(contextMenu.route)">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -109,22 +88,23 @@
       <div
         class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
         :class="disableFixed ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
-        @click="toggleFixed(contextMenu.route)"
-      >
+        @click="toggleFixed(contextMenu.route)">
         <svg v-if="!isContextFixed" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
         </svg>
         <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
         </svg>
         {{ isContextFixed ? '取消固定' : '固定标签' }}
       </div>
       <div
         class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
-        @click="reloadTab(contextMenu.route)"
-      >
+        @click="reloadTab(contextMenu.route)">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
         重新加载
       </div>
@@ -132,8 +112,7 @@
       <div
         class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
         :class="disableCloseLeft ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
-        @click="closeLeftTabs(contextMenu.route)"
-      >
+        @click="closeLeftTabs(contextMenu.route)">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
         </svg>
@@ -142,8 +121,7 @@
       <div
         class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
         :class="disableCloseRight ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
-        @click="closeRightTabs(contextMenu.route)"
-      >
+        @click="closeRightTabs(contextMenu.route)">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
         </svg>
@@ -152,8 +130,7 @@
       <div
         class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
         :class="disableCloseOther ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
-        @click="closeOtherTabs(contextMenu.route)"
-      >
+        @click="closeOtherTabs(contextMenu.route)">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -161,11 +138,10 @@
       </div>
       <div
         class="px-3 py-2 hover:bg-[#0F3B6E] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
-        :class="disableCloseAll ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''"
-        @click="closeAllTabs"
-      >
+        :class="disableCloseAll ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''" @click="closeAllTabs">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
         </svg>
         关闭全部标签
       </div>
@@ -178,15 +154,13 @@ import { ref, computed, watch, onMounted, onUnmounted, inject, nextTick } from '
 import { useRouter, useRoute } from 'vue-router'
 import { getSessionCache, setSessionCache, SessionCacheKey } from '~/utils/cache'
 
-// 从父组件注入状态
 const layoutState = inject('layoutState') as any
-const layoutActions = inject('layoutActions') as any 
+const layoutActions = inject('layoutActions') as any
 const { forceRefreshPage } = layoutActions
 const { layoutMode, activeMenu, menuList } = layoutState
 const router = useRouter()
 const route = useRoute()
 
-// Tab 数据类型 - 新增固定字段
 interface TabItem {
   name: string
   route: string
@@ -194,30 +168,36 @@ interface TabItem {
   isFixed?: boolean
 }
 
-// Tab 列表
 const tabsList = ref<TabItem[]>([])
-// 当前激活的 Tab
 const activeTabRoute = ref<string>('')
-// 标记是否是初始化加载阶段
 const isInitializing = ref(true)
-// 右键菜单
-const contextMenu = ref({
-  show: false,
-  x: 0,
-  y: 0,
-  route: ''
-})
-
-// ==================== 拖拽相关状态 ====================
+const contextMenu = ref({ show: false, x: 0, y: 0, route: '' })
 const draggingTab = ref<TabItem | null>(null)
 
-// ==================== 滚动与箭头状态 ====================
+// ==================== 滚动状态管理 ====================
 const scrollContainerRef = ref<HTMLElement | null>(null)
 const showArrows = ref(false)
+const isAtStart = ref(true)
+const isAtEnd = ref(false)
 let resizeObserver: ResizeObserver | null = null
 
+const handleScrollUpdate = () => {
+  if (!scrollContainerRef.value) return
+  const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.value
+  isAtStart.value = scrollLeft <= 0
+  // 使用 2px 的容差判断是否触底
+  isAtEnd.value = scrollLeft + clientWidth >= scrollWidth - 2
+}
+
+const checkScroll = () => {
+  if (scrollContainerRef.value) {
+    const { scrollWidth, clientWidth } = scrollContainerRef.value
+    showArrows.value = scrollWidth > clientWidth + 1
+    handleScrollUpdate()
+  }
+}
+
 // ==================== 核心计算属性 ====================
-// 渲染用的整体Tab列表：Home永远在前 → 固定标签 → 非固定标签
 const renderTabsList = computed(() => {
   const home = tabsList.value.find(t => t.route === '/dashboard/overview' || t.route === '/')
   const fixedTabs = tabsList.value.filter(t => !(t.route === '/dashboard/overview' || t.route === '/') && t.isFixed)
@@ -277,36 +257,26 @@ const disableCloseRight = computed(() => {
 // 关闭其他禁用逻辑
 const disableCloseOther = computed(() => {
   if (isContextHome.value) return true
-  const closableTabs = tabsList.value.filter(t => 
-    !(t.route === '/dashboard/overview' || t.route === '/') && 
-    !t.isFixed && 
+  const closableTabs = tabsList.value.filter(t =>
+    !(t.route === '/dashboard/overview' || t.route === '/') &&
+    !t.isFixed &&
     t.route !== contextMenu.value.route
   )
   return closableTabs.length === 0
 })
 // 关闭全部禁用逻辑
 const disableCloseAll = computed(() => {
-  const closableTabs = tabsList.value.filter(t => 
-    !(t.route === '/dashboard/overview' || t.route === '/') && 
+  const closableTabs = tabsList.value.filter(t =>
+    !(t.route === '/dashboard/overview' || t.route === '/') &&
     !t.isFixed
   )
   return closableTabs.length === 0
 })
 
-// ==================== 滚动与箭头逻辑 ====================
-// 检查是否需要显示箭头
-const checkScroll = () => {
-  if (scrollContainerRef.value) {
-    const { scrollWidth, clientWidth } = scrollContainerRef.value
-    // 添加极小容差防止边界闪烁
-    showArrows.value = scrollWidth > clientWidth + 1
-  }
-}
-
-// 点击箭头进行固定尺寸平滑滚动
+// ==================== 方法逻辑 ====================
 const scrollTabs = (direction: 'left' | 'right') => {
   if (!scrollContainerRef.value) return
-  const scrollAmount = 300 // 固定尺寸的滚动跨度
+  const scrollAmount = 300
   const currentScroll = scrollContainerRef.value.scrollLeft
   scrollContainerRef.value.scrollTo({
     left: direction === 'left' ? currentScroll - scrollAmount : currentScroll + scrollAmount,
@@ -314,7 +284,6 @@ const scrollTabs = (direction: 'left' | 'right') => {
   })
 }
 
-// 鼠标滚轮水平滚动（增强体验）
 const handleWheelScroll = (e: WheelEvent) => {
   if (!scrollContainerRef.value) return
   scrollContainerRef.value.scrollLeft += e.deltaY > 0 ? 150 : -150
@@ -339,7 +308,6 @@ const scrollToActiveTab = () => {
   })
 }
 
-// ==================== 原有方法保留 ====================
 // 保存 Tabs 到 sessionStorage
 const saveTabsToSession = () => {
   setSessionCache(SessionCacheKey.TABS_LIST, tabsList.value)
@@ -349,49 +317,49 @@ const saveTabsToSession = () => {
 const loadTabsFromSession = () => {
   const savedTabs = getSessionCache<TabItem[]>(SessionCacheKey.TABS_LIST, [])
   const savedActiveRoute = getSessionCache<string>(SessionCacheKey.ACTIVE_TAB_ROUTE, '')
-  
   if (savedTabs.length > 0) {
     tabsList.value = savedTabs.map(t => ({ isFixed: false, ...t }))
     activeTabRoute.value = savedActiveRoute
   } else {
     const defaultMenu = menuList.value[0]
-    const defaultTab = defaultMenu.subMenu && defaultMenu.subMenu.length > 0 
+    const defaultTab = defaultMenu.subMenu && defaultMenu.subMenu.length > 0
       ? { name: defaultMenu.subMenu[0].name, route: defaultMenu.subMenu[0].route, index: defaultMenu.subMenu[0].index, isFixed: false }
       : { name: defaultMenu.name, route: defaultMenu.route, index: defaultMenu.index, isFixed: false }
     tabsList.value = [defaultTab]
     activeTabRoute.value = defaultTab.route
   }
 }
-// 添加 Tab
+
 const addTab = (tab: TabItem) => {
-  const existingTab = tabsList.value.find(t => t.route === tab.route)
-  if (!existingTab) {
+  if (!tabsList.value.find(t => t.route === tab.route)) {
     tabsList.value.push({ ...tab, isFixed: false })
   }
   activeTabRoute.value = tab.route
   saveTabsToSession()
 }
+
 // 移除 Tab
 const removeTab = (route: string) => {
   const index = tabsList.value.findIndex(t => t.route === route)
   if (index === -1) return
-  
+
   if (route === '/dashboard/overview' || route === '/') return
   const targetTab = tabsList.value[index]
   if (targetTab.isFixed) return
-  
+
   const isRemovingActive = activeTabRoute.value === route
   tabsList.value.splice(index, 1)
-  
+
   if (isRemovingActive && tabsList.value.length > 0) {
     const newIndex = index < tabsList.value.length ? index : tabsList.value.length - 1
     const newActiveRoute = tabsList.value[newIndex].route
     activeTabRoute.value = newActiveRoute
     router.push(newActiveRoute)
   }
-  
+
   saveTabsToSession()
 }
+
 // 关闭指定Tab
 const closeTab = (route: string) => {
   removeTab(route)
@@ -487,7 +455,7 @@ const closeRightTabs = (route: string) => {
 // ==================== 拖拽相关方法 ====================
 const handleDragStart = (tab: TabItem, e: DragEvent) => {
   draggingTab.value = tab
-  ;(e.target as HTMLElement).style.opacity = '0.5'
+    ; (e.target as HTMLElement).style.opacity = '0.5'
   if (e.dataTransfer) {
     e.dataTransfer.effectAllowed = 'move'
   }
@@ -518,7 +486,7 @@ const handleDrop = (targetTab: TabItem, e: DragEvent) => {
 
   const [movedTab] = tabsList.value.splice(dragIndex, 1)
   const adjustedTargetIndex = dragIndex < targetIndex ? targetIndex - 1 : targetIndex
-  
+
   let insertIndex: number
   if (mouseX < targetMiddleX) {
     insertIndex = adjustedTargetIndex
@@ -544,7 +512,7 @@ const handleContainerDrop = (e: DragEvent) => {
   const [movedTab] = tabsList.value.splice(dragIndex, 1)
   const currentHomeTab = tabsList.value.find(t => t.route === '/dashboard/overview' || t.route === '/')
   const currentFixedTabs = tabsList.value.filter(t => !(t.route === '/dashboard/overview' || t.route === '/') && t.isFixed)
-  
+
   let insertIndex: number
   if (movedTab.isFixed) {
     insertIndex = (currentHomeTab ? 1 : 0) + currentFixedTabs.length
@@ -556,7 +524,7 @@ const handleContainerDrop = (e: DragEvent) => {
 }
 
 const handleDragEnd = (e: DragEvent) => {
-  ;(e.target as HTMLElement).style.opacity = '1'
+  ; (e.target as HTMLElement).style.opacity = '1'
   draggingTab.value = null
 }
 
@@ -608,7 +576,7 @@ onMounted(() => {
   loadTabsFromSession()
   document.addEventListener('click', handleClickOutside)
   window.addEventListener('add-tab', handleAddTabEvent as EventListener)
-  
+
   // 监听容器大小变化动态显隐箭头
   if (scrollContainerRef.value) {
     resizeObserver = new ResizeObserver(() => checkScroll())
@@ -626,34 +594,37 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 隐藏滚动条但保留滚动功能 */
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
+
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
 }
 
 .tab-inactive {
   border-radius: 4px;
   position: relative;
 }
+
 .tab-inactive:hover {
   background: #32AFFF1F;
   margin-bottom: 2px;
   margin-top: 1px;
   height: calc(100% - 3px);
 }
-.tab-inactive + .tab-inactive::before {
+
+.tab-inactive+.tab-inactive::before {
   content: '';
   position: absolute;
   left: -2.5px;
   top: 20%;
   height: 60%;
   width: 1px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
+
 .tab-active {
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
@@ -664,6 +635,7 @@ onUnmounted(() => {
   padding-bottom: 2px;
   height: calc(100% - 1px);
 }
+
 .tab-active::before {
   content: '';
   position: absolute;
@@ -672,8 +644,8 @@ onUnmounted(() => {
   width: 8px;
   height: 8px;
   background: radial-gradient(circle at top left, transparent 70%, #32AFFF1F 50%);
-  z-index: 1;
 }
+
 .tab-active::after {
   content: '';
   position: absolute;
@@ -682,19 +654,12 @@ onUnmounted(() => {
   width: 8px;
   height: 8px;
   background: radial-gradient(circle at top right, transparent 70%, #32AFFF1F 50%);
-  z-index: 1;
 }
-.tab-active > span {
-  position: relative;
-  z-index: 2;
-}
-.tab-active::before,
-.tab-active::after {
-  pointer-events: none;
-}
+
 div[draggable="true"] {
   cursor: grab;
 }
+
 div[draggable="true"]:active {
   cursor: grabbing;
 }
