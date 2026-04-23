@@ -7,11 +7,18 @@ export default defineNuxtConfig({
     port: 4022,
     host: '0.0.0.0'
   },
+  runtimeConfig: {
+    apiSecret: '',
+    public: {
+      baseURL: 'http://localhost:4022/api'
+    }
+  },
   devtools: { enabled: false }, 
   compatibilityDate: '2025-07-15',
   modules: [
     '@nuxtjs/tailwindcss',
-    '@ant-design-vue/nuxt'
+    '@ant-design-vue/nuxt',
+    '@vercel/analytics'
   ],
   css: [
     '~/assets/css/global.css',
@@ -29,17 +36,11 @@ export default defineNuxtConfig({
       ]
     }
   },
-  runtimeConfig: {
-    apiSecret: '',
-    public: {
-      baseURL: 'http://localhost:4022/api'
-    }
-  },
   vite: {
     css: {
       preprocessorOptions: {
         less: {
-          javascriptEnabled: true, // 启用 Less JS 特性（避免解析报错）
+          javascriptEnabled: true,
         }
       }
     },
@@ -66,6 +67,7 @@ export default defineNuxtConfig({
   // 配置根路径对应页面
   hooks: {
     'pages:extend': (pages) => {
+      // 配置默认首页
       const overviewPage = pages.find(p => p.name === 'dashboard-overview')
       if (overviewPage) {
         pages.unshift({
