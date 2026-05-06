@@ -62,7 +62,6 @@ const chartOption = computed(() => {
       backgroundStyle: { color: '#0D1B35', borderRadius: 20 },
       itemStyle: {
         borderRadius: 20,
-        // 使用传入的 barColor 进行渐变渲染
         color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
           { offset: 0, color: props.barColor[0] },
           { offset: 0.5, color: props.barColor[1] },
