@@ -1,9 +1,7 @@
 <template>
   <div class="load-dashboard w-full h-screen bg-transparent text-white font-sans overflow-hidden flex flex-col relative z-0">
-    <!-- 模拟底部 HUD 科技雷达背景层 -->
     <div class="absolute inset-0 z-0 pointer-events-none hud-bg"></div>
     <div class="relative z-10 flex flex-col h-full">
-      <!-- 顶部天气栏 居右 -->
       <div class="weather-bar flex justify-end items-center gap-6 px-6 py-3 text-sm shrink-0">
         <div class="flex items-center gap-2 text-[14px]">
           <span>今日：☁️</span>
@@ -21,9 +19,7 @@
           最近7天天气预警：4月15日橙色高温预警38℃ 、4月20日大风蓝色预警7级
         </div>
       </div>
-      <!-- 顶部指标卡片区域 (保持原样) -->
       <div class="flex gap-2 h-[90px] shrink-0 w-full mb-3 px-6">
-        <!-- 当前总负荷 -->
         <div class="flex-1 flex items-center gap-4 px-4 relative overflow-hidden" style="background: linear-gradient(0deg, #428EF4 0%, #3859E8 100%); border-radius: 2px;">
           <img src="/image/loadmonitor1.png" alt="当前总负荷" class="w-10 h-10 z-10 -ml-1" onerror="this.style.display='none'" />
           <div class="flex flex-col justify-center z-10">
@@ -32,7 +28,6 @@
             <span class="text-[11px]"><span class="text-[#FF4D4F]">↑1.6%</span> <span class="text-[#FFFFFF80]">vs 预测</span></span>
           </div>
         </div>
-        <!-- 今日用电量 -->
         <div class="flex-1 flex items-center gap-4 px-4 relative overflow-hidden" style="background: linear-gradient(180deg, #6C6AFF 0%, #4D27D5 100%); border-radius: 2px;">
           <img src="/image/loadmonitor3.png" alt="今日用电量" class="w-10 h-10 z-10 -ml-1" onerror="this.style.display='none'" />
           <div class="flex flex-col justify-center z-10">
@@ -41,7 +36,6 @@
             <span class="text-[11px]"><span class="text-[#52C41A]">↓1.4%</span> <span class="text-[#FFFFFF80]">vs 昨日</span></span>
           </div>
         </div>
-        <!-- 关键负荷 -->
         <div class="flex-1 flex items-center gap-4 px-4 relative overflow-hidden" style="background: linear-gradient(180deg, #65C7F8 0%, #4491E2 100%); border-radius: 2px;">
           <img src="/image/loadmonitor2.png" alt="关键负荷" class="w-10 h-10 z-10 -ml-1" onerror="this.style.display='none'" />
           <div class="flex flex-col justify-center z-10">
@@ -50,7 +44,6 @@
             <span class="text-[11px] text-[#FFFFFF80]">97%</span>
           </div>
         </div>
-        <!-- 可调负荷 -->
         <div class="flex-1 flex items-center gap-4 px-4 relative overflow-hidden" style="background: linear-gradient(0deg, #52A9DE 0%, #6CDDB1 100%); border-radius: 2px;">
           <img src="/image/loadmonitor5.png" alt="可调负荷" class="w-10 h-10 z-10 -ml-1" onerror="this.style.display='none'" />
           <div class="flex flex-col justify-center z-10">
@@ -59,7 +52,6 @@
             <span class="text-[11px] text-[#FFFFFF80]">97%</span>
           </div>
         </div>
-        <!-- 可断负荷 -->
         <div class="flex-1 flex items-center gap-4 px-4 relative overflow-hidden" style="background: linear-gradient(0deg, #EF898B 0%, #F2CA69 100%); border-radius: 2px;">
           <img src="/image/loadmonitor5.png" alt="可断负荷" class="w-10 h-10 z-10 -ml-1" onerror="this.style.display='none'" />
           <div class="flex flex-col justify-center z-10">
@@ -68,7 +60,6 @@
             <span class="text-[11px] text-[#FFFFFF80]">89%</span>
           </div>
         </div>
-        <!-- 今日负荷高点 -->
         <div class="flex-1 flex items-center gap-4 px-4 relative overflow-hidden" style="background: linear-gradient(180deg, #5B64FF 0%, #353DD4 100%); border-radius: 2px;">
           <img src="/image/forecastload1.png" alt="今日负荷高点" class="w-10 h-10 z-10 -ml-1" onerror="this.style.display='none'" />
           <div class="flex flex-col justify-center z-10">
@@ -78,19 +69,13 @@
           </div>
         </div>
       </div>
-      <!-- 下部主内容区 统一半透明背景框，控制在可视区域内无滚动条 -->
       <div class="flex-1 px-6 pb-6 w-full overflow-hidden flex flex-col min-h-0">  
-        <!-- 统一半透明背景容器 -->
         <div class="flex-1 bg-transparent rounded border border-[#FFFFFF1F] pt-3 pb-4 flex flex-col min-h-0">
-          <!-- 负荷预测大标题 占整行 -->
           <div class="metric-main-title px-4 pb-3 border-b border-[#FFFFFF1F] mb-4 shrink-0">
             负荷预测
           </div>
-          <!-- 左右布局主容器 -->
           <div class="flex-1 flex gap-4 min-h-0 px-4">
-            <!-- 左侧区域：负荷预测指标 + 预测精度折线图 -->
             <div class="w-1/3 flex flex-col min-h-0">
-              <!-- 预测明日用电量 左右布局 -->
               <div class="flex items-center gap-5 mb-4 shrink-0 pl-2 mt-3 mb-1">
                 <img src="/image/forecastday.png" alt="预测" class="w-16 h-16" />
                 <div class="flex items-center gap-2">
@@ -99,7 +84,6 @@
                 </div>
               </div>
               
-              <!-- 今日/明日负荷峰值卡片 -->
               <div class="flex gap-3 mb-4 shrink-0">
                 <div class="flex-1 round p-3" style="background: linear-gradient(90deg, rgba(50,169,255,0.06) 37%, rgba(0,0,0,0) 100%);">
                   <div class="text-xs text-gray-300 mb-1"><span class="middle-metric-text text-[14px] !text-[#FFFFFF]">今日负荷峰值(kW)</span></div>
@@ -113,12 +97,10 @@
                 </div>
               </div>
               
-              <!-- 预测精度标题 -->
               <div class="middle-metric-title mb-3.5 shrink-0">
                 预测精度
               </div>
               
-              <!-- 预测精度指标卡片 图标已替换 -->
               <div class="flex gap-3 mb-4 shrink-0">
                 <div class="flex-1 bg-blue-900/10 rounded flex items-center gap-3 p-3">
                   <img src="/image/wifi.png" alt="NRMSE" class="w-8 h-7" onerror="this.style.display='none'" />
@@ -136,30 +118,36 @@
                 </div>
               </div>
               
-              <!-- 预测精度折线图容器 -->
               <div class="flex-1 min-h-0 bg-transparent rounded p-2 overflow-hidden">
                 <div ref="accuracyChartRef" class="w-full h-full"></div>
               </div>
             </div>
             
-            <!-- 右侧区域：发电预测曲线 -->
             <div class="flex-1 flex flex-col min-h-0">
-              <!-- 发电预测曲线标题和控制栏 -->
               <div class="flex justify-between items-center pb-2 mb-4 shrink-0">
                 <div class="forecast-line-title">发电预测曲线</div>
+                
                 <div class="flex items-center gap-3">
-                  <select class="bg-[#0A1121]/70 border border-blue-500/30 rounded px-3 py-1 text-sm text-gray-300">
-                    <option>级别：请选择</option>
-                  </select>
-                  <input type="date" class="bg-[#0A1121]/70 border border-blue-500/30 rounded px-3 py-1 text-sm text-gray-300" value="2024-04-15" />
+                  <span class="text-sm text-gray-300">级别：</span>
+                  <a-select v-model:value="levelSelect" class="custom-dark-select min-w-[130px] w-[130px]"
+                    :getPopupContainer="(triggerNode) => triggerNode.parentNode">
+                    <a-select-option value="all">请选择</a-select-option>
+                  </a-select>
+                  
+                  <a-date-picker v-model:value="forecastDate" valueFormat="YYYY-MM-DD" class="custom-dark-datepicker min-w-[130px] w-[130px]"
+                    placeholder="请选择日期" dropdownClassName="custom-dark-datepicker-dropdown"
+                    :getPopupContainer="(triggerNode) => triggerNode.parentNode" />
+                    
                   <div class="flex items-center gap-2">
                     <span class="text-sm text-gray-300">对比：</span>
-                    <input type="date" class="bg-[#0A1121]/70 border border-blue-500/30 rounded px-3 py-1 text-sm text-gray-300" value="2024-04-15" />
-                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">添加</button>
+                    <a-date-picker v-model:value="compareDate" valueFormat="YYYY-MM-DD" class="custom-dark-datepicker min-w-[130px] w-[130px]"
+                      placeholder="请选择日期" dropdownClassName="custom-dark-datepicker-dropdown"
+                      :getPopupContainer="(triggerNode) => triggerNode.parentNode" />
+                      
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">添加</button>
                   </div>
                 </div>
-              </div>
-              <!-- 发电预测折线图容器 -->
+                </div>
               <div class="flex-1 min-h-0 bg-transparent rounded p-2 overflow-hidden">
                 <div ref="generationChartRef" class="w-full h-full"></div>
               </div>
@@ -182,6 +170,15 @@ const generationChartRef = ref(null)
 // 图表实例
 let accuracyChart = null
 let generationChart = null
+
+// 当前日期
+const todayStr = new Date().toLocaleDateString('en-CA')
+
+// 下拉框和时间选择绑定的变量：
+const levelSelect = ref('all')
+const forecastDate = ref(todayStr)
+const compareDate = ref(todayStr)
+
 // 数据模拟
 const accuracyData = {
   times: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'],
@@ -380,6 +377,7 @@ onUnmounted(() => {
 })
 </script>
 <style scoped>
+@import url(@/assets/css/antd.css);
 
 .hud-bg {
   background-image: 
@@ -430,30 +428,5 @@ onUnmounted(() => {
   font-weight: 400;
   font-size: 14px;
   color: #32AFFF;
-}
-
-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  padding-right: 1.5rem;
-  background-image: transparent;
-  background-repeat: no-repeat;
-  background-position: right 0.3rem center;
-  background-size: 12px;
-}
-
-input[type="date"] {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: transparent;
-  background-repeat: no-repeat;
-  background-position: right 0.3rem center;
-  background-size: 12px;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) brightness(0.7);
 }
 </style>
