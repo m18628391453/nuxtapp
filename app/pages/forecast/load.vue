@@ -85,12 +85,12 @@
               </div>
               
               <div class="flex gap-3 mb-4 shrink-0">
-                <div class="flex-1 round p-3" style="background: linear-gradient(90deg, rgba(50,169,255,0.06) 37%, rgba(0,0,0,0) 100%);">
+                <div class="flex-1 round p-3" style="background: linear-gradient(90deg, rgba(50,169,255,0.1) 37%, rgba(0,0,0,0) 100%);">
                   <div class="text-xs text-gray-300 mb-1"><span class="middle-metric-text text-[14px] !text-[#FFFFFF]">今日负荷峰值(kW)</span></div>
                   <div class="text-xs text-gray-300 mb-1"><span class="middle-metric-text text-[14px]">最高</span><span class="text-blue-400 ml-1 text-[15px]">821.20</span></div>
                   <div class="text-xs text-gray-300"><span class="middle-metric-text text-[14px]">预计明日 15:05</span></div>
                 </div>
-                <div class="flex-1 round p-3" style="background: linear-gradient(90deg, rgba(50,169,255,0.06) 37%, rgba(0,0,0,0) 100%);">
+                <div class="flex-1 round p-3" style="background: linear-gradient(90deg, rgba(50,169,255,0.1) 37%, rgba(0,0,0,0) 100%);">
                   <div class="text-xs text-gray-300 mb-1"><span class="middle-metric-text text-[14px] !text-[#FFFFFF]">明日负荷峰值(kW)</span></div>
                   <div class="text-xs text-gray-300 mb-1"><span class="middle-metric-text text-[14px]">最高</span><span class="text-blue-400 ml-1 text-[15px]">821.20</span></div>
                   <div class="text-xs text-gray-300"><span class="middle-metric-text text-[14px]">预计明日 15:05</span></div>
