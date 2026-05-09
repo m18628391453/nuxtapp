@@ -129,18 +129,18 @@
                 
                 <div class="flex items-center gap-3">
                   <span class="text-sm text-gray-300">级别：</span>
-                  <a-select v-model:value="levelSelect" class="custom-dark-select min-w-[130px] w-[130px]"
+                  <a-select v-model:value="levelSelect" class="custom-dark-select min-w-[150px] w-[150px]"
                     :getPopupContainer="(triggerNode) => triggerNode.parentNode">
                     <a-select-option value="all">请选择</a-select-option>
                   </a-select>
                   
-                  <a-date-picker v-model:value="forecastDate" valueFormat="YYYY-MM-DD" class="custom-dark-datepicker min-w-[130px] w-[130px]"
+                  <a-date-picker v-model:value="forecastDate" valueFormat="YYYY-MM-DD" class="custom-dark-datepicker min-w-[150px] w-[150px]"
                     placeholder="请选择日期" dropdownClassName="custom-dark-datepicker-dropdown"
                     :getPopupContainer="(triggerNode) => triggerNode.parentNode" />
                     
                   <div class="flex items-center gap-2">
                     <span class="text-sm text-gray-300">对比：</span>
-                    <a-date-picker v-model:value="compareDate" valueFormat="YYYY-MM-DD" class="custom-dark-datepicker min-w-[130px] w-[130px]"
+                    <a-date-picker v-model:value="compareDate" valueFormat="YYYY-MM-DD" class="custom-dark-datepicker min-w-[150px] w-[150px]"
                       placeholder="请选择日期" dropdownClassName="custom-dark-datepicker-dropdown"
                       :getPopupContainer="(triggerNode) => triggerNode.parentNode" />
                       
