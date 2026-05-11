@@ -270,8 +270,9 @@ const initComparisonChart = () => {
   const option = {
     tooltip: {
       trigger: 'axis',
+      axisPointer: { type: 'shadow' },
       backgroundColor: 'rgba(5, 13, 29, 0.9)',
-      borderColor: '#3B82F6',
+      borderColor: '#1A2A4A',
       textStyle: { color: '#fff', fontSize: 12 }
     },
     grid: {
