@@ -95,32 +95,36 @@
           </div>
           
           <div class="flex gap-3 flex-1 min-h-0 p-1 px-2.5 pb-2">
-             <div class="weather-panel flex-[2] relative overflow-hidden flex flex-col min-h-0">
+             <div class="weather-panel flex-[2] relative overflow-hidden flex flex-col min-h-0 mt-1">
                 <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/image/factory.jpg'); filter: brightness(0.75);"></div>
                 <div class="relative z-10 flex flex-col h-full px-5 py-4 w-full">
-                  <div class="flex items-start justify-between flex-shrink-0 w-full mb-2">
+                  <!-- 调整后的天气头部布局 - 星期在右侧，气候指标在左侧 -->
+                  <div class="flex items-start justify-between flex-shrink-0 w-full mb-2 mt-2">
                     <div class="flex items-center gap-4">
                       <span class="text-6xl">⛅</span>
                       <div class="flex flex-col">
-                        <div class="text-4xl font-medium flex items-end gap-2">
+                        <div class="text-4xl font-medium">
                            <span>32 ℃</span>
-                           <span class="text-sm font-normal opacity-80 mb-1 ml-2">星期一</span>
                         </div>
                         <div class="text-sm opacity-80 mt-1">多云 26-32℃</div>
                       </div>
+                      <div class="flex flex-col gap-1.5 text-sm mt-2">
+                        <div>降水概率: <span class="text-white">20%</span></div>
+                        <div>湿度: <span class="text-white">60%</span></div>
+                        <div>风速: <span class="text-white">4米/秒</span></div>
+                      </div>
                     </div>
-                    <div class="flex flex-col gap-1.5 text-sm text-right mt-1">
-                      <div>降水概率: <span class="text-white">20%</span></div>
-                      <div>湿度: <span class="text-white">60%</span></div>
-                      <div>风速: <span class="text-white">4米/秒</span></div>
+                    <div class="text-sm font-normal opacity-80 mt-1">
+                      星期一
                     </div>
                   </div>
         
-                  <div class="flex gap-4 text-sm mt-1 mb-1 flex-shrink-0 text-white/80">
+                  <div class="flex gap-3 text-sm mt-2 mb-2 flex-shrink-0 text-white/80">
                     <span class="bg-blue-500 text-white px-3 py-1 rounded cursor-pointer">温度</span>
                     <span class="cursor-pointer py-1">降水概率</span>
                     <span class="cursor-pointer py-1">风力</span>
                   </div>
+
                   <div ref="tempChartRef" class="flex-1 min-h-0 w-full" style="filter: brightness(1.05);"></div>
         
                   <div class="seven-day-forecast flex gap-1.5 flex-shrink-0 mt-2 h-[85px]">
@@ -135,9 +139,9 @@
              </div>
              
              <!-- 历史相似日模块 - 已优化表格滚动 -->
-             <div class="similar-days-module flex-[1] flex flex-col bg-[#FFFFFF09] p-4 flex flex-col min-h-0 overflow-hidden">
+             <div class="similar-days-module flex-[1] flex flex-col p-4 flex flex-col min-h-0 overflow-hidden">
                 <!-- 标题栏 - 统一高度和下划线位置 -->
-                <div class="pb-2 flex-shrink-0 h-[30px] flex items-center">
+                <div class="pb-2 flex-shrink-0 h-[30px] flex items-center pl-2">
                     <h2 class="text-[14px] text-[#32AFFF] font-normal">历史相似日</h2>
                 </div>
                 
@@ -169,48 +173,60 @@
         </div>
       </div>
       
-      <!-- 下部区域保持不变 -->
-      <div class="lower-section flex gap-3 flex-[1] min-h-0 overflow-hidden max-h-[50%] h-[50%] mt-2">
-        <!-- 原有下部代码不变 -->
-        <div class="left-panel flex-1 bg-[#FFFFFF09] p-4 flex flex-col gap-4 overflow-hidden rounded-lg">
-          <h2 class="text-[14px] font-normal border-b border-[#FFFFFF1F] pb-2 flex-shrink-0 text-white">发电预测</h2>
-          <div class="accuracy-metrics flex-shrink-0">
-            <h3 class="text-sm font-normal text-blue-400 mb-3">预测精度</h3>
-            <div class="grid grid-cols-2 gap-3 mb-3">
-              <div class="metric-small bg-[#0F172A] rounded-lg p-3">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="inline-block w-3 h-3 bg-blue-500 rounded-sm"></span>
-                  <span class="text-xs opacity-80">今日光伏NRMSE</span>
+      <!-- 下部区域 - 调整为整体面板布局 -->
+      <div class="lower-section flex flex-col gap-5 flex-[1] min-h-0 overflow-hidden max-h-[50%] h-[50%] mt-1 bg-[#FFFFFF09]">
+        <!-- 发电预测标题 - 占一整行 -->
+        <div class="lower-title flex-shrink-0 pt-4 pb-3 px-4 border-b border-[#FFFFFF1F] pb-2">
+          <h2 class="text-[14px] font-normal text-white">发电预测</h2>
+        </div>
+        
+        <!-- 左中右三个面板容器 -->
+        <div class="lower-content flex gap-8 flex-1 min-h-0 px-5">
+          <!-- 左侧面板 - 预测精度 -->
+          <div class="left-panel flex-1 flex flex-col gap-4 overflow-hidden">
+            <div class="accuracy-metrics flex-shrink-0">
+              <h3 class="sub-title">预测精度</h3>
+              <div class="flex gap-3 mt-3 mb-4 shrink-0">
+                <div class="flex-1 bg-blue-900/10 rounded flex items-center gap-3 p-3">
+                  <img src="/image/wifi.png" alt="NRMSE" class="w-8 h-7" onerror="this.style.display='none'" />
+                  <div class="flex flex-col">
+                    <span class="text-[12px] text-gray-300">今日光伏NRMSE</span>
+                    <span class="text-[20px] font-normal text-blue-400">4.5%</span>
+                  </div>
                 </div>
-                <div class="text-xl font-bold text-blue-400 mt-2">4.5%</div>
+                <div class="flex-1 bg-green-900/10 rounded flex items-center gap-3 p-3">
+                  <img src="/image/electricity.png" alt="MAPE" class="w-6 h-8" onerror="this.style.display='none'" />
+                  <div class="flex flex-col">
+                    <span class="text-[12px] text-gray-300">今日光伏MAPE</span>
+                    <span class="text-[20px] font-normal text-green-400">5.5%</span>
+                  </div>
+                </div>
               </div>
-              <div class="metric-small bg-[#0F172A] rounded-lg p-3">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="inline-block w-3 h-3 bg-green-500 rounded-sm"></span>
-                  <span class="text-xs opacity-80">今日光伏MAPE</span>
-                </div>
-                <div class="text-xl font-bold text-green-400 mt-2">5.5%</div>
+
+            </div>
+            <div ref="accuracyChartRef" class="flex-1 min-h-0"></div>
+          </div>
+          
+          <!-- 中间面板 - 光伏发电预测曲线 -->
+          <div class="middle-panel flex-[2] flex flex-col gap-4 overflow-hidden">
+            <div class="flex items-center justify-between pb-2 flex-shrink-0">
+              <h2 class="sub-title">光伏发电预测曲线</h2>
+              <div class="flex gap-4 text-xs">
+                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> 中期</div>
+                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> 短期</div>
+                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-yellow-400"></span> 中短期</div>
+                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-400"></span> 超短期</div>
+                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-400"></span> 实际发电</div>
               </div>
             </div>
+            <div ref="pvForecastChartRef" class="flex-1 min-h-0"></div>
           </div>
-          <div ref="accuracyChartRef" class="flex-1 min-h-0"></div>
-        </div>
-        <div class="middle-panel flex-[2] bg-[#FFFFFF09] p-4 flex flex-col gap-4 overflow-hidden rounded-lg">
-          <div class="flex items-center justify-between border-b border-[#FFFFFF1F] pb-2 flex-shrink-0">
-            <h2 class="text-[14px] font-normal text-white">光伏发电预测曲线</h2>
-            <div class="flex gap-4 text-xs">
-              <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> 中期</div>
-              <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> 短期</div>
-              <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-yellow-400"></span> 中短期</div>
-              <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-400"></span> 超短期</div>
-              <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-400"></span> 实际发电</div>
-            </div>
+          
+          <!-- 右侧面板 - 相似日发电曲线 -->
+          <div class="right-panel flex-1 flex flex-col gap-4 overflow-hidden">
+            <h2 class="sub-title pb-2 flex-shrink-0">相似日发电曲线</h2>
+            <div ref="similarChartRef" class="flex-1 min-h-0"></div>
           </div>
-          <div ref="pvForecastChartRef" class="flex-1 min-h-0"></div>
-        </div>
-        <div class="right-panel flex-1 bg-[#FFFFFF09] p-4 flex flex-col gap-4 overflow-hidden rounded-lg">
-          <h2 class="text-[14px] font-normal border-b border-[#FFFFFF1F] pb-2 text-white flex-shrink-0">相似日发电曲线</h2>
-          <div ref="similarChartRef" class="flex-1 min-h-0"></div>
         </div>
       </div>
     </div>
@@ -289,8 +305,8 @@ const pvForecastData = {
 
 // 相似日发电数据
 const similarPowerData = [250, 280, 260, 270, 290, 270, 260, 280, 250, 240, 230, 220]
-
 // ======================================================================
+
 /**
  * 初始化温度曲线图表
  */
@@ -300,9 +316,10 @@ const initTempChart = () => {
   const option = {
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(15, 23, 42, 0.95)',
-      borderColor: '#FBBF24',
-      textStyle: { color: '#fff' }
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(5, 13, 29, 0.9)',
+      borderColor: '#1A2A4A',
+      textStyle: { color: '#fff', fontSize: 12 }
     },
     grid: {
       left: '2%',
@@ -348,6 +365,7 @@ const initTempChart = () => {
   }
   tempChart.setOption(option)
 }
+
 /**
  * 初始化预测精度折线图
  */
@@ -357,14 +375,16 @@ const initAccuracyChart = () => {
   const option = {
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(15, 23, 42, 0.95)',
-      borderColor: '#3B82F6',
-      textStyle: { color: '#fff' }
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(5, 13, 29, 0.9)',
+      borderColor: '#1A2A4A',
+      textStyle: { color: '#fff', fontSize: 12 }
     },
     legend: {
       data: ['NRMSE', '支付笔数'],
       textStyle: { color: '#fff', fontSize: 10 },
-      bottom: 0,
+      top: '0px',
+      right: 2,
       icon: 'circle',
       itemWidth: 8
     },
@@ -372,7 +392,7 @@ const initAccuracyChart = () => {
       left: '3%',
       right: '4%',
       bottom: '15%',
-      top: '5%',
+      top: '14%',
       containLabel: true
     },
     xAxis: {
@@ -385,7 +405,7 @@ const initAccuracyChart = () => {
     yAxis: {
       type: 'value',
       min: 0,
-      max: 350,
+      max: 300,
       axisLine: { lineStyle: { color: '#334155' } },
       axisLabel: { color: '#94A3B8', fontSize: 10 },
       splitLine: { lineStyle: { color: '#334155', type: 'dashed' } }
@@ -423,6 +443,7 @@ const initAccuracyChart = () => {
   }
   accuracyChart.setOption(option)
 }
+
 /**
  * 初始化光伏发电预测曲线
  */
@@ -432,14 +453,15 @@ const initPvForecastChart = () => {
   const option = {
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(15, 23, 42, 0.95)',
-      borderColor: '#3B82F6',
-      textStyle: { color: '#fff' }
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(5, 13, 29, 0.9)',
+      borderColor: '#1A2A4A',
+      textStyle: { color: '#fff', fontSize: 12 }
     },
     grid: {
       left: '3%',
       right: '4%',
-      bottom: '5%',
+      bottom: '10.5%',
       top: '5%',
       containLabel: true
     },
@@ -509,6 +531,7 @@ const initPvForecastChart = () => {
   }
   pvForecastChart.setOption(option)
 }
+
 /**
  * 初始化相似日发电曲线
  */
@@ -518,9 +541,10 @@ const initSimilarChart = () => {
   const option = {
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(15, 23, 42, 0.95)',
-      borderColor: '#06B6D4',
-      textStyle: { color: '#fff' }
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(5, 13, 29, 0.9)',
+      borderColor: '#1A2A4A',
+      textStyle: { color: '#fff', fontSize: 12 }
     },
     grid: {
       left: '3%',
@@ -532,7 +556,7 @@ const initSimilarChart = () => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: shortTimeAxis,
+      data: timeAxis,
       axisLine: { lineStyle: { color: '#334155' } },
       axisLabel: { color: '#94A3B8', fontSize: 10 }
     },
@@ -563,6 +587,7 @@ const initSimilarChart = () => {
   }
   similarChart.setOption(option)
 }
+
 /**
  * 窗口大小变化时重绘图表
  */
@@ -572,6 +597,7 @@ const handleResize = () => {
   pvForecastChart?.resize()
   similarChart?.resize()
 }
+
 // 生命周期
 onMounted(() => {
   initTempChart()
@@ -580,6 +606,7 @@ onMounted(() => {
   initSimilarChart()
   window.addEventListener('resize', handleResize)
 })
+
 onUnmounted(() => {
   // 销毁图表实例 防止内存泄漏
   tempChart?.dispose()
@@ -628,15 +655,26 @@ tbody tr {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.02);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* 统一副标题样式 */
+.sub-title {
+  font-family: 'Microsoft YaHei', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #32AFFF;
 }
 </style>
