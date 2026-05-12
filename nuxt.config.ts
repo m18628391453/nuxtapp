@@ -18,8 +18,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@ant-design-vue/nuxt',
-    '@vercel/analytics',
-    '@vercel/speed-insights',
   ],
   css: [
     '~/assets/css/global.css',
