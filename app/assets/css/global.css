@@ -47,3 +47,164 @@
 .font-yahei {
     font-family: "Microsoft YaHei", sans-serif;
 }
+
+/* ===== 表格省略号样式 ===== */
+.ant-table-cell {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.ant-table-thead > tr > th {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* ===== 因子管理对话框暗色样式 ===== */
+.factor-modal-wrap .ant-modal-content {
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(0, 20, 40, 0.98) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.factor-modal-wrap .ant-modal-header {
+    border: none !important;
+    background: rgba(0, 20, 40, 0.98) !important;
+    color: #FFFFFF !important;
+}
+.factor-modal-wrap .ant-modal-footer {
+    border: none !important;
+    background: rgba(0, 20, 40, 0.98) !important;
+}
+.factor-modal-wrap .ant-modal-title {
+    color: #FFFFFF !important;
+}
+
+/* ===== 全局暗色对话框样式 - 所有页面共用 ===== */
+.ant-modal-content {
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(0, 20, 40, 0.98) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.ant-modal-header {
+    border: none !important;
+    background: rgba(0, 20, 40, 0.98) !important;
+    color: #FFFFFF !important;
+}
+.ant-modal-footer {
+    border: none !important;
+    background: rgba(0, 20, 40, 0.98) !important;
+}
+.ant-modal-title {
+    color: #FFFFFF !important;
+}
+.ant-modal-body {
+    background: rgba(0, 20, 40, 0.98) !important;
+}
+.ant-modal-close-x {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+.ant-modal-close-x:hover {
+    color: #FFFFFF !important;
+}
+
+/* ===== 对话框内表单控件暗色样式 ===== */
+.ant-modal-content .ant-input,
+.ant-modal-content .ant-input-affix-wrapper {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+.ant-modal-content .ant-input::placeholder,
+.ant-modal-content .ant-input-affix-wrapper::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+.ant-modal-content .ant-input:hover,
+.ant-modal-content .ant-input-affix-wrapper:hover {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+.ant-modal-content .ant-input-focused,
+.ant-modal-content .ant-input-affix-wrapper-focused {
+    border-color: #32AFFF !important;
+    box-shadow: 0 0 0 2px rgba(50, 175, 255, 0.2) !important;
+}
+.ant-modal-content .ant-select-selector {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+.ant-modal-content .ant-select-selector:hover {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+.ant-modal-content .ant-select-focused .ant-select-selector {
+    border-color: #32AFFF !important;
+    box-shadow: 0 0 0 2px rgba(50, 175, 255, 0.2) !important;
+}
+.ant-modal-content .ant-select-selection-placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+.ant-modal-content .ant-select-arrow {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+.ant-modal-content .ant-textarea {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+.ant-modal-content .ant-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+.ant-modal-content .ant-textarea:hover {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+.ant-modal-content .ant-textarea-focused {
+    border-color: #32AFFF !important;
+    box-shadow: 0 0 0 2px rgba(50, 175, 255, 0.2) !important;
+}
+
+/* ===== 对话框内表单标签暗色样式 ===== */
+.ant-modal-content .ant-form-item-label > label {
+    color: #FFFFFF !important;
+}
+.ant-modal-content .ant-form-item-label > label .ant-form-item-required {
+    color: #FF4D4F !important;
+}
+
+/* ===== 对话框内文字内容暗色样式 ===== */
+.ant-modal-content .ant-modal-confirm-title {
+    color: #FFFFFF !important;
+}
+.ant-modal-content .ant-modal-confirm-content {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+.ant-modal-content .ant-modal-body p {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ===== 搜索区域输入框样式 ===== */
+.content-search .ant-input,
+.content-search .ant-input-affix-wrapper {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.content-search .ant-input::placeholder,
+.content-search .ant-input-affix-wrapper::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.content-search .ant-input:hover,
+.content-search .ant-input-affix-wrapper:hover {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.content-search .ant-input:focus,
+.content-search .ant-input-affix-wrapper:focus,
+.content-search .ant-input-focused,
+.content-search .ant-input-affix-wrapper-focused {
+    border-color: #32AFFF !important;
+    box-shadow: 0 0 0 2px rgba(50, 175, 255, 0.2) !important;
+}

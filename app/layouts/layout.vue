@@ -111,14 +111,60 @@ const initSystemData = async () => {
         ]
       },
       { name: '策略管理', route: '/strategy', icon: 'Sliders', index: 5, subMenu: [] },
-      { name: '能碳管理', route: '/carbon', icon: 'Cloud', index: 6, subMenu: [] },
+      { name: '能碳管理', route: '/carbon', icon: 'Cloud', index: 6, 
+        subMenu: [
+          {name: '能碳看板', route: '/carbon/board', icon: 'Sun', index: 0,},
+          {
+            name: '能源管理', route: '/carbon/energy', icon: 'Sun', index: 1,
+            subMenu: [
+              { name: '能源看板', route: '/carbon/energy/board', index: 0 },
+              { name: '能源报表', route: '/carbon/energy/report', index: 1 }
+            ]
+          },
+          {
+            name: '碳足迹管理', route: '/carbon/footprint', icon: 'Sun', index: 6,
+            subMenu: [
+              { name: '碳足迹管理', route: '/carbon/footprint/manage', index: 0 }
+            ]
+          },
+          {
+            name: '碳减排管理', route: '/carbon/reduction', icon: 'Sun', index: 7,
+            subMenu: [
+              { name: '碳减排管理', route: '/carbon/reduction/manage', index: 0 }
+            ]
+          },
+          {
+            name: '碳资产管理', route: '/carbon/asset', icon: 'Sun', index: 8,
+            subMenu: [
+              { name: '碳信用项目管理', route: '/carbon/asset/credit', index: 0 },
+              { name: '碳资产管理', route: '/carbon/asset/manage', index: 0 },
+              { name: '绿电绿证项目管理', route: '/carbon/asset/electricity', index: 0 },
+              { name: '绿电绿证交易管理', route: '/carbon/asset/transaction', index: 0 },
+            ]
+          },
+          {
+            name: '数据采集', route: '/carbon/datacollection', icon: 'Sun', index: 9,
+            subMenu: [
+              { name: '数据采集', route: '/carbon/datacollection/manage', index: 0 },
+            ]
+          },
+        ] 
+      },
       { name: '电力交易', route: '/trade', icon: 'BarChart3', index: 7, subMenu: [] },
       {
         name: '基础设置', route: '/base', icon: 'Settings', index: 8,
         subMenu: [
-          { name: '园区管理', route: '/base/park', icon: 'User', index: 0 },
-          { name: '分区管理', route: '/base/area', icon: 'User', index: 1 },
-          { name: '设备类型管理', route: '/base/devicetype', icon: 'User', index: 2 },
+          { name: '园区管理', route: '/base/park', icon: 'Settings', index: 0 },
+          { name: '分区管理', route: '/base/area', icon: 'Settings', index: 1 },
+          { name: '设备类型管理', route: '/base/devicetype', icon: 'Settings', index: 2 },
+          { name: '设备型号管理', route: '/base/devicetypemodel', icon: 'Settings', index: 3 },
+          { name: '设备管理', route: '/base/device', icon: 'Settings', index: 4 },
+          { name: '遥测遥信设置', route: '/base/modelinfoaddress', icon: 'Settings', index: 5 },
+          { name: '能碳设置', route: '/base/carbon', icon: 'Settings', index: 6, subMenu: [
+            { name: '排放因子库', route: '/base/carbon/efdatabase', icon: 'Settings', index: 0 },
+            { name: '碳排放模型', route: '/base/carbon/carbonmodel', icon: 'Settings', index: 1 },
+            { name: '排放源库', route: '/base/carbon/esinventory', icon: 'Settings', index: 2 },
+          ] },
         ]
       },
       { name: '系统设置', route: '/system', icon: 'Shield', index: 9, subMenu: [] },

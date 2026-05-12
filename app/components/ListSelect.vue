@@ -99,8 +99,8 @@ watch(() => props.modelValue, (val) => {
 
 /* 深色 */
 .custom-list-select-trigger.theme-dark {
-  background: transparent;
-  border-color: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255,255,255,0.15);
 }
 .custom-list-select-trigger.theme-dark .trigger-text {
   font-size: 13px;
@@ -149,8 +149,8 @@ watch(() => props.modelValue, (val) => {
   padding: 6px;
 }
 .custom-list-dropdown-wrapper.theme-dark {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0, 20, 40, 0.98);
+  border: 1px solid rgba(255,255,255,0.15);
 }
 .custom-list-dropdown-wrapper.theme-light {
   background: #fff;

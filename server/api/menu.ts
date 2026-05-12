@@ -62,9 +62,17 @@ export default defineEventHandler(async (event) => {
       { name: '电力交易', route: '/trade', icon: 'BarChart3', index: 7, subMenu: [] },
       { name: '基础设置', route: '/base', icon: 'Settings', index: 8, 
         subMenu: [
-          { name: '园区管理', route: '/base/park', icon: 'User', index: 0 },
-          { name: '分区管理', route: '/base/area', icon: 'User', index: 1 },
-          { name: '设备类型管理', route: '/base/devicetype', icon: 'User', index: 2 },
+          { name: '园区管理', route: '/base/park', icon: 'Settings', index: 0 },
+           { name: '分区管理', route: '/base/area', icon: 'Settings', index: 1 },
+          { name: '设备类型管理', route: '/base/devicetype', icon: 'Settings', index: 2 },
+          { name: '设备型号管理', route: '/base/devicetypemodel', icon: 'Settings', index: 3 },
+          { name: '设备管理', route: '/base/device', icon: 'Settings', index: 4 },
+          { name: '遥测遥信设置', route: '/base/modelinfoaddress', icon: 'Settings', index: 5 },
+          { name: '能碳设置', route: '/base/carbon', icon: 'Settings', index: 6, subMenu: [
+            { name: '排放因子库', route: '/base/carbon/efdatabase', icon: 'Settings', index: 1 },
+            { name: '碳排放模型', route: '/base/carbon/carbonmodel', icon: 'Settings', index: 2 },
+            { name: '排放源库', route: '/base/carbon/esinventory', icon: 'Settings', index: 3 },
+          ] },
         ]
        },
       { name: '系统设置', route: '/system', icon: 'Shield', index: 9, subMenu: [] },

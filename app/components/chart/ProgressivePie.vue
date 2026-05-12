@@ -1,13 +1,24 @@
 <template>
   <div class="bg-[#0A162C]/10 rounded-lg flex flex-col h-full w-full relative overflow-hidden" :style="customPadding">
-    <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-3 -mr-4 shrink-0">
-      <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
-      <h3 class="text-[14px] font-bold text-white ml-1 leading-none">
-        {{ title }}
-      </h3>
+    <div class="w-full bg-gradient-to-r from-[#0F3460] to-transparent flex items-center py-3.5 px-4 relative -ml-3 -mr-4 -pt-5 pb-4">
+      <div class="absolute left-0 top-0 bottom-0 w-1 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"></div>
+      <h3 class="text-[14px] font-bold text-white ml-1 leading-none">{{ title }}</h3>
+      <div class="absolute right-0 top-[20%] w-[24%] flex ">
+        <div class="flex bg-transparent border border-[#00A2FF]/10 rounded">
+          <button 
+            v-for="btn in buttons" 
+            :key="btn" 
+            @click="activeBtn = btn"
+            class="px-2 py-0.5 text-[10px] rounded transition-all" 
+            :class="btn === activeBtn ? 'bg-cyan-600/30 text-[#32AFFF] border border-cyan-500/50 cursor-pointer' : 'text-[#FFFFFFCC] hover:text-gray-300 cursor-pointer'"
+          >
+            {{ btn }}
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div class="flex items-center gap-4 flex-1 min-h-0 pt-2 -mt-5">
+    <div class="flex items-center gap-4 flex-1 min-h-0 pt-2 ">
       <div 
         ref="chartContainer" 
         class="flex items-center justify-center shrink-0"
@@ -34,16 +45,12 @@
       <div class="flex-1 flex flex-col gap-3 justify-center pr-2 overflow-y-auto -ml-4">
         <div v-for="(item, idx) in pieData" :key="idx" 
              :class="layout === 'row' ? 'flex items-center justify-between -pl-2' : 'flex flex-col gap-0.5 -pl-4'">
-          
           <div class="flex items-center gap-2">
             <div class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ backgroundColor: item.color, boxShadow: `0 0 6px ${item.color}80` }"></div>
             <span class="text-gray-300 font-medium text-[12px] truncate">{{ item.name }}</span>
-          </div>
-
-          <span class="flex items-baseline text-white font-bold text-[14px] font-mono" :class="layout === 'row' ? 'ml-2' : 'ml-5'">
-            {{ (item.value || 0).toLocaleString() }}
+            <span class="text-white font-bold text-[14px] font-mono">{{ (item.value || 0).toLocaleString() }}</span>
             <span class="text-gray-300 text-[10px] font-normal ml-1">{{ unit }}</span>
-          </span>
+          </div>
         </div>
       </div>
     </div>
@@ -57,6 +64,7 @@ const props = defineProps({
   title: { type: String, default: '' },
   centerTitle: { type: String, default: '' },
   unit: { type: String, default: '' },
+  buttons: { type: Array, default: () => ['类型', '组织'] },
   layout: { type: String, default: 'column' },
   pieSize: { type: Number, default: 175 },
   innerRadiusRatio: { type: Number, default: 0.45 },
@@ -69,7 +77,6 @@ const props = defineProps({
   customPadding: { type: Object, default: () => ({ padding: '0.5rem 1rem 1rem 1.2rem' }) }
 });
 
-const chartContainer = ref(null);
 const canvasRef = ref(null);
 const tooltipVisible = ref(false);
 const tooltipX = ref(0);
@@ -77,8 +84,8 @@ const tooltipY = ref(0);
 const tooltipName = ref('');
 const tooltipValue = ref(0);
 const tooltipPercent = ref(0);
+const activeBtn = ref(props.buttons[0]);
 
-let resizeObserver = null;
 let currentHoverSector = null;
 let sectors = [];
 

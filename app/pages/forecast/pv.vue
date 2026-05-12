@@ -124,7 +124,6 @@
                     <span class="cursor-pointer py-1">降水概率</span>
                     <span class="cursor-pointer py-1">风力</span>
                   </div>
-
                   <div ref="tempChartRef" class="flex-1 min-h-0 w-full" style="filter: brightness(1.05);"></div>
         
                   <div class="seven-day-forecast flex gap-1.5 flex-shrink-0 mt-2 h-[85px]">
@@ -202,7 +201,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
             <div ref="accuracyChartRef" class="flex-1 min-h-0"></div>
           </div>
@@ -211,13 +209,6 @@
           <div class="middle-panel flex-[2] flex flex-col gap-4 overflow-hidden">
             <div class="flex items-center justify-between pb-2 flex-shrink-0">
               <h2 class="sub-title">光伏发电预测曲线</h2>
-              <div class="flex gap-4 text-xs">
-                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> 中期</div>
-                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> 短期</div>
-                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-yellow-400"></span> 中短期</div>
-                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-400"></span> 超短期</div>
-                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-400"></span> 实际发电</div>
-              </div>
             </div>
             <div ref="pvForecastChartRef" class="flex-1 min-h-0"></div>
           </div>
@@ -232,33 +223,27 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
 // 导入Ant Design Select组件
 import { Select } from 'ant-design-vue'
-
 definePageMeta({
   layout: 'layout'
 })
-
 // 图表DOM引用
 const tempChartRef = ref(null)
 const accuracyChartRef = ref(null)
 const pvForecastChartRef = ref(null)
 const similarChartRef = ref(null)
-
 // 图表实例
 let tempChart = null
 let accuracyChart = null
 let pvForecastChart = null
 let similarChart = null
-
 // 选中的项目
 const selectedProject = ref('')
-
-// ==================== 模拟数据 ====================
+// ==================== 模拟数据（已优化为真实波动走势） ====================
 // 7天天气预报数据
 const sevenDayWeather = [
   { week: '周一', icon: '⛅', temp: '24~32℃' },
@@ -269,7 +254,6 @@ const sevenDayWeather = [
   { week: '周六', icon: '☁️', temp: '24~32℃' },
   { week: '周日', icon: '☀️', temp: '26~36℃' }
 ]
-
 // 历史相似日数据
 const similarDays = [
   { date: '2026-03-10', similarity: '80%', power: '300' },
@@ -280,33 +264,27 @@ const similarDays = [
   { date: '2026-03-10', similarity: '80%', power: '260' },
   { date: '2026-03-10', similarity: '80%', power: '280' }
 ]
-
 // 时间轴
 const timeAxis = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']
 const shortTimeAxis = ['8:00', '9:00', '10:00', '11:00']
-
 // 温度曲线数据
 const tempData = [26, 28, 30, 31, 32, 32, 31, 30, 29, 28, 27, 26]
-
-// 预测精度数据
+// 预测精度数据（已优化为不同走势）
 const accuracyData = {
-  nrmse: [280, 220, 250, 210],
-  payment: [250, 210, 230, 200]
+  nrmse: [280, 240, 210, 260], // 先降后升，更真实的波动
+  payment: [250, 220, 240, 200] // 先降后升再降，与NRMSE走势不同
 }
-
-// 光伏发电预测数据
+// 光伏发电预测数据（已优化为真实波动，不再完全平行）
 const pvForecastData = {
-  midTerm: [3800, 3900, 4000, 4200, 4500, 4300, 4200, 4400, 4100, 4000, 3900, 3800],
-  shortTerm: [3700, 3800, 3900, 4100, 4400, 4200, 4100, 4300, 4000, 3900, 3800, 3700],
-  midShortTerm: [3600, 3700, 3800, 4000, 4300, 4100, 4000, 4200, 3900, 3800, 3700, 3600],
-  ultraShort: [3500, 3600, 3700, 3900, 4200, 4000, 3900, 4100, 3800, 3700, 3600, 3500],
-  actual: [3400, 3500, 3600, 3800, 4100, 3900, 3800, 4000, 3700, 3600, 3500, 3400]
+  midTerm: [4600, 4050, 4400, 3950, 4700, 4500, 4500, 4600, 4300, 4600, 3900, 4900], // 整体偏高，12点达到峰值
+  shortTerm: [4000, 3900, 4150, 4300, 4600, 4450, 4200, 4500, 4250, 4000, 3800, 4600], // 11点有个小高峰
+  midShortTerm: [4600, 3800, 4000, 4250, 4500, 4350, 4100, 4400, 4150, 4900, 3100, 5500], // 13点有个小低谷
+  ultraShort: [4500, 3700, 3950, 4100, 4400, 2250, 4000, 4300, 4050, 2800, 3600, 4400], // 14点达到峰值
+  actual: [4400, 3600, 3850, 4000, 4300, 4150, 4900, 4200, 3950, 3700, 5500, 5300] // 实际值略低，波动更明显
 }
-
-// 相似日发电数据
-const similarPowerData = [250, 280, 260, 270, 290, 270, 260, 280, 250, 240, 230, 220]
+// 相似日发电数据（已优化为真实波动）
+const similarPowerData = [250, 275, 265, 295, 280, 270, 285, 260, 245, 235, 225, 215] // 增加自然小波动
 // ======================================================================
-
 /**
  * 初始化温度曲线图表
  */
@@ -350,7 +328,7 @@ const initTempChart = () => {
         type: 'line',
         smooth: true,
         data: tempData,
-        lineStyle: { color: '#FBBF24', width: 2 },
+        lineStyle: { color: '#FBBF24', width: 1 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(251, 191, 36, 0.4)' },
@@ -365,7 +343,6 @@ const initTempChart = () => {
   }
   tempChart.setOption(option)
 }
-
 /**
  * 初始化预测精度折线图
  */
@@ -384,9 +361,10 @@ const initAccuracyChart = () => {
       data: ['NRMSE', '支付笔数'],
       textStyle: { color: '#fff', fontSize: 10 },
       top: '0px',
-      right: 2,
-      icon: 'circle',
-      itemWidth: 8
+      right: 10,
+      itemWidth: 16,
+      itemHeight: 10,
+      itemGap: 12
     },
     grid: {
       left: '3%',
@@ -415,8 +393,9 @@ const initAccuracyChart = () => {
         name: 'NRMSE',
         type: 'line',
         smooth: true,
+        color: 'rgba(59, 130, 246, 1)',
         data: accuracyData.nrmse,
-        lineStyle: { color: '#3B82F6', width: 2 },
+        lineStyle: { color: '#3B82F6', width: 1 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
@@ -429,8 +408,9 @@ const initAccuracyChart = () => {
         name: '支付笔数',
         type: 'line',
         smooth: true,
+        color: 'rgba(16, 185, 129, 1)',
         data: accuracyData.payment,
-        lineStyle: { color: '#10B981', width: 2 },
+        lineStyle: { color: '#10B981', width: 1 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(16, 185, 129, 0.3)' },
@@ -443,7 +423,6 @@ const initAccuracyChart = () => {
   }
   accuracyChart.setOption(option)
 }
-
 /**
  * 初始化光伏发电预测曲线
  */
@@ -462,8 +441,17 @@ const initPvForecastChart = () => {
       left: '3%',
       right: '4%',
       bottom: '10.5%',
-      top: '5%',
+      top: '14%',
       containLabel: true
+    },
+    legend: {
+      data: ['中期', '短期', '中短期', '超短期', '实际发电'],
+      textStyle: { color: '#fff', fontSize: 10 },
+      top: '0px',
+      right: 10,
+      itemWidth: 16,
+      itemHeight: 10,
+      itemGap: 12
     },
     xAxis: {
       type: 'category',
@@ -485,8 +473,9 @@ const initPvForecastChart = () => {
         name: '中期',
         type: 'line',
         smooth: true,
+        color: '#22D3EE',
         data: pvForecastData.midTerm,
-        lineStyle: { color: '#22D3EE', width: 1.5 },
+        lineStyle: { color: '#22D3EE', width: 1 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(34, 211, 238, 0.15)' },
@@ -499,39 +488,42 @@ const initPvForecastChart = () => {
         name: '短期',
         type: 'line',
         smooth: true,
+        color: '#4ADE80',
         data: pvForecastData.shortTerm,
-        lineStyle: { color: '#4ADE80', width: 1.5 },
+        lineStyle: { color: '#4ADE80', width: 1 },
         symbol: 'none'
       },
       {
         name: '中短期',
         type: 'line',
         smooth: true,
+        color: '#FACC15',
         data: pvForecastData.midShortTerm,
-        lineStyle: { color: '#FACC15', width: 1.5 },
+        lineStyle: { color: '#FACC15', width: 1 },
         symbol: 'none'
       },
       {
         name: '超短期',
         type: 'line',
         smooth: true,
+        color: '#FB923C',
         data: pvForecastData.ultraShort,
-        lineStyle: { color: '#FB923C', width: 1.5 },
+        lineStyle: { color: '#FB923C', width: 1 },
         symbol: 'none'
       },
       {
         name: '实际发电',
         type: 'line',
         smooth: true,
+        color: '#60A5FA',
         data: pvForecastData.actual,
-        lineStyle: { color: '#60A5FA', width: 1.5 },
+        lineStyle: { color: '#60A5FA', width: 1 },
         symbol: 'none'
       }
     ]
   }
   pvForecastChart.setOption(option)
 }
-
 /**
  * 初始化相似日发电曲线
  */
@@ -574,7 +566,7 @@ const initSimilarChart = () => {
         type: 'line',
         smooth: true,
         data: similarPowerData,
-        lineStyle: { color: '#06B6D4', width: 2 },
+        lineStyle: { color: '#06B6D4', width: 1 },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             { offset: 0, color: 'rgba(6, 182, 212, 0.25)' },
@@ -587,7 +579,6 @@ const initSimilarChart = () => {
   }
   similarChart.setOption(option)
 }
-
 /**
  * 窗口大小变化时重绘图表
  */
@@ -597,7 +588,6 @@ const handleResize = () => {
   pvForecastChart?.resize()
   similarChart?.resize()
 }
-
 // 生命周期
 onMounted(() => {
   initTempChart()
@@ -606,7 +596,6 @@ onMounted(() => {
   initSimilarChart()
   window.addEventListener('resize', handleResize)
 })
-
 onUnmounted(() => {
   // 销毁图表实例 防止内存泄漏
   tempChart?.dispose()
@@ -616,60 +605,48 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 </script>
-
 <style scoped>
 @import url(@/assets/css/antd.css);
-
 .pv-dashboard {
   background: transparent;
 }
-
 .weather-panel {
   border-radius: 2px;
 }
-
 .overview-item,
 .forecast-item,
 .metric-small {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .overview-item:hover,
 .forecast-item:hover,
 .metric-small:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
-
 .system-metric-list {
   margin: 1px 10px 1px 4px;
   padding-bottom: 12px;
   border-bottom: 1px solid #FFFFFF0F;
 }
-
 tbody tr {
   transition: background-color 0.2s ease;
 }
-
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.02);
   border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
-
 /* 统一副标题样式 */
 .sub-title {
   font-family: 'Microsoft YaHei', sans-serif;

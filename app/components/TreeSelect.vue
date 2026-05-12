@@ -8,16 +8,32 @@
     <!-- 下拉触发器 -->
     <template #overlay>
       <div class="custom-tree-dropdown-wrapper" :class="`theme-${theme}`" :style="{ width: width }">
+        <!-- 搜索框 -->
+        <div v-if="searchable" class="tree-search-input-wrapper mb-2">
+          <a-input
+            v-model:value="searchValue"
+            placeholder="请输入关键词搜索"
+            size="small"
+            :class="`theme-${theme}`"
+          />
+        </div>
+        <!-- 树组件 -->
         <a-tree
           v-model:expandedKeys="expandedKeys"
-          :tree-data="treeData"
+          :tree-data="processedTreeData"
           :show-icon="false"
           :block-node="true"
           @select="handleTreeSelect"
           class="custom-tree"
+          :field-names="{ title: 'title', key: 'key', children: 'children' }"
         >
-          <template #title="{ title, name }">
-            <span class="text-[13px]">{{ title || name }}</span>
+          <template #title="{ title, name, disabled }">
+            <span 
+              class="text-[13px] node-title-text"
+              :class="{ 'node-unselectable': disabled }"
+            >
+              {{ title || name }}
+            </span>
           </template>
         </a-tree>
       </div>
@@ -48,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 // 组件 Props 定义
 const props = defineProps({
@@ -82,6 +98,16 @@ const props = defineProps({
   width: {
     type: String,
     default: '200px'
+  },
+  /** 是否显示搜索框 */
+  searchable: {
+    type: Boolean,
+    default: true
+  },
+  /** 允许选择的节点类型（nodeType）数组，为空则所有节点可选 */
+  nodeTypes: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -91,8 +117,90 @@ const emit = defineEmits(['select', 'update:modelValue'])
 // 内部状态
 const dropdownOpen = ref(false)
 const expandedKeys = ref([])
-const selectedTitle = ref(props.modelValue)
 const isFocused = ref(false)
+const searchValue = ref('') // 搜索框值
+
+/**
+ * 核心逻辑：处理树数据（添加 disabled 属性 + 搜索过滤）
+ * 不破坏原数据引用，只在表层增加 computed 属性
+ */
+const processedTreeData = computed(() => {
+  // 1. 先根据 nodeTypes 给节点打上 disabled 标签
+  const dataWithDisabled = addDisabledFlag(props.treeData)
+  // 2. 再根据搜索关键词过滤
+  if (!searchValue.value) return dataWithDisabled
+  return filterTreeData(dataWithDisabled, searchValue.value)
+})
+
+/**
+ * 递归：给节点添加 disabled 属性
+ */
+const addDisabledFlag = (nodes) => {
+  return nodes.map(node => {
+    const isDisabled = props.nodeTypes.length > 0 && !props.nodeTypes.includes(node.nodeType)
+    const newNode = {
+      ...node,
+      disabled: isDisabled,
+      // 确保 children 也被处理
+      children: node.children && node.children.length > 0 ? addDisabledFlag(node.children) : undefined
+    }
+    return newNode
+  })
+}
+
+/**
+ * 递归：过滤树数据（保留父节点结构）
+ */
+const filterTreeData = (nodes, keyword) => {
+  const result = []
+  for (const node of nodes) {
+    const title = node.title || node.name || ''
+    const matchKeyword = title.toLowerCase().includes(keyword.toLowerCase())
+    
+    let filteredChildren = []
+    if (node.children && node.children.length > 0) {
+      filteredChildren = filterTreeData(node.children, keyword)
+    }
+
+    if (matchKeyword || filteredChildren.length > 0) {
+      result.push({
+        ...node,
+        children: filteredChildren.length > 0 ? filteredChildren : node.children
+      })
+    }
+  }
+  return result
+}
+
+/**
+ * 根据 code/key 在树中查找对应的 title
+ */
+const findTitleByCode = (nodes, code) => {
+  for (const node of nodes) {
+    if ((node.code || node.key) === code) {
+      return node.title || node.name
+    }
+    if (node.children && node.children.length > 0) {
+      const found = findTitleByCode(node.children, code)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+/**
+ * 计算显示的标题
+ */
+const selectedTitle = computed(() => {
+  if (props.modelValue) {
+    const title = findTitleByCode(props.treeData, props.modelValue)
+    if (title) {
+      return title
+    }
+    return props.modelValue
+  }
+  return ''
+})
 
 /**
  * 处理 focus 事件
@@ -113,43 +221,39 @@ const handleBlur = () => {
  */
 const handleTreeSelect = (selectedKeys, info) => {
   if (info.selected && info.node) {
-    // 更新显示的标题
-    selectedTitle.value = info.node.title || info.node.name // 兼容 title/name 字段
+    // 再次校验：如果节点是 disabled 状态，直接返回
+    if (info.node.disabled) {
+      return
+    }
+    
     // 暴露选中节点给父组件
     emit('select', info.node)
-    // 触发 modelValue 更新 - 关键修改：传递完整的显示值（title 或 name）
-    emit('update:modelValue', info.node.title || info.node.name)
+    // 触发 modelValue 更新
+    emit('update:modelValue', info.node.code || info.node.key)
     // 点击后收起下拉
     dropdownOpen.value = false
   }
 }
 
-// 监听 modelValue 变化
-import { watch } from 'vue'
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    selectedTitle.value = newValue
-  }
-)
-
 /**
- * 暴露给父组件的方法：清空选择
+ * 暴露给父组件的方法
  */
 defineExpose({
   clearSelection: () => {
-    selectedTitle.value = ''
+    emit('update:modelValue', '')
   },
-  /**
-   * 初始化方法：打开下拉并加载数据
-   */
   init: async () => {
-    // 先调用父组件传递的初始化方法
     if (props.initMethod) {
       await props.initMethod()
     }
-    // 然后打开下拉
     dropdownOpen.value = true
+  }
+})
+
+// 监听下拉关闭，清空搜索框
+watch(dropdownOpen, (isOpen) => {
+  if (!isOpen) {
+    searchValue.value = ''
   }
 })
 </script>
@@ -180,8 +284,8 @@ defineExpose({
 
 /* 深色主题 */
 .custom-tree-select-trigger.theme-dark {
-  background-color: transparent;
-  border-color: #e0dcdc;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 .custom-tree-select-trigger.theme-dark .trigger-text {
   font-size: 13px;
@@ -232,10 +336,27 @@ defineExpose({
   box-sizing: border-box;
 }
 
+/* 搜索框样式 */
+.tree-search-input-wrapper {
+  width: 100%;
+}
+.tree-search-input-wrapper :deep(.ant-input) {
+  background-color: transparent;
+}
+/* 简单的主题适配，若需更精细的 Input 样式控制可自行扩展 */
+.tree-search-input-wrapper :deep(.ant-input.theme-dark) {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+}
+.tree-search-input-wrapper :deep(.ant-input.theme-dark::placeholder) {
+  color: rgba(255, 255, 255, 0.3);
+}
+
 /* 深色主题下拉菜单 */
 .custom-tree-dropdown-wrapper.theme-dark {
-  background-color: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 20, 40, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* 浅色主题下拉菜单 */
@@ -252,9 +373,27 @@ defineExpose({
 }
 :deep(.custom-tree .ant-tree-node-content-wrapper) {
   padding: 4px 0;
+  width: 100%;
 }
 
-/* 深色主题树 */
+/* 不可选节点基础样式 */
+.node-unselectable {
+  cursor: not-allowed;
+}
+/* 深色主题下的不可选文字（加深优化） */
+.custom-tree-dropdown-wrapper.theme-dark :deep(.ant-tree-treenode-disabled .node-title-text) {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+/* 浅色主题下的不可选文字（加深优化） */
+.custom-tree-dropdown-wrapper.theme-light :deep(.ant-tree-treenode-disabled .node-title-text) {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+/* 禁用态hover样式重置，避免高亮 */
+:deep(.custom-tree .ant-tree-treenode-disabled .ant-tree-node-content-wrapper:hover) {
+  background-color: transparent !important;
+}
+
+/* 深色主题树交互 */
 .custom-tree-dropdown-wrapper.theme-dark :deep(.custom-tree) {
   color: rgba(255, 255, 255, 0.85);
 }
@@ -269,7 +408,7 @@ defineExpose({
   color: rgba(255, 255, 255, 0.45);
 }
 
-/* 浅色主题树 */
+/* 浅色主题树交互 */
 .custom-tree-dropdown-wrapper.theme-light :deep(.custom-tree) {
   color: rgba(0, 0, 0, 0.85);
 }
@@ -298,5 +437,9 @@ defineExpose({
 }
 .custom-tree-dropdown-wrapper::-webkit-scrollbar-track {
   background: transparent;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
 }
 </style>

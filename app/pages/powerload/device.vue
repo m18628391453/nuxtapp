@@ -4,18 +4,7 @@
       <!-- 左侧树状菜单 完全保留 不要修改！！！ -->
       <div class="w-[280px] shrink-0 flex flex-col h-full bg-transparent" style="border-radius: 2px; background: rgba(255,255,255,0.04);">
         <div class="flex justify-between items-center mt-1 mb-2">
-          <span class="font-bold text-[14px] ml-2 mt-1 p-1">负荷区域</span>
-          <div class="flex gap-1 text-[12px] p-1 mt-1 mr-1">
-              <button 
-                  v-for="btn in buttons" 
-                  :key="btn" 
-                  @click="handleBtnClick(btn)"
-                  class="px-2 text-[10px] rounded transition-all" 
-                  :class="btn === activeBtn ? 'bg-cyan-600/30 text-[#32AFFF] border border-cyan-500/50 cursor-pointer' : 'text-[#FFFFFFCC] hover:text-gray-300 cursor-pointer'"
-                  >
-                  {{ btn }}
-              </button>
-          </div>
+          <span class="font-bold text-[14px] ml-2 mt-1 p-1">负荷配置</span>
         </div>
         
         <div class="mb-3 px-2 custom-search">
@@ -48,7 +37,7 @@
         </div>
       </div>
       
-      <!-- 右侧区域 修复宽度溢出问题 关键：加overflow:hidden和width:0 -->
+      <!-- 右侧配置 修复宽度溢出问题 关键：加overflow:hidden和width:0 -->
       <div class="flex-1 flex flex-col h-full bg-transparent overflow-hidden" style="border-radius: 2px; background: rgba(255,255,255,0.04);">
         <!-- 满行搜索栏 完全和左侧一致 带搜索图标 -->
         <div class="bg-[#FFFFFF0A] border border-[#FFFFFF0D] rounded-[4px] px-2 py-1 mx-4 mb-4 shrink-0 w-[calc(100%-32px)] mt-3.5">
@@ -99,7 +88,7 @@
         <div class="flex-1 bg-[#FFFFFF0A] border border-[#FFFFFF0D] rounded-[4px] flex flex-col min-h-0 overflow-hidden mx-4 mb-4 w-[calc(100%-32px)]">
           <!-- 表格标题与操作按钮 -->
           <div class="flex justify-between items-center px-6 py-2 border-b border-[#FFFFFF14] shrink-0">
-            <span class="text-[14px] font-normal text-white tracking-wide">负荷模型列表</span>
+            <span class="text-[14px] font-normal text-white tracking-wide">负荷配置列表</span>
             <div class="flex gap-2 shrink-0">
               <a-button type="primary" class="!bg-[#32AFFF] !border-[#32AFFF] hover:!opacity-80" @click="handleAdd">新增</a-button>
               <a-button class="!bg-transparent !border-[#FFFFFF33] !text-[#FFFFFF99] hover:!text-white hover:!border-[#fefefe30]" @click="handleEdit">编辑</a-button>
@@ -131,8 +120,14 @@
                 </template>
                 
                 <template v-else-if="column.key === 'description'">
-                  <!-- 负荷区域描述内容左对齐 标题保持居中 -->
+                  <!-- 负荷配置描述内容左对齐 标题保持居中 -->
                   <span class="text-[#FFFFFFCC] text-[14px] text-left block">{{ text }}</span>
+                </template>
+
+                <template v-else-if="column.key === 'status'">
+                  <span class="text-[14px]" :class="(text === 1 || text === '1') ? 'text-green-400' : 'text-red-400'">
+                    {{ (text === 1 || text === '1') ? '在用' : '停用' }}
+                  </span>
                 </template>
                 
                 <template v-else-if="column.key === 'action'">
@@ -151,42 +146,42 @@
     </div>
   </div>
 
-  <!-- 区域对话框（新增/编辑共用） -->
+  <!-- 配置对话框（新增/编辑共用） -->
   <a-modal
     v-model:open="areaModalVisible"
-    :title="isEditMode ? '编辑区域' : '新增区域'"
+    :title="isEditMode ? '编辑配置' : '新增配置'"
     @ok="handleAreaSubmit"
     @cancel="closeAreaModal"
   >
-    <a-form layout="vertical" :model="areaForm" :rules="areaRules" ref="areaFormRef">
-      <a-form-item label="区域编码" name="code">
-        <a-input v-model:value="areaForm.code" placeholder="请输入区域编码" />
+    <a-form layout="vertical" :model="areaForm" :rules="rules" ref="formRef">
+      <a-form-item label="负荷设备类型" name="modelCategoryName">
+        <TreeSelect
+          ref="treeSelectRef"
+          :tree-data="modelCategoryTreeData"
+          placeholder="请选择设备类型"
+          @select="selectModelCategory"
+          v-model="areaForm.modelCategoryName"
+          theme="dark"
+          :node-types="['loadModelCategory']"
+          width="300px"
+          class="w-full"
+        />
       </a-form-item>
-      <a-form-item label="区域名称" name="name">
-        <a-input v-model:value="areaForm.name" placeholder="请输入区域名称" />
+     
+      <a-form-item label="编码" name="code">
+        <a-input v-model:value="areaForm.code" placeholder="请输入配置编码" />
       </a-form-item>
-      <a-form-item label="区域描述" name="description">
-        <a-textarea v-model:value="areaForm.description" placeholder="请输入区域描述" rows="3" />
+      <a-form-item label="名称" name="name">
+        <a-input v-model:value="areaForm.name" placeholder="请输入配置名称" />
       </a-form-item>
-    </a-form>
-  </a-modal>
-
-  <!-- 设备对话框（新增/编辑共用） -->
-  <a-modal
-    v-model:open="deviceModalVisible"
-    :title="isEditMode ? '编辑设备' : '新增设备'"
-    @ok="handleDeviceSubmit"
-    @cancel="closeDeviceModal"
-  >
-    <a-form layout="vertical" :model="deviceForm" :rules="deviceRules" ref="deviceFormRef">
-      <a-form-item label="设备编码" name="code">
-        <a-input v-model:value="deviceForm.code" placeholder="请输入设备编码" />
+       <a-form-item label="使用状态" name="status">
+        <a-select v-model:value="areaForm.status" class="w-[100px]">
+          <a-select-option :value="1">在用</a-select-option>
+          <a-select-option :value="0">停用</a-select-option>
+        </a-select>
       </a-form-item>
-      <a-form-item label="设备名称" name="name">
-        <a-input v-model:value="deviceForm.name" placeholder="请输入设备名称" />
-      </a-form-item>
-      <a-form-item label="设备描述" name="description">
-        <a-textarea v-model:value="deviceForm.description" placeholder="请输入设备描述" rows="3" />
+      <a-form-item label="备注" name="description">
+        <a-textarea v-model:value="areaForm.description" placeholder="请输入备注" rows="3" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -195,32 +190,26 @@
 <script setup>
 import { ref, computed,onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRequest } from "~/composables/useRequest"
+import TreeSelect from "~/components/TreeSelect.vue"
 import { message, Modal } from 'ant-design-vue'
+
 definePageMeta({
   layout: 'layout'
 })
-
+const treeSelectRef = ref(null)
+const formRef = ref(null)
 const searchValue = ref('')
 const selectedKeys = ref([])
 const expandedKeys = ref([])
 const modelAreaTreeData = ref([])
-const modelCategoryTreeData = ref([])
 // 当前选中的树节点数据
 const selectedNodeData = ref(null)
 // 过滤后的树数据
 const filteredTreeData = ref([])
-// 按钮切换处理
-const buttons = ref(['区域', '设备'])
-const activeBtn = ref('区域')
 // 模拟表格数据 完全匹配设计稿内容
 const tableData = ref([])
 // 表格选中行 
 const selectedRowKeys = ref([])
-
-// 当前树数据计算属性
-const currentTreeData = computed(() => {
-  return activeBtn.value === '区域' ? modelAreaTreeData.value : modelCategoryTreeData.value
-})
 
 // 树节点选择事件处理
 const handleTreeSelect = (selectedKeys, info) => {
@@ -229,8 +218,8 @@ const handleTreeSelect = (selectedKeys, info) => {
   if (info.selected && info.node && info.node) {
     selectedNodeData.value = info.node
     console.log('选中节点数据:', selectedNodeData.value)
-    // 重新加载表格数据，传入选中节点的 key 作为 parentId
-    loadTableData(info.node.key)
+    // 重新加载表格数据，传入选中节点的 code 
+    loadTableData(info.node.code)
   } else {
     // 取消选中时，查询所有数据
     selectedNodeData.value = null
@@ -238,64 +227,38 @@ const handleTreeSelect = (selectedKeys, info) => {
   }
 }
 
-// 按钮点击事件处理
-const handleBtnClick = (btn) => {
-  activeBtn.value = btn
-  console.log('切换到:', btn)
-  console.log('当前 activeBtn 值:', activeBtn.value)
-  console.log('当前树数据:', currentTreeData.value)
-  selectedKeys.value = []
-  selectedNodeData.value = null
-  // 更新过滤后的树数据
-  filteredTreeData.value = currentTreeData.value
-  // 重新加载表格数据
-  loadTableData()
-}
-
 // 加载表格数据
-const loadTableData = async (parentId = null) => {
-  console.log('加载表格数据，当前模式:', activeBtn.value, 'parentId:', parentId)
+const loadTableData = async (code = null) => {
+  console.log('加载表格数据，code:', code)
   const { get } = useRequest()
   
-  if (activeBtn.value === '区域') {
-    const areaData = await get('/powerload/load-model-area/page', {
-      pageNo: paginationConfig.value.current,
-      pageSize: paginationConfig.value.pageSize,
-      parentId: parentId || '',
-      code: modelSearchParams.value.code || '',
-      name: modelSearchParams.value.name || '',
-      description: modelSearchParams.value.description || ''
-    })
-    tableData.value = areaData.data.list || []
-    // 更新总条数
-    if (areaData.data.total) {
-      paginationConfigs.value['区域'].total = areaData.data.total
-    }
-  } else {
-    const categoryData = await get('/powerload/load-model-category/page', {
-      pageNo: paginationConfig.value.current,
-      pageSize: paginationConfig.value.pageSize,
-      parentId: parentId || '',
-      code: modelSearchParams.value.code || '',
-      name: modelSearchParams.value.name || '',
-      description: modelSearchParams.value.description || ''
-    })
-    tableData.value = categoryData.data.list || []
-    // 更新总条数
-    if (categoryData.data.total) {
-      paginationConfigs.value['设备'].total = categoryData.data.total
-    }
+  const areaData = await get('/powerload/load-device/page', {
+    pageNo: paginationConfig.value.current,
+    pageSize: paginationConfig.value.pageSize,
+    modelAreaCode: code || null,
+    code: modelSearchParams.value.code || null,
+    name: modelSearchParams.value.name || null,
+    description: modelSearchParams.value.description || null
+  })
+  tableData.value = areaData.data.list || []
+  // Log the first record's status to debug
+  if (tableData.value.length > 0) {
+    console.log('First record status:', tableData.value[0].status, typeof tableData.value[0].status)
+  }
+  // 更新总条数
+  if (areaData.data.total) {
+    paginationConfig.value.total = areaData.data.total
   }
 }
 
 // 分页变化事件处理
 const handlePaginationChange = (pagination) => {
   console.log('分页变化:', pagination)
-  // 更新对应按钮类型的分页配置
-  paginationConfigs.value[activeBtn.value].current = pagination.current
-  paginationConfigs.value[activeBtn.value].pageSize = pagination.pageSize
+  // 更新分页配置
+  paginationConfig.value.current = pagination.current
+  paginationConfig.value.pageSize = pagination.pageSize
   // 重新加载表格数据
-  loadTableData(selectedNodeData.value?.key || null)
+  loadTableData(selectedNodeData.value?.code || null)
 }
 // 搜索事件
 const onQuery = () => {
@@ -309,7 +272,7 @@ const filterTreeData = () => {
   const keyword = searchValue.value.trim()
   if (!keyword) {
     // 如果搜索词为空，显示所有数据
-    filteredTreeData.value = currentTreeData.value
+    filteredTreeData.value = modelAreaTreeData.value
     return
   }
   
@@ -332,7 +295,7 @@ const filterTreeData = () => {
       .filter(Boolean)
   }
   
-  filteredTreeData.value = filterNodes(currentTreeData.value)
+  filteredTreeData.value = filterNodes(modelAreaTreeData.value)
 }
 // 自适应窗口
 const resizeCharts = () => {
@@ -364,7 +327,7 @@ const searchBarVisible = ref(false)
 const onModelQuery = () => {
   console.log('执行右侧搜索，搜索条件:', modelSearchParams.value)
   // 重新加载表格数据，传入搜索条件
-  loadTableData(selectedNodeData.value?.key || null)
+  loadTableData(selectedNodeData.value?.code || null)
 }
 
 // 清空搜索条件
@@ -376,7 +339,7 @@ const clearModelSearch = () => {
     description: ''
   }
   // 重新加载表格数据
-  loadTableData(selectedNodeData.value?.key || null)
+  loadTableData(selectedNodeData.value?.code || null)
 }
 
 // 切换搜索栏显示/隐藏
@@ -390,23 +353,18 @@ const initData = async () => {
   try {
     const data = await post('/powerload/common/list-loadModelAreaTree', {})
     modelAreaTreeData.value = data.data || []
-    console.log('区域树数据:', modelAreaTreeData.value)
-    
-    const categoryData = await post('/powerload/common/list-loadModelCategoryTree', {})
-    modelCategoryTreeData.value = categoryData.data || []
-    console.log('设备树数据:', modelCategoryTreeData.value)
+    console.log('配置树数据:', modelAreaTreeData.value)
   
   // 更新过滤后的树数据
-  filteredTreeData.value = currentTreeData.value
-  // 根据当前激活的按钮加载表格数据
+  filteredTreeData.value = modelAreaTreeData.value
+  // 加载表格数据
   loadTableData()
   } catch (error) {
     console.error('加载树数据失败:', error)
     // 加载失败时使用默认数据
     modelAreaTreeData.value = []
-    modelCategoryTreeData.value = []
     // 更新过滤后的树数据
-    filteredTreeData.value = currentTreeData.value
+    filteredTreeData.value = modelAreaTreeData.value
   }
 }
 
@@ -414,106 +372,71 @@ const initData = async () => {
 const onSelectChange = (keys) => { selectedRowKeys.value = keys }
 
 // 表格列配置 完全匹配设计稿 关键：给每列设置固定宽度 防止自动计算溢出
-const columnsConfig = {
-  '区域': [
-    { title: '序号', key: 'index', width: 80, align: 'center' },
-    { title: '区域编码', dataIndex: 'code', key: 'code', width: 150, align: 'center' },
-    { title: '区域名称', dataIndex: 'name', key: 'name', width: 150, align: 'center' },
-    { title: '负荷区域描述', dataIndex: 'description', key: 'description', width: 350, align: 'center' },
-    { title: '操作', key: 'action', align: 'center', width: 120 }
-  ],
-  '设备': [
-    { title: '序号', key: 'index', width: 80, align: 'center' },
-    { title: '设备编码', dataIndex: 'code', key: 'code', width: 150, align: 'center' },
-    { title: '设备名称', dataIndex: 'name', key: 'name', width: 150, align: 'center' },
-    { title: '设备描述', dataIndex: 'description', key: 'description', width: 350, align: 'center' },
-    { title: '操作', key: 'action', align: 'center', width: 120 }
-  ]
-}
-
-// 当前表格列配置计算属性
-const columns = computed(() => {
-  return columnsConfig[activeBtn.value] || columnsConfig['区域']
-})
+const columns = [
+  { title: '序号', key: 'index', width: 80, align: 'center' },
+  { title: '设备编码', dataIndex: 'code', key: 'code', width: 150, align: 'center' },
+  { title: '设备名称', dataIndex: 'name', key: 'name', width: 150, align: 'center' },
+  { title: '规格型号', dataIndex: 'modelCategoryCode', key: 'modelCategoryCode', width: 150, align: 'center' },
+  { title: '使用状态', dataIndex: 'status', key: 'status', width: 150, align: 'center' },
+  // { title: '设备重要性', dataIndex: 'importanceLevel', key: 'importanceLevel', width: 150, align: 'center' },
+  { title: '负荷类型', dataIndex: 'loadTypeName', key: 'loadTypeName', width: 150, align: 'center' },
+  { title: '备注', dataIndex: 'description', key: 'description', width: 300, align: 'center' },
+  { title: '操作', key: 'action', align: 'center', width: 120 }
+]
 
 
 // 分页配置 完全匹配设计稿
-// 为区域和设备分别维护分页状态
-const paginationConfigs = ref({
-  '区域': {
-    total: 200,
-    current: 1,
-    pageSize: 20,
-    pageNo: 1,
-    showSizeChanger: true,
-    showQuickJumper: true,
-    showTotal: (total) => `共${total}条数据`,
-    size: 'small'
-  },
-  '设备': {
-    total: 200,
-    current: 1,
-    pageSize: 20,
-    pageNo: 1,
-    showSizeChanger: true,
-    showQuickJumper: true,
-    showTotal: (total) => `共${total}条数据`,
-    size: 'small'
-  }
-})
-
-// 当前分页配置计算属性
-const paginationConfig = computed(() => {
-  return paginationConfigs.value[activeBtn.value] || paginationConfigs.value['区域']
+const paginationConfig = ref({
+  total: 200,
+  current: 1,
+  pageSize: 20,
+  pageNo: 1,
+  showSizeChanger: true,
+  showQuickJumper: true,
+  showTotal: (total) => `共${total}条数据`,
+  size: 'small'
 })
 
 // 对话框相关
 const areaModalVisible = ref(false)
-const deviceModalVisible = ref(false)
 // 是否为编辑模式
 const isEditMode = ref(false)
 
-// 区域表单数据（新增/编辑共用）
+// 配置表单数据（新增/编辑共用）
 const areaForm = ref({
   id: '',
   name: '',
   code: '',
-  description: ''
-})
-
-// 设备表单数据（新增/编辑共用）
-const deviceForm = ref({
-  id: '',
-  name: '',
-  code: '',
-  description: ''
+  description: '',
+  modelCategoryName: '',
+  modelCategoryCode: '',
+  parkCode: '',
+  parkPowerLoadCode: '',
+  status: 1
 })
 
 // 表单校验规则
-const areaRules = {
+const rules = {
   code: [
-    { required: true, message: '请输入区域编码', trigger: 'blur' }
+    { required: true, message: '请输入编码', trigger: 'blur' }
   ],
   name: [
-    { required: true, message: '请输入区域名称', trigger: 'blur' }
+    { required: true, message: '请输入名称', trigger: 'blur' }
+  ],
+  modelCategoryName: [
+    { required: true, message: '请选择设备类型', trigger: 'change' }
+  ],
+  status: [
+    { required: true, message: '请选择使用状态', trigger: 'change' }
   ]
 }
 
-const deviceRules = {
-  code: [
-    { required: true, message: '请输入设备编码', trigger: 'blur' }
-  ],
-  name: [
-    { required: true, message: '请输入设备名称', trigger: 'blur' }
-  ]
-}
-
-// 表单引用
-const areaFormRef = ref(null)
-const deviceFormRef = ref(null)
+// 设备类型树数据
+const modelCategoryTreeData = ref([])
 
 // 新增按钮点击事件
 const handleAdd = () => {
+  loadModelCategoryTreeData()
   // 校验是否选中左侧树节点
   if (selectedKeys.value.length === 0) {
     // 提示用户选择树节点
@@ -524,29 +447,24 @@ const handleAdd = () => {
   // 设置为新增模式
   isEditMode.value = false
   
-  // 根据当前激活的按钮类型显示不同的对话框
-  if (activeBtn.value === '区域') {
-    // 重置表单
-    areaForm.value = {
-      id: '',
-      name: '',
-      code: '',
-      description: ''
-    }
-    areaModalVisible.value = true
-  } else {
-    // 重置表单
-    deviceForm.value = {
-      id: '',
-      name: '',
-      code: '',
-      description: ''
-    }
-    deviceModalVisible.value = true
+  // 重置表单
+  areaForm.value = {
+    id: '',
+    name: '',
+    code: '',
+    description: '',
+    modelCategoryName: '',
+    modelCategoryCode: '',
+    parkCode: selectedNodeData.value?.parkCode || '',
+    parkPowerLoadCode: selectedNodeData.value?.parkPowerLoadCode || '',
+    modelAreaCode: selectedNodeData.value?.code || '',
+    status: 1
   }
+  console.log('新增表单 status:', areaForm.value.status, typeof areaForm.value.status)
+  areaModalVisible.value = true
 }
 
-// 关闭区域对话框
+// 关闭配置对话框
 const closeAreaModal = () => {
   areaModalVisible.value = false
   isEditMode.value = false
@@ -555,20 +473,13 @@ const closeAreaModal = () => {
     id: '',
     name: '',
     code: '',
-    description: ''
-  }
-}
-
-// 关闭设备对话框
-const closeDeviceModal = () => {
-  deviceModalVisible.value = false
-  isEditMode.value = false
-  // 重置表单
-  deviceForm.value = {
-    id: '',
-    name: '',
-    code: '',
-    description: ''
+    description: '',
+    modelCategoryName: '',
+    modelCategoryCode: '',
+    parkCode: '',
+    parkPowerLoadCode: '',
+    modelAreaCode: '',
+    status: 1
   }
 }
 
@@ -578,33 +489,52 @@ const refreshTreeData = async () => {
   try {
     const data = await post('/powerload/common/list-loadModelAreaTree', {})
     modelAreaTreeData.value = data.data || []
-    
-    const categoryData = await post('/powerload/common/list-loadModelCategoryTree', {})
-    modelCategoryTreeData.value = categoryData.data || []
   
     // 更新过滤后的树数据
-    filteredTreeData.value = currentTreeData.value
+    filteredTreeData.value = modelAreaTreeData.value
   } catch (error) {
     console.error('刷新树数据失败:', error)
   }
 }
 
-// 区域表单提交（新增/编辑）
+// 加载设备类型树数据
+const loadModelCategoryTreeData = async () => {
+  const { post } = useRequest()
+  try {
+    const data = await post('/powerload/common/list-loadModelCategoryTree', {})
+    modelCategoryTreeData.value = data.data || []
+  } catch (error) {
+    console.error('加载设备类型树数据失败:', error)
+  }
+}
+
+// 选择设备类型
+const selectModelCategory = (node) => {
+  if (node) {
+    areaForm.value.modelCategoryName = node.title
+    areaForm.value.modelCategoryCode = node.code
+  }
+}
+
+// 配置表单提交（新增/编辑）
 const handleAreaSubmit = async () => {
   try {
     // 表单校验
-    await areaFormRef.value.validate()
+    await formRef.value.validate()
     
     if (isEditMode.value) {
       // 编辑模式
       const { put } = useRequest()
       
       // 调用更新接口
-      await put('/powerload/load-model-area/update', {
+      await put('/powerload/load-device/update', {
         id: areaForm.value.id,
         name: areaForm.value.name,
         code: areaForm.value.code,
-        description: areaForm.value.description
+        status: areaForm.value.status,
+        description: areaForm.value.description,
+        modelCategoryCode: areaForm.value.modelCategoryCode,
+        modelCategoryName: areaForm.value.modelCategoryName
       })
     } else {
       // 新增模式
@@ -612,17 +542,16 @@ const handleAreaSubmit = async () => {
       // 获取选中的树节点 key 作为 parentId
       const parentId = selectedKeys.value[0]
       // 调用保存接口
-      await post('/powerload/load-model-area/create', {
-        parentId,
+      await post('/powerload/load-device/create', {
         name: areaForm.value.name,
         code: areaForm.value.code,
         description: areaForm.value.description,
-        parkCode: selectedNodeData.value?.parkCode || '',
-        parkPowerLoadCode: selectedNodeData.value?.parkPowerLoadCode || '',
-        status: 1,
-        fullId: selectedNodeData.value?.fullId || '',
-        fullName: selectedNodeData.value?.fullName || '',
-        fullCode: selectedNodeData.value?.fullCode || ''
+        modelCategoryCode: areaForm.value.modelCategoryCode,
+        modelCategoryName: areaForm.value.modelCategoryName,
+        parkCode: areaForm.value.parkCode,
+        parkPowerLoadCode: areaForm.value.parkPowerLoadCode,
+        status: areaForm.value.status,
+        modelAreaCode: areaForm.value.modelAreaCode,
       })
     }
     
@@ -635,8 +564,8 @@ const handleAreaSubmit = async () => {
     await refreshTreeData()
     
     // 根据左侧树选中的节点刷新表格数据
-    if (selectedNodeData.value && selectedNodeData.value.key) {
-      loadTableData(selectedNodeData.value.key)
+    if (selectedNodeData.value && selectedNodeData.value.code) {
+      loadTableData(selectedNodeData.value.code)
     } else {
       loadTableData()
     }
@@ -645,77 +574,16 @@ const handleAreaSubmit = async () => {
       // 表单校验失败
       console.error('表单校验失败:', error)
     } else {
-      console.error(isEditMode.value ? '更新区域失败:' : '保存区域失败:', error)
-    }
-  }
-}
-
-// 设备表单提交（新增/编辑）
-const handleDeviceSubmit = async () => {
-  try {
-    // 表单校验
-    await deviceFormRef.value.validate()
-    
-    if (isEditMode.value) {
-      // 编辑模式
-      const { put } = useRequest()
-      
-      // 调用更新接口
-      await put('/powerload/load-model-category/update', {
-        id: deviceForm.value.id,
-        name: deviceForm.value.name,
-        code: deviceForm.value.code,
-        description: deviceForm.value.description
-      })
-    } else {
-      // 新增模式
-      const { post } = useRequest()
-      // 获取选中的树节点 key 作为 parentId
-      const parentId = selectedKeys.value[0]
-      
-      // 调用保存接口
-      await post('/powerload/load-model-category/create', {
-        parentId,
-        name: deviceForm.value.name,
-        code: deviceForm.value.code,
-        description: deviceForm.value.description,
-        parkCode: selectedNodeData.value?.parkCode || '',
-        parkPowerLoadCode: selectedNodeData.value?.parkPowerLoadCode || '',
-        status: 1,
-        type: selectedNodeData.value?.type || 0,
-        fullId: selectedNodeData.value?.fullId || '',
-        fullName: selectedNodeData.value?.fullName || '',
-        fullCode: selectedNodeData.value?.fullCode || ''
-      })
-    }
-    
-    message.success(isEditMode.value ? '更新成功' : '保存成功')
-    
-    // 关闭对话框
-    closeDeviceModal()
-    
-    // 刷新树数据
-    await refreshTreeData()
-    
-    // 根据左侧树选中的节点刷新表格数据
-    if (selectedNodeData.value && selectedNodeData.value.key) {
-      loadTableData(selectedNodeData.value.key)
-    } else {
-      loadTableData()
-    }
-  } catch (error) {
-    if (error.errorFields) {
-      // 表单校验失败
-      console.error('表单校验失败:', error)
-    } else {
-      console.error(isEditMode.value ? '更新设备失败:' : '保存设备失败:', error)
+      console.error(isEditMode.value ? '更新配置失败:' : '保存配置失败:', error)
     }
   }
 }
 
 // 编辑按钮点击事件
 const handleEdit = (record) => {
+  loadModelCategoryTreeData()
   console.log('编辑数据:', record)
+  console.log('编辑数据 status:', record.status, typeof record.status)
   let targetRecord = record
   
   // 如果 record 为空，从表格复选框中获取选中的数据
@@ -745,26 +613,21 @@ const handleEdit = (record) => {
   // 设置为编辑模式
   isEditMode.value = true
   
-  // 根据当前激活的按钮类型显示不同的编辑对话框
-  if (activeBtn.value === '区域') {
-    // 填充表单数据
-    areaForm.value = {
-      id: targetRecord.id || '',
-      name: targetRecord.name || '',
-      code: targetRecord.code || '',
-      description: targetRecord.description || ''
-    }
-    areaModalVisible.value = true
-  } else {
-    // 填充表单数据
-    deviceForm.value = {
-      id: targetRecord.id || '',
-      name: targetRecord.name || '',
-      code: targetRecord.code || '',
-      description: targetRecord.description || ''
-    }
-    deviceModalVisible.value = true
+  // 填充表单数据
+  areaForm.value = {
+    id: targetRecord.id || '',
+    name: targetRecord.name || '',
+    code: targetRecord.code || '',
+    status: targetRecord.status,
+    description: targetRecord.description || '',
+    modelCategoryName: targetRecord.modelCategoryName || '',
+    modelCategoryCode: targetRecord.modelCategoryCode || '',
+    parkCode: targetRecord.parkCode || '',
+    parkPowerLoadCode: targetRecord.parkPowerLoadCode || '',
+    modelAreaCode: targetRecord.modelAreaCode || ''
   }
+  console.log('填充表单后 status:', areaForm.value.status, typeof areaForm.value.status)
+  areaModalVisible.value = true
 }
 
 // 删除按钮点击事件
@@ -797,19 +660,15 @@ const handleDelete = (record) => {
         
         // 调用删除接口
         for (const id of deleteIds) {
-          if (activeBtn.value === '区域') {
-            await deleteRequest('/powerload/load-model-area/delete', { id })
-          } else {
-            await deleteRequest('/powerload/load-model-category/delete', { id })
-          }
+          await deleteRequest('/powerload/load-device/delete', { id })
         }
         
         // 刷新树数据
         await refreshTreeData()
         
         // 根据左侧树选中的节点刷新表格数据
-        if (selectedNodeData.value && selectedNodeData.value.key) {
-          loadTableData(selectedNodeData.value.key)
+        if (selectedNodeData.value && selectedNodeData.value.code) {
+          loadTableData(selectedNodeData.value.code)
         } else {
           loadTableData()
         }
@@ -829,54 +688,45 @@ const handleDelete = (record) => {
 const handleExport = async () => {
   Modal.confirm({
     title: '确认导出',
-    content: `您确定要导出数据吗？`,
+    content: `您确定要导出负荷配置数据吗？`,
     okText: '确定',
     cancelText: '取消',
     okType: 'danger',
     async onOk() {
-        // 根据当前激活的按钮类型选择导出接口
-        let url = ''
-        if (activeBtn.value === '区域') {
-          url = '/powerload/load-model-area/export-excel'
-        } else {
-          url = '/powerload/load-model-category/export-excel'
+      // 导出配置数据
+      const url = '/powerload/load-device/export-excel'
+      
+      try {
+        // 构建查询参数
+        const params = {
+          code: modelSearchParams.value.code || undefined,
+          name: modelSearchParams.value.name || undefined,
+          description: modelSearchParams.value.description || undefined
         }
         
-        try {
-          // 构建查询参数
-          const params = {
-            code: modelSearchParams.value.code || undefined,
-            name: modelSearchParams.value.name || undefined,
-            description: modelSearchParams.value.description || undefined
-          }
-          
-          // 获取配置
-          const config = useRuntimeConfig()
-          const baseURL = config.public.baseURL
-          
-          // 发送请求获取文件数据
-          const { get: getRequest } = useRequest()
-          const response = await getRequest(url, params, {
-            responseType: 'blob' // 确保响应类型为 blob
-          })
-          
-          // 创建下载链接
-          const downloadUrl = window.URL.createObjectURL(response)
-          const link = document.createElement('a')
-          link.href = downloadUrl
-          link.download = activeBtn.value === '区域' ? '负荷模型(区域).xls' : '负荷模型(设备分类).xls'
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          
-          // 释放 URL 对象
-          window.URL.revokeObjectURL(downloadUrl)
-        } catch (error) {
-          console.error('导出失败:', error)
-          message.error('导出失败')
-        }
+        // 发送请求获取文件数据
+        const { get: getRequest } = useRequest()
+        const response = await getRequest(url, params, {
+          responseType: 'blob' // 确保响应类型为 blob
+        })
+        
+        // 创建下载链接
+        const downloadUrl = window.URL.createObjectURL(response)
+        const link = document.createElement('a')
+        link.href = downloadUrl
+        link.download = '负荷模型(配置).xls'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+        // 释放 URL 对象
+        window.URL.revokeObjectURL(downloadUrl)
+      } catch (error) {
+        console.error('导出失败:', error)
+        message.error('导出失败')
       }
-   })
+    }
+  })
 }
 // -------------------------- 右侧新增代码结束 --------------------------
 </script>
