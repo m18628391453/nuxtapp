@@ -98,10 +98,10 @@
 <script setup lang="ts">
 import { ref, computed, watch, inject } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, BarChart3, Settings, Shield, TvMinimal, Boxes, Monitor, Sun, Wind, ChartNoAxesCombined, SolarPanel, Atom, GalleryThumbnails } from 'lucide-vue-next'
+import { Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, BarChart3, Settings, Shield, TvMinimal, Boxes, Monitor, Sun, Wind, ChartNoAxesCombined, SolarPanel, Atom, GalleryThumbnails, Building2, LayoutGrid, Server, Radio } from 'lucide-vue-next'
 
 const menuIconMap: Record<string, any> = {
-  Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, BarChart3, Settings, Shield, TvMinimal, Boxes, Monitor, Sun, Wind, ChartNoAxesCombined, SolarPanel, Atom, GalleryThumbnails
+  Home, Zap, Battery, Activity, TrendingUp, Sliders, Cloud, BarChart3, Settings, Shield, TvMinimal, Boxes, Monitor, Sun, Wind, ChartNoAxesCombined, SolarPanel, Atom, GalleryThumbnails, Building2, LayoutGrid, Server, Radio
 }
 
 const layoutState = inject('layoutState') as any

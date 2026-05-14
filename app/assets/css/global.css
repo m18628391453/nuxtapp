@@ -1,3 +1,10 @@
+/* ===== 全局页面样式 ===== */
+html, body {
+    overflow-y: hidden !important;
+    margin: 0;
+    padding: 0;
+}
+
 /* ===== Chrome / Edge 的滚动条样式（完全不变） ===== */
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px !important;
@@ -102,6 +109,23 @@
 }
 .ant-modal-body {
     background: rgba(0, 20, 40, 0.98) !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+}
+.ant-modal-body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.ant-modal-body::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+.ant-modal-body::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+.ant-modal-body::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.4);
 }
 .ant-modal-close-x {
     color: rgba(255, 255, 255, 0.6) !important;
@@ -146,7 +170,17 @@
     color: rgba(255, 255, 255, 0.4) !important;
 }
 .ant-modal-content .ant-select-arrow {
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: #FFFFFF !important;
+}
+
+.ant-select-arrow {
+    color: #FFFFFF !important;
+}
+.ant-select:not(.ant-select-disabled) .ant-select-arrow {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+.ant-select:not(.ant-select-disabled):hover .ant-select-arrow {
+    color: #FFFFFF !important;
 }
 .ant-modal-content .ant-textarea {
     background-color: rgba(255, 255, 255, 0.05) !important;

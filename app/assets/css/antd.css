@@ -638,3 +638,45 @@
 :deep(.ant-picker-clear:hover) {
   color: #FFFFFF !important;
 }
+
+:deep(.ant-checkbox-wrapper) {
+    color: #9CA3AF;
+    font-size: 12px;
+}
+
+:deep(.ant-select-selector) {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+}
+
+:deep(.ant-select-selection-placeholder) {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+:deep(.ant-picker-input > input::placeholder),
+:deep(.ant-input > input::placeholder) {
+    color: #FFFFFF99 !important;
+}
+
+:deep(.custom-dark-input .ant-input) {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  border-radius: 4px;
+  box-shadow: none !important;
+}
+
+:deep(.custom-dark-input .ant-input:hover),
+:deep(.custom-dark-input .ant-input-focused) {
+  border-color: #32AFFF66 !important;
+}
+
+:deep(.ant-input::placeholder) {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+:deep(.ant-checkbox-disabled+span) {
+    color: #9CA3AF;
+    font-size: 12px;
+}

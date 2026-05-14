@@ -1,6 +1,6 @@
 <template>
   <a-config-provider :locale="zhCN">
-    <NuxtLayout :style="{ background: '#0B1B32' }">
+    <NuxtLayout >
       <NuxtPage />
     </NuxtLayout>
   </a-config-provider>

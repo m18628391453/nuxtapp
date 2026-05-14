@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isClientReady" class="relative min-h-screen text-white font-sans">
+  <div v-if="isClientReady" class="max-container relative min-h-screen text-white font-sans">
     <div class="relative z-10 flex flex-col min-h-screen">
       <Header @settings="showSettings = true" />
 
@@ -96,8 +96,8 @@ const initSystemData = async () => {
         name: '负荷管理', route: '/powerload', icon: 'Activity', index: 3,
         subMenu: [
           { name: '负荷监测', route: '/powerload/monitor', icon: 'GalleryThumbnails', index: 0 },
-          { name: '负荷建模', route: '/powerload/model', icon: 'Boxes', index: 1 },
-          { name: '负荷配置', route: '/powerload/device', icon: 'Boxes', index: 2 },
+          { name: '负荷建模', route: '/powerload/model', icon: 'Activity', index: 1 },
+          { name: '负荷配置', route: '/powerload/device', icon: 'Sliders', index: 2 },
           { name: '负荷分析', route: '/powerload/analyse', icon: 'ChartNoAxesCombined', index: 3 },
         ]
       },
@@ -111,30 +111,38 @@ const initSystemData = async () => {
         ]
       },
       { name: '策略管理', route: '/strategy', icon: 'Sliders', index: 5, subMenu: [] },
-      { name: '能碳管理', route: '/carbon', icon: 'Cloud', index: 6, 
+      {
+        name: '能碳管理', route: '/carbon', icon: 'Cloud', index: 6,
         subMenu: [
-          {name: '能碳看板', route: '/carbon/board', icon: 'Sun', index: 0,},
+          { name: '能碳看板', route: '/carbon/board', icon: 'GalleryThumbnails', index: 0, },
           {
-            name: '能源管理', route: '/carbon/energy', icon: 'Sun', index: 1,
+            name: '能源管理', route: '/carbon/energy', icon: 'Zap', index: 1,
             subMenu: [
-              { name: '能源看板', route: '/carbon/energy/board', index: 0 },
+              { name: '能源看板', route: '/carbon/energy/eboard', index: 0 },
               { name: '能源报表', route: '/carbon/energy/report', index: 1 }
             ]
           },
           {
-            name: '碳足迹管理', route: '/carbon/footprint', icon: 'Sun', index: 6,
+            name: '碳排放管理', route: '/carbon/discharge', icon: 'TrendingUp', index: 7,
+            subMenu: [
+              { name: '碳排放看板', route: '/carbon/discharge/emitboard', index: 1 }
+            ]
+          },
+          {
+            name: '碳足迹管理', route: '/carbon/footprint', icon: 'Cloud', index: 6,
             subMenu: [
               { name: '碳足迹管理', route: '/carbon/footprint/manage', index: 0 }
             ]
           },
           {
-            name: '碳减排管理', route: '/carbon/reduction', icon: 'Sun', index: 7,
+            name: '碳减排管理', route: '/carbon/reduction', icon: 'TrendingUp', index: 7,
             subMenu: [
-              { name: '碳减排管理', route: '/carbon/reduction/manage', index: 0 }
+              { name: '碳减排管理', route: '/carbon/reduction/manage', index: 0 },
             ]
           },
+
           {
-            name: '碳资产管理', route: '/carbon/asset', icon: 'Sun', index: 8,
+            name: '碳资产管理', route: '/carbon/asset', icon: 'Building2', index: 8,
             subMenu: [
               { name: '碳信用项目管理', route: '/carbon/asset/credit', index: 0 },
               { name: '碳资产管理', route: '/carbon/asset/manage', index: 0 },
@@ -143,28 +151,41 @@ const initSystemData = async () => {
             ]
           },
           {
-            name: '数据采集', route: '/carbon/datacollection', icon: 'Sun', index: 9,
+            name: '数据采集', route: '/carbon/datacollection', icon: 'Radio', index: 9,
             subMenu: [
               { name: '数据采集', route: '/carbon/datacollection/manage', index: 0 },
             ]
           },
-        ] 
+        ]
       },
-      { name: '电力交易', route: '/trade', icon: 'BarChart3', index: 7, subMenu: [] },
+      {
+        name: '电力交易', route: '/trade', icon: 'BarChart3', index: 7,
+        subMenu: [
+          {
+            name: '策略管理', route: '/trade/tactics', icon: 'Settings', index: 6,
+            subMenu: [
+              { name: '日数据分析', route: '/trade/tactics/daydata', icon: 'Settings', index: 0 },
+              { name: '相识日数据', route: '/trade/tactics/smldaydata', icon: 'Settings', index: 1 },
+            ]
+          },
+        ]
+      },
       {
         name: '基础设置', route: '/base', icon: 'Settings', index: 8,
         subMenu: [
-          { name: '园区管理', route: '/base/park', icon: 'Settings', index: 0 },
-          { name: '分区管理', route: '/base/area', icon: 'Settings', index: 1 },
-          { name: '设备类型管理', route: '/base/devicetype', icon: 'Settings', index: 2 },
-          { name: '设备型号管理', route: '/base/devicetypemodel', icon: 'Settings', index: 3 },
-          { name: '设备管理', route: '/base/device', icon: 'Settings', index: 4 },
-          { name: '遥测遥信设置', route: '/base/modelinfoaddress', icon: 'Settings', index: 5 },
-          { name: '能碳设置', route: '/base/carbon', icon: 'Settings', index: 6, subMenu: [
-            { name: '排放因子库', route: '/base/carbon/efdatabase', icon: 'Settings', index: 0 },
-            { name: '碳排放模型', route: '/base/carbon/carbonmodel', icon: 'Settings', index: 1 },
-            { name: '排放源库', route: '/base/carbon/esinventory', icon: 'Settings', index: 2 },
-          ] },
+          { name: '园区管理', route: '/base/park', icon: 'Building2', index: 0 },
+          { name: '分区管理', route: '/base/area', icon: 'LayoutGrid', index: 1 },
+          { name: '设备类型管理', route: '/base/devicetype', icon: 'Boxes', index: 2 },
+          { name: '设备型号管理', route: '/base/devicetypemodel', icon: 'Server', index: 3 },
+          { name: '设备管理', route: '/base/device', icon: 'Monitor', index: 4 },
+          { name: '遥测遥信设置', route: '/base/modelinfoaddress', icon: 'Radio', index: 5 },
+          {
+            name: '能碳设置', route: '/base/carbon', icon: 'Atom', index: 6, subMenu: [
+              { name: '排放因子库', route: '/base/carbon/efdatabase', icon: 'BarChart3', index: 0 },
+              { name: '碳排放模型', route: '/base/carbon/carbonmodel', icon: 'Activity', index: 1 },
+              { name: '排放源库', route: '/base/carbon/esinventory', icon: 'Cloud', index: 2 },
+            ]
+          },
         ]
       },
       { name: '系统设置', route: '/system', icon: 'Shield', index: 9, subMenu: [] },

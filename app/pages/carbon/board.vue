@@ -73,7 +73,6 @@
   </div>
 </template>
 <script setup>
-import { inject } from 'vue'
 import MainMetric from '@/components/carbon/MainMetric.vue'
 import BottomMetric from '@/components/carbon/BottomMetric.vue'
 import ProgressivePie from '@/components/chart/ProgressivePie.vue'
